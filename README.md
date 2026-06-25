@@ -17,15 +17,6 @@
 | TanStack Query | ^5.79.0 |
 | Axios | ^1.7.9 |
 
-### 백엔드 (`/eduops-server/server`)
-| 항목 | 버전 |
-|------|------|
-| NestJS | ^11 |
-| Prisma ORM | latest |
-| Redis (cache-manager) | latest |
-| JWT / Passport | latest |
-| Swagger | latest |
-
 ---
 
 ## 🚀 시작하기
@@ -35,22 +26,7 @@
 **프론트엔드**
 ```bash
 cp .env.example .env.local
-# NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
-**백엔드**
-```bash
-cd ../eduops-server/server
-cp .env.example .env
-# DATABASE_URL, JWT_SECRET 등 설정
-```
-
-### 2. 데이터베이스 설정
-
-```bash
-cd eduops-server/server
-npx prisma migrate dev --name init
-npx prisma generate
+# NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 ### 3. 실행
@@ -58,13 +34,6 @@ npx prisma generate
 **프론트엔드**
 ```bash
 npm run dev        # http://localhost:3000
-```
-
-**백엔드**
-```bash
-cd eduops-server/server
-npm run start:dev  # http://localhost:3001
-# Swagger: http://localhost:3001/docs
 ```
 
 ---
@@ -101,21 +70,4 @@ src/
 │   └── utils.ts         # cn() 유틸
 ├── stores/              # Zustand 스토어 (auth, ui)
 └── types/               # TypeScript 타입 정의
-```
-
-### 백엔드
-
-```
-src/
-├── auth/                # JWT 인증 모듈
-├── students/            # 학생 CRUD
-├── teachers/            # 교사 CRUD
-├── courses/             # 강좌 CRUD
-├── schedules/           # 시간표 CRUD
-├── grades/              # 성적 CRUD
-├── attendance/          # 출결 CRUD
-├── prisma/              # PrismaService (global)
-└── main.ts              # Bootstrap (Swagger, CORS, Validation)
-prisma/
-└── schema.prisma        # DB 스키마 정의
 ```
