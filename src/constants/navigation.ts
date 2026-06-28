@@ -6,6 +6,7 @@ export interface NavItem {
 export const DIRECTOR_NAV: NavItem[] = [
   { label: "매출 관리", href: "/finance" },
   { label: "자재/결제 관리", href: "/payment" },
+  { label: "연락 관리", href: "/message" },
 ];
 
 export const MANAGER_NAV: NavItem[] = [
