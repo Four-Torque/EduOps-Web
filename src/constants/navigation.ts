@@ -10,17 +10,33 @@ export interface NavItem {
 }
 
 export const DIRECTOR_NAV: NavItem[] = [
-  { label: "매출 관리", href: "/finance" },
-  { label: "자재/결제 관리", href: "/payment" },
-  { label: "연락 관리", href: "/director-message" },
+  {
+    label: "사용자 관리",
+    children: [
+      { label: "사용자 목록", href: "/user-list" },
+      { label: "사용자 등록", href: "/user-register" },
+    ],
+  },
+  { label: "지재물 관리", href: "/asset" },
+  { label: "매출", href: "/finance" },
 ];
 
 export const MANAGER_NAV: NavItem[] = [
-  { label: "원생/강사 관리", href: "/academic" },
-  { label: "반/스케줄 관리", href: "/schedule" },
-  { label: "직원 근태 관리", href: "/attendance" },
-  { label: "수업료/급여 결제", href: "/billing" },
-  { label: "쪽지", href: "/manager-message" },
+  {
+    label: "학원 정보",
+    children: [
+      { label: "학원 기본 정보", href: "/school-info" },
+      { label: "원생 관리", href: "/student" },
+      { label: "강좌 관리", href: "/course" },
+      { label: "스케줄 관리", href: "/schedule" },
+      { label: "강사 관리", href: "/teacher-mgmt" },
+    ],
+  },
+  { label: "학생 상세", href: "/student-detail" },
+  { label: "직원 근태", href: "/attendance" },
+  { label: "자재 물품 신청", href: "/material" },
+  { label: "결제 관리", href: "/billing" },
+  { label: "문자/쪽지", href: "/manager-message" },
 ];
 
 export const TEACHER_NAV: NavItem[] = [

@@ -1,6 +1,11 @@
+"use client";
+
 import AppShell from "../../components/common/AppShell";
-import { MANAGER_NAV } from "../../constants/navigation";
+import { DIRECTOR_NAV, MANAGER_NAV } from "../../constants/navigation";
+import { useAuthStore } from "../../store/auth.store";
 
 export default function ManagerLayout({ children }: { children: React.ReactNode }) {
-  return <AppShell navItems={MANAGER_NAV}>{children}</AppShell>;
+  const role = useAuthStore((s) => s.user?.role);
+  const navItems = role === "DIRECTOR" ? [...DIRECTOR_NAV, ...MANAGER_NAV] : MANAGER_NAV;
+  return <AppShell navItems={navItems}>{children}</AppShell>;
 }

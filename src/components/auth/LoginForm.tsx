@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "../../store/auth.store";
 
 export default function LoginForm() {
   const router = useRouter();
+  const setAuth = useAuthStore((s) => s.setAuth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -61,21 +63,21 @@ export default function LoginForm() {
         <div className="mt-4 flex flex-col gap-2">
           <button
             type="button"
-            onClick={() => router.push("/class")}
+            onClick={() => { setAuth({ id: 1, name: "강사", role: "TEACHER" }, "dev-token"); router.push("/class"); }}
             className="w-full border border-dashed border-orange-300 text-orange-400 rounded-lg py-2 text-xs font-medium hover:bg-orange-50 transition-colors"
           >
             [DEV] 강사 바로 입장
           </button>
           <button
             type="button"
-            onClick={() => router.push("/academic")}
+            onClick={() => { setAuth({ id: 2, name: "관리자", role: "MANAGER" }, "dev-token"); router.push("/academic"); }}
             className="w-full border border-dashed border-blue-300 text-blue-400 rounded-lg py-2 text-xs font-medium hover:bg-blue-50 transition-colors"
           >
             [DEV] 관리자 바로 입장
           </button>
           <button
             type="button"
-            onClick={() => router.push("/finance")}
+            onClick={() => { setAuth({ id: 3, name: "원장", role: "DIRECTOR" }, "dev-token"); router.push("/finance"); }}
             className="w-full border border-dashed border-purple-300 text-purple-400 rounded-lg py-2 text-xs font-medium hover:bg-purple-50 transition-colors"
           >
             [DEV] 원장 바로 입장
