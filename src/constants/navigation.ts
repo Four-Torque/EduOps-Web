@@ -6,7 +6,7 @@ export interface NavItem {
 export const DIRECTOR_NAV: NavItem[] = [
   { label: "매출 관리", href: "/finance" },
   { label: "자재/결제 관리", href: "/payment" },
-  { label: "연락 관리", href: "/message" },
+  { label: "연락 관리", href: "/director-message" },
 ];
 
 export const MANAGER_NAV: NavItem[] = [
@@ -14,7 +14,7 @@ export const MANAGER_NAV: NavItem[] = [
   { label: "반/스케줄 관리", href: "/schedule" },
   { label: "직원 근태 관리", href: "/attendance" },
   { label: "수업료/급여 결제", href: "/billing" },
-  { label: "쪽지", href: "/message" },
+  { label: "쪽지", href: "/manager-message" },
 ];
 
 export const TEACHER_NAV: NavItem[] = [
