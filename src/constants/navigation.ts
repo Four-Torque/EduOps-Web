@@ -1,6 +1,12 @@
-export interface NavItem {
+export interface SubNavItem {
   label: string;
   href: string;
+}
+
+export interface NavItem {
+  label: string;
+  href?: string;
+  children?: SubNavItem[];
 }
 
 export const DIRECTOR_NAV: NavItem[] = [
@@ -18,8 +24,28 @@ export const MANAGER_NAV: NavItem[] = [
 ];
 
 export const TEACHER_NAV: NavItem[] = [
-  { label: "시간표 및 수업 설정", href: "/class" },
-  { label: "학생 출결 관리", href: "/student-attendance" },
-  { label: "수업 파일 관리", href: "/files" },
-  { label: "학생 수업 테스트", href: "/test" },
+  {
+    label: "시간표",
+    children: [
+      { label: "수업 시간표", href: "/class" },
+    ],
+  },
+  {
+    label: "학생 출결관리",
+    children: [
+      { label: "학생 출결 관리", href: "/student-attendance" },
+    ],
+  },
+  {
+    label: "수업 파일 관리",
+    children: [
+      { label: "수업 파일 관리", href: "/files" },
+    ],
+  },
+  {
+    label: "성적 관리",
+    children: [
+      { label: "학생 수업 테스트", href: "/test" },
+    ],
+  },
 ];

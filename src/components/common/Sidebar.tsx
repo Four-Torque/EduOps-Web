@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
@@ -14,15 +15,30 @@ interface SidebarProps {
 
 export function Sidebar({ navItems }: SidebarProps) {
   const pathname = usePathname();
-  const { sidebarOpen, toggleSidebar } = useUIStore();
-  const { user } = useAuthStore();
+  const sidebarOpen = useUIStore((s) => s.sidebarOpen);
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const addTab = useUIStore((s) => s.addTab);
+  const user = useAuthStore((s) => s.user);
+  const [openLabel, setOpenLabel] = useState<string | null>(null);
+
+  // 페이지 진입 시 현재 경로가 속한 부모를 자동으로 펼침
+  useEffect(() => {
+    const matched = navItems.find((item) =>
+      item.children?.some((child) => pathname.startsWith(child.href))
+    );
+    if (matched) setOpenLabel(matched.label);
+  }, [pathname, navItems]);
+
+  function handleParentClick(label: string) {
+    setOpenLabel((prev) => (prev === label ? null : label));
+  }
 
   return (
     <aside
       className={cn(
         "flex flex-col h-screen bg-white border-r border-slate-100 shrink-0",
         "transition-all duration-300 ease-in-out",
-        sidebarOpen ? "w-[220px]" : "w-[60px]",
+        sidebarOpen ? "w-[260px]" : "w-[60px]",
       )}
     >
       {/* 브랜드 로고 */}
@@ -54,28 +70,82 @@ export function Sidebar({ navItems }: SidebarProps) {
       )}
 
       {/* 네비게이션 */}
-      <nav className="flex-1 px-[35px] py-5 overflow-y-auto">
+      <nav className="flex-1 px-[35px] py-5 overflow-hidden">
         <ul className="space-y-0.5">
           {navItems.map((item) => {
-            const active =
-              pathname === item.href || pathname.startsWith(item.href + "/");
+            // 자식이 있는 부모 메뉴
+            if (item.children) {
+              const isOpen = openLabel === item.label;
+              // 자식 중 하나라도 현재 경로면 부모를 활성 표시
+              const hasActiveChild = item.children.some((child) =>
+                pathname.startsWith(child.href)
+              );
+
+              return (
+                <li key={item.label}>
+                  {/* 부모 버튼 — 클릭 시 열림/닫힘 토글 */}
+                  <button
+                    onClick={() => handleParentClick(item.label)}
+                    className={cn(
+                      "flex items-center justify-between px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors w-full",
+                      hasActiveChild
+                        ? "text-slate-800 font-medium"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800",
+                    )}
+                  >
+                    <span>{item.label}</span>
+                  </button>
+
+                  {/* 자식 메뉴 — 열렸을 때만 렌더링 */}
+                  {isOpen && sidebarOpen && (
+                    <ul className="mt-0.5 ml-2 space-y-0.5">
+                      {item.children.map((child) => {
+                        const isActive = pathname.startsWith(child.href);
+                        return (
+                          <li key={child.href}>
+                            <Link
+                              href={child.href}
+                              onClick={() => addTab({ label: child.label, href: child.href })}
+                              className={cn(
+                                "flex items-center gap-2 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors",
+                                isActive
+                                  ? "text-[#E8732A] font-medium"
+                                  : "text-slate-400 hover:text-slate-700",
+                              )}
+                            >
+                              <span className={cn(
+                                "w-1 h-1 rounded-full shrink-0",
+                                isActive ? "bg-[#E8732A]" : "bg-slate-300",
+                              )} />
+                              {child.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+              );
+            }
+
+            // 자식 없는 단순 링크
+            const isActive =
+              !!item.href &&
+              (pathname === item.href || pathname.startsWith(item.href + "/"));
 
             return (
               <li key={item.href}>
                 <Link
-                  href={item.href}
-                  title={!sidebarOpen ? item.label : undefined}
+                  href={item.href ?? "#"}
                   className={cn(
                     "flex items-center gap-1.5 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors",
-                    sidebarOpen ? "w-[190px]" : "w-9 justify-center",
-                    active
+                    sidebarOpen ? "w-full" : "w-9 justify-center",
+                    isActive
                       ? "bg-[#0069A8] text-white font-medium"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-800",
                   )}
                 >
-                  {sidebarOpen && (
-                    <span className="truncate">{item.label}</span>
-                  )}
+                  {sidebarOpen && <span className="truncate">{item.label}</span>}
                 </Link>
               </li>
             );
