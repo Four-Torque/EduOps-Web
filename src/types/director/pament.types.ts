@@ -10,3 +10,9 @@ export interface PaymentUser {
   role: PaymentRoleType;
   status: PaymentApprovalStatus;
 }
+
+export interface PaymentUserListResponse {
+  items: PaymentUser[];
+  totalItems: number;
+  totalPages: number;
+}

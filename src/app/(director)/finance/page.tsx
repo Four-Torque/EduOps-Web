@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { RevenueKpi } from "@/components/finance/RevenueKpi";
-import { RevenueFilterBar } from "@/components/finance/RevenueFilterBar";
-import { RevenueTable } from "@/components/finance/RevenueTable";
-import { RevenueChart } from "@/components/finance/RevenueChart";
-import { QuickActions } from "@/components/finance/QuickActions";
+import { RevenueKpi } from "@/components/director/finance/RevenueKpi";
+import { RevenueFilterBar } from "@/components/director/finance/RevenueFilterBar";
+import { RevenueTable } from "@/components/director/finance/RevenueTable";
+import { RevenueChart } from "@/components/director/finance/RevenueChart";
+import { QuickActions } from "@/components/director/finance/QuickActions";
 import {
   MOCK_REVENUE_STATS,
   MOCK_REVENUE_ITEMS,
