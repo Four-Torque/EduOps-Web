@@ -4,8 +4,9 @@ export interface NavItem {
 }
 
 export const DIRECTOR_NAV: NavItem[] = [
+    { label: "사용자관리", href: "/user" },
   { label: "매출 관리", href: "/finance" },
-  { label: "자재/결제 관리", href: "/payment" },
+  { label: "자재/결제 관리", href: "/inventory" },
   { label: "연락 관리", href: "/director-message" },
 ];
 

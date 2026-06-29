@@ -13,7 +13,7 @@ import {
 } from "@/constants/director/finance.mock";
 import { useFinanceStore } from "@/store/director/finance.store";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 5;
 
 export default function FinancePage() {
   const { filter, setSearch, setStatus, setDateRange, setPage } =
@@ -32,6 +32,8 @@ export default function FinancePage() {
       return matchSearch && matchStatus;
     });
   }, [filter.search, filter.status]);
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
   const paginated = filtered.slice(
     (filter.page - 1) * PAGE_SIZE,
@@ -55,6 +57,7 @@ export default function FinancePage() {
       <RevenueTable
         items={paginated}
         page={filter.page}
+        totalPages={totalPages}
         totalItems={filtered.length}
         pageSize={PAGE_SIZE}
         onPageChange={setPage}

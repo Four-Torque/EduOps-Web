@@ -1,17 +1,17 @@
 "use client";
 
-import { PAYMENT_TABS } from "@/constants/director/payment.constants";
-import type { PaymentTabFilter } from "@/types/director/pament.types";
+import { USER_TABS } from "@/constants/director/user.constants";
+import type { UserTabFilter } from "@/types/director/user.types";
 
-interface PaymentFilterTabsProps {
-  active: PaymentTabFilter;
-  onChange: (tab: PaymentTabFilter) => void;
+interface UserFilterTabsProps {
+  active: UserTabFilter;
+  onChange: (tab: UserTabFilter) => void;
 }
 
-export function PaymentFilterTabs({ active, onChange }: PaymentFilterTabsProps) {
+export function UserFilterTabs({ active, onChange }: UserFilterTabsProps) {
   return (
     <div className="flex border-b border-slate-200">
-      {PAYMENT_TABS.map((tab) => (
+      {USER_TABS.map((tab) => (
         <button
           key={tab.value}
           onClick={() => onChange(tab.value)}

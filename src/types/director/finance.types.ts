@@ -1,4 +1,4 @@
-export type PaymentStatus = "paid" | "unpaid";
+export type UserStatus = "paid" | "unpaid";
 
 export type RevenueCategory = "수강료" | "교재" | "특강" | "실습비" | "기타";
 
@@ -9,7 +9,7 @@ export interface RevenueItem {
   itemSub: string;
   studentName: string;
   amount: number;
-  status: PaymentStatus;
+  status: UserStatus;
   category: RevenueCategory;
 }
 

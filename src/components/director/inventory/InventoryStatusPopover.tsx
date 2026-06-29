@@ -1,34 +1,34 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { PaymentApprovalStatus } from "@/types/director/pament.types";
+import type { InventoryPaymentStatus } from "@/types/director/inventory.types";
 
 interface PopoverAction {
   label: string;
-  status: PaymentApprovalStatus;
+  status: InventoryPaymentStatus;
   className: string;
 }
 
 const POPOVER_ACTIONS: PopoverAction[] = [
   {
-    label: "승인완료",
-    status: "approved",
+    label: "승인",
+    status: "paid",
     className: "text-white bg-[#0069A8] hover:bg-[#005a8e]",
   },
   {
-    label: "취소",
-    status: "cancelled",
+    label: "반려",
+    status: "pending",
     className: "text-slate-600 bg-slate-100 hover:bg-slate-200",
   },
 ];
 
-interface PaymentStatusPopoverProps {
+interface InventoryStatusPopoverProps {
   anchorRect: DOMRect;
-  onSelect: (status: PaymentApprovalStatus) => void;
+  onSelect: (status: InventoryPaymentStatus) => void;
   onClose: () => void;
 }
 
-export function PaymentStatusPopover({ anchorRect, onSelect, onClose }: PaymentStatusPopoverProps) {
+export function InventoryStatusPopover({ anchorRect, onSelect, onClose }: InventoryStatusPopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function PaymentStatusPopover({ anchorRect, onSelect, onClose }: PaymentS
     <div
       ref={ref}
       className="fixed z-50 bg-white border border-slate-200 rounded shadow-lg p-2.5 flex flex-col gap-1.5"
-      style={{ top: anchorRect.bottom + 6, left: anchorRect.left, minWidth: 96 }}
+      style={{ top: anchorRect.bottom + 6, left: anchorRect.left, minWidth: 80 }}
     >
       {POPOVER_ACTIONS.map((action) => (
         <button
