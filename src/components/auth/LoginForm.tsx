@@ -1,87 +1,154 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Card, CardContent } from "../ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { LockIcon, UserIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod/v3";
+import { LoginFormSchema } from "@/validations/auth.valid";
+import FormInput from "@/components/common/FormInput";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import { useLocalStorage } from "@/hooks/common/useLocalStorage";
+import { useEffect, useState } from "react";
 
 export default function LoginForm() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [mounted, setMounted] = useState(false);
+  const [rememberedEmail, setRememberedEmail] = useLocalStorage(
+    "rememberedEmail",
+    "",
+  );
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    router.push("/class");
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues: {
+      email: rememberedEmail || "",
+      password: "",
+    },
+  });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
+  function handleSubmit(values: z.infer<typeof LoginFormSchema>) {
+    console.log(values);
+  }
+
+  function handleRememberEmailChange(checked: boolean) {
+    if (checked) {
+      setRememberedEmail(form.getValues("email"));
+    } else {
+      setRememberedEmail("");
+    }
   }
 
   return (
-    <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-8">
-      <h1 className="text-2xl font-bold text-slate-800 mb-2">EduOps</h1>
-      <p className="text-sm text-slate-500 mb-8">교육 운영 관리 시스템</p>
+    <Card className="w-full sm:max-w-100 pt-9 px-10 pb-8">
+      <CardContent className="p-0">
+        <form id="login-form" onSubmit={form.handleSubmit(handleSubmit)}>
+          <FieldGroup>
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid} className="gap-1">
+                  <FieldLabel htmlFor="email" className="font-semibold">
+                    이메일
+                  </FieldLabel>
+                  <FormInput
+                    {...field}
+                    icon={UserIcon}
+                    id="email"
+                    type="email"
+                    ariaInvalid={fieldState.invalid}
+                    placeholder="이메일을 입력하세요."
+                    autoComplete="off"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-700">이메일</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@eduops.kr"
-            required
-            className="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400"
-          />
-        </div>
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid} className="gap-1">
+                  <FieldLabel htmlFor="password" className="font-semibold">
+                    비밀번호
+                  </FieldLabel>
+                  <FormInput
+                    {...field}
+                    icon={LockIcon}
+                    id="password"
+                    type="password"
+                    ariaInvalid={fieldState.invalid}
+                    placeholder="비밀번호를 입력하세요."
+                    autoComplete="off"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
 
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-slate-700">비밀번호</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            className="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400"
-          />
-        </div>
+          <div className="flex items-center gap-2 my-5">
+            <Checkbox
+              id="remember-email"
+              checked={!!rememberedEmail}
+              onCheckedChange={handleRememberEmailChange}
+            />
+            <label
+              htmlFor="remember-email"
+              className="text-sm font-medium text-muted-foreground cursor-pointer select-none"
+            >
+              이메일 기억하기
+            </label>
+          </div>
 
-        <button
-          type="submit"
-          className="mt-2 bg-slate-800 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-slate-700 transition-colors"
-        >
-          로그인
-        </button>
-      </form>
-
-      <div className="mt-6 flex justify-center gap-4 text-xs text-slate-400">
-        <a href="/signup" className="hover:text-slate-600">회원가입</a>
-        <span>·</span>
-        <a href="/findpassword" className="hover:text-slate-600">비밀번호 찾기</a>
-      </div>
-
-      {process.env.NODE_ENV === "development" && (
-        <div className="mt-4 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => router.push("/class")}
-            className="w-full border border-dashed border-orange-300 text-orange-400 rounded-lg py-2 text-xs font-medium hover:bg-orange-50 transition-colors"
+          <Button
+            className="size-full p-3.75 text-white border-none rounded-[7px] text-[16px] font-bold cursor-pointer tracking-[0.5px] transition-colors duration-180"
+            type="submit"
           >
-            [DEV] 강사 바로 입장
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/academic")}
-            className="w-full border border-dashed border-blue-300 text-blue-400 rounded-lg py-2 text-xs font-medium hover:bg-blue-50 transition-colors"
+            로그인
+          </Button>
+        </form>
+
+        <Separator className="mt-6 mb-4.5" />
+
+        <div className="flex justify-center items-center gap-0 text-[13px] text-muted-foreground">
+          <Link
+            href="/forgot-password"
+            className="hover:text-primary transition-colors duration-180"
           >
-            [DEV] 관리자 바로 입장
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push("/finance")}
-            className="w-full border border-dashed border-purple-300 text-purple-400 rounded-lg py-2 text-xs font-medium hover:bg-purple-50 transition-colors"
+            <p className="px-4">비밀번호 찾기</p>
+          </Link>
+          <span className="text-muted-foreground text-sm">|</span>
+          <Link
+            href="/register"
+            className="hover:text-primary transition-colors duration-180"
           >
-            [DEV] 원장 바로 입장
-          </button>
+            <p className="px-4">회원가입</p>
+          </Link>
         </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 }
