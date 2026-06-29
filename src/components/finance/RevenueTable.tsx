@@ -1,7 +1,7 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
-import type { RevenueItem } from "@/types/finance.types";
+import type { RevenueItem } from "@/types/director/finance.types";
 
 interface RevenueTableProps {
   items: RevenueItem[];

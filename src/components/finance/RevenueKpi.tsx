@@ -1,4 +1,4 @@
-import type { RevenueStats } from "@/types/finance.types";
+import type { RevenueStats } from "@/types/director/finance.types";
 
 interface RevenueKpiProps {
   stats: RevenueStats;

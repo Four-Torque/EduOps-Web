@@ -10,8 +10,8 @@ import {
   MOCK_REVENUE_STATS,
   MOCK_REVENUE_ITEMS,
   MOCK_MONTHLY_REVENUE,
-} from "@/constants/finance.mock";
-import { useFinanceStore } from "@/store/finance.store";
+} from "@/constants/director/finance.mock";
+import { useFinanceStore } from "@/store/director/finance.store";
 
 const PAGE_SIZE = 8;
 

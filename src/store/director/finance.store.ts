@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { PaymentStatus } from "@/types/finance.types";
+import type { PaymentStatus } from "@/types/director/finance.types";
 
 interface FinanceFilter {
   search: string;

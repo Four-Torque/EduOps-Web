@@ -2,7 +2,7 @@ import type {
   RevenueItem,
   RevenueStats,
   MonthlyRevenue,
-} from "@/types/finance.types";
+} from "@/types/director/finance.types";
 
 export const MOCK_REVENUE_STATS: RevenueStats = {
   totalRevenue: 28400000,

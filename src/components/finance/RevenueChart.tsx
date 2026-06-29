@@ -1,4 +1,4 @@
-import type { MonthlyRevenue } from "@/types/finance.types";
+import type { MonthlyRevenue } from "@/types/director/finance.types";
 
 interface RevenueChartProps {
   data: MonthlyRevenue[];
