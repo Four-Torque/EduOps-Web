@@ -17,8 +17,10 @@ export const DIRECTOR_NAV: NavItem[] = [
       { label: "사용자 등록", href: "/user-register" },
     ],
   },
-  { label: "지재물 관리", href: "/asset" },
-  { label: "매출", href: "/finance" },
+  { label: "지재/결제 관리", href: "/inventory" },
+  { label: "매출 관리", href: "/finance" },
+  { label: "연락 관리", href: "/director-message" },
+
 ];
 
 export const MANAGER_NAV: NavItem[] = [

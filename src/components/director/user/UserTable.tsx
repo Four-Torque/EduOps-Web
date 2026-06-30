@@ -2,38 +2,40 @@
 
 import { useState } from "react";
 import { Calendar } from "lucide-react";
-import { PaymentStatusBadge }   from "./PaymentStatusBadge";
-import { PaymentStatusPopover } from "./PaymentStatusPopover";
-import { PaymentFilterTabs }    from "./PaymentFilterTabs";
-import { PAYMENT_TABLE_COLUMNS } from "../../../constants/payment.constants";
-import { usePaymentStore }       from "../../../store/payment.store";
-import { usePaymentUsers, useUpdatePaymentUserStatus, useDeletePaymentUsers } from "../../../hooks/usePaymentUsers";
-import type { PaymentApprovalStatus, PaymentUser } from "../../../types/payment.types";
+import { UserStatusBadge }   from "./UserStatusBadge";
+import { UserStatusPopover } from "./UserStatusPopover";
+import { UserFilterTabs }    from "./UserFilterTabs";
+import { Pagination }        from "@/components/common/Pagination";
+import { USER_TABLE_COLUMNS }                                                    from "@/constants/director/user.constants";
+import { useDirectorUserStore }                                                  from "@/store/director/user.store";
+import { useDirectorUsers, useUpdateDirectorUserStatus, useDeleteDirectorUsers } from "@/hooks/director/user.hooks";
+import type { DirectorUser, UserApprovalStatus }                                 from "@/types/director/user.types";
 
 interface PopoverState {
   userId: number;
   rect: DOMRect;
 }
 
-export function PaymentUserTable() {
+export function UserTable() {
   const {
-    date, tab, selectedIds,
-    setDate, setTab,
+    date, tab, page, selectedIds,
+    setDate, setTab, setPage,
     toggleSelect, toggleSelectAll,
-  } = usePaymentStore();
+  } = useDirectorUserStore();
 
-  const { data, isLoading }        = usePaymentUsers();
-  const { mutate: updateStatus }   = useUpdatePaymentUserStatus();
-  const { mutate: deleteUsers }    = useDeletePaymentUsers();
+  const { data, isLoading }      = useDirectorUsers();
+  const { mutate: updateStatus } = useUpdateDirectorUserStatus();
+  const { mutate: deleteUsers }  = useDeleteDirectorUsers();
 
   const [popover, setPopover] = useState<PopoverState | null>(null);
 
-  const items      = data?.items      ?? [];
+  const items      = (data?.items      ?? []) as DirectorUser[];
   const totalItems = data?.totalItems ?? 0;
+  const totalPages = data?.totalPages ?? 1;
 
-  const allChecked = items.length > 0 && items.every((u) => selectedIds.includes(u.id));
+  const allChecked = items.length > 0 && items.every((item: DirectorUser) => selectedIds.includes(item.id));
 
-  const handleStatusSelect = (status: PaymentApprovalStatus) => {
+  const handleStatusSelect = (status: UserApprovalStatus) => {
     if (!popover) return;
     updateStatus({ userId: popover.userId, status });
   };
@@ -62,7 +64,7 @@ export function PaymentUserTable() {
         </div>
 
         {/* 탭 */}
-        <PaymentFilterTabs active={tab} onChange={setTab} />
+        <UserFilterTabs active={tab} onChange={setTab} />
 
         {/* 테이블 */}
         <table className="w-full border-collapse">
@@ -72,11 +74,11 @@ export function PaymentUserTable() {
                 <input
                   type="checkbox"
                   checked={allChecked}
-                  onChange={() => toggleSelectAll(items.map((u) => u.id))}
+                  onChange={() => toggleSelectAll(items.map((item: DirectorUser) => item.id))}
                   className="w-3.5 h-3.5 accent-[#0069A8]"
                 />
               </th>
-              {PAYMENT_TABLE_COLUMNS.map((col) => (
+              {USER_TABLE_COLUMNS.map((col) => (
                 <th
                   key={col.key}
                   className="px-3.5 py-[9px] text-[11.5px] font-semibold text-slate-500 text-left"
@@ -100,7 +102,7 @@ export function PaymentUserTable() {
                 </td>
               </tr>
             ) : (
-              items.map((user: PaymentUser) => (
+              items.map((user: DirectorUser) => (
                 <tr
                   key={user.id}
                   className="border-b border-slate-100 last:border-slate-200 hover:bg-slate-50 transition-colors"
@@ -119,7 +121,7 @@ export function PaymentUserTable() {
                   <td className="px-3.5 py-2.5 text-[12px] text-slate-400">{user.requestedAt}</td>
                   <td className="px-3.5 py-2.5 text-[12.5px] text-slate-700">{user.role}</td>
                   <td className="px-3.5 py-2.5">
-                    <PaymentStatusBadge
+                    <UserStatusBadge
                       status={user.status}
                       onClick={(e) => {
                         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -135,17 +137,21 @@ export function PaymentUserTable() {
           </tbody>
         </table>
 
-        {/* 하단 총 건수 */}
+        {/* 페이지네이션 */}
         {!isLoading && totalItems > 0 && (
-          <div className="px-3.5 py-2.5 border-t border-slate-100">
+          <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100">
             <p className="text-[11px] text-slate-400">총 {totalItems}명</p>
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
           </div>
         )}
       </div>
 
-      {/* 팝오버 */}
       {popover && (
-        <PaymentStatusPopover
+        <UserStatusPopover
           anchorRect={popover.rect}
           onSelect={handleStatusSelect}
           onClose={() => setPopover(null)}

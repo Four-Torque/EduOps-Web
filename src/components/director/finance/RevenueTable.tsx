@@ -1,12 +1,14 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
+import { Pagination } from "@/components/common/Pagination";
 import type { RevenueItem } from "@/types/director/finance.types";
 
 interface RevenueTableProps {
   items: RevenueItem[];
   page: number;
   totalItems: number;
+  totalPages: number;
   pageSize: number;
   onPageChange: (page: number) => void;
 }
@@ -15,12 +17,11 @@ function formatKRW(amount: number) {
   return amount.toLocaleString("ko-KR") + "원";
 }
 
-const TOTAL_PAGES = 3;
-
 export function RevenueTable({
   items,
   page,
   totalItems,
+  totalPages,
   pageSize,
   onPageChange,
 }: RevenueTableProps) {
@@ -38,15 +39,10 @@ export function RevenueTable({
                 className="px-3.5 py-[9px] text-[11.5px] font-semibold text-slate-500 text-left"
                 style={{
                   width:
-                    i === 0
-                      ? 110
-                      : i === 3
-                        ? 110
-                        : i === 4
-                          ? 90
-                          : i === 5
-                            ? 50
-                            : undefined,
+                    i === 0 ? 110 :
+                    i === 3 ? 110 :
+                    i === 4 ? 90  :
+                    i === 5 ? 70  : undefined,
                   textAlign: i === 3 ? "right" : "left",
                 }}
               >
@@ -61,32 +57,19 @@ export function RevenueTable({
               key={item.id}
               className="border-b border-slate-100 last:border-slate-200 hover:bg-slate-50 transition-colors"
             >
-              {/* 날짜 */}
-              <td className="px-3.5 py-2.5 text-[12px] text-slate-400">
-                {item.date}
-              </td>
+              <td className="px-3.5 py-2.5 text-[12px] text-slate-400">{item.date}</td>
 
-              {/* 항목 */}
               <td className="px-3.5 py-2.5">
-                <p className="text-[12.5px] font-medium text-slate-900 leading-tight">
-                  {item.itemTitle}
-                </p>
-                <p className="text-[10.5px] text-slate-400 mt-0.5">
-                  {item.itemSub}
-                </p>
+                <p className="text-[12.5px] font-medium text-slate-900 leading-tight">{item.itemTitle}</p>
+                <p className="text-[10.5px] text-slate-400 mt-0.5">{item.itemSub}</p>
               </td>
 
-              {/* 학생 */}
-              <td className="px-3.5 py-2.5 text-[12.5px] text-slate-700">
-                {item.studentName}
-              </td>
+              <td className="px-3.5 py-2.5 text-[12.5px] text-slate-700">{item.studentName}</td>
 
-              {/* 금액 */}
               <td className="px-3.5 py-2.5 text-right text-[12.5px] font-medium text-slate-800">
                 {formatKRW(item.amount)}
               </td>
 
-              {/* 상태 */}
               <td className="px-3.5 py-2.5">
                 {item.status === "paid" ? (
                   <span className="inline-block text-[10.5px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
@@ -99,12 +82,8 @@ export function RevenueTable({
                 )}
               </td>
 
-              {/* 관리 */}
               <td className="px-3.5 py-2.5">
-                <button
-                  aria-label="더보기"
-                  className="text-slate-300 hover:text-slate-500 transition-colors"
-                >
+                <button aria-label="더보기" className="text-slate-300 hover:text-slate-500 transition-colors">
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
               </td>
@@ -118,55 +97,12 @@ export function RevenueTable({
         <p className="text-[11px] text-slate-400 uppercase tracking-wide">
           Showing {start}-{end} of {totalItems} items
         </p>
-        <div className="flex gap-1">
-          <PgBtn
-            label="‹"
-            onClick={() => onPageChange(Math.max(1, page - 1))}
-            disabled={page === 1}
-          />
-          {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
-            <PgBtn
-              key={p}
-              label={String(p)}
-              active={p === page}
-              onClick={() => onPageChange(p)}
-            />
-          ))}
-          <PgBtn
-            label="›"
-            onClick={() => onPageChange(Math.min(TOTAL_PAGES, page + 1))}
-            disabled={page === TOTAL_PAGES}
-          />
-        </div>
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </div>
     </div>
-  );
-}
-
-function PgBtn({
-  label,
-  active,
-  disabled,
-  onClick,
-}: {
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={[
-        "w-[26px] h-[26px] rounded border text-[11.5px] flex items-center justify-center transition-colors",
-        active
-          ? "bg-[#0069A8] text-white border-[#0069A8] font-bold"
-          : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50",
-        disabled ? "opacity-40 pointer-events-none" : "",
-      ].join(" ")}
-    >
-      {label}
-    </button>
   );
 }

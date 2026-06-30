@@ -2,11 +2,11 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { PaymentStatus } from "@/types/director/finance.types";
+import type { UserStatus } from "@/types/director/finance.types";
 
 interface FinanceFilter {
   search: string;
-  status: PaymentStatus | "all";
+  status: UserStatus | "all";
   dateRange: string;
   page: number;
 }
@@ -14,7 +14,7 @@ interface FinanceFilter {
 interface FinanceStore {
   filter: FinanceFilter;
   setSearch: (search: string) => void;
-  setStatus: (status: PaymentStatus | "all") => void;
+  setStatus: (status: UserStatus | "all") => void;
   setDateRange: (dateRange: string) => void;
   setPage: (page: number) => void;
   resetFilter: () => void;

@@ -1,33 +1,37 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { PaymentTabFilter } from "@/types/director/pament.types";
+import type { UserTabFilter } from "@/types/director/user.types";
 
-// ─── UI 상태만 관리 (서버 데이터는 TanStack Query) ────────────────────────────
-
-interface PaymentUIState {
+interface DirectorUserUIState {
   date: string;
-  tab: PaymentTabFilter;
+  tab: UserTabFilter;
+  page: number;
   selectedIds: number[];
 
   setDate: (date: string) => void;
-  setTab: (tab: PaymentTabFilter) => void;
+  setTab: (tab: UserTabFilter) => void;
+  setPage: (page: number) => void;
   toggleSelect: (id: number) => void;
   toggleSelectAll: (ids: number[]) => void;
   clearSelection: () => void;
 }
 
-export const usePaymentStore = create<PaymentUIState>()(
+export const useDirectorUserStore = create<DirectorUserUIState>()(
   devtools(
     (set) => ({
       date: new Date().toISOString().slice(0, 10),
       tab: "all",
+      page: 1,
       selectedIds: [],
 
       setDate: (date) =>
-        set({ date }, false, "payment/set-date"),
+        set({ date, page: 1 }, false, "director-user/set-date"),
 
       setTab: (tab) =>
-        set({ tab, selectedIds: [] }, false, "payment/set-tab"),
+        set({ tab, page: 1, selectedIds: [] }, false, "director-user/set-tab"),
+
+      setPage: (page) =>
+        set({ page }, false, "director-user/set-page"),
 
       toggleSelect: (id) =>
         set(
@@ -37,7 +41,7 @@ export const usePaymentStore = create<PaymentUIState>()(
               : [...state.selectedIds, id],
           }),
           false,
-          "payment/toggle-select",
+          "director-user/toggle-select",
         ),
 
       toggleSelectAll: (ids) =>
@@ -47,12 +51,12 @@ export const usePaymentStore = create<PaymentUIState>()(
             return { selectedIds: allSelected ? [] : [...ids] };
           },
           false,
-          "payment/toggle-select-all",
+          "director-user/toggle-select-all",
         ),
 
       clearSelection: () =>
-        set({ selectedIds: [] }, false, "payment/clear-selection"),
+        set({ selectedIds: [] }, false, "director-user/clear-selection"),
     }),
-    { name: "PaymentStore" },
+    { name: "DirectorUserStore" },
   ),
 );
