@@ -20,12 +20,13 @@ export default function Logo({
   return (
     <div className="flex flex-col items-center mb-7">
       <div
-        className={`size-16 bg-[${bgColor}] rounded-2xl flex items-center justify-center mb-4.5`}
+        className={`size-16 rounded-2xl flex items-center justify-center mb-4.5`}
+        style={{ backgroundColor: bgColor }}
       >
         {Icon ? (
-          <Icon className={`size-8.5 text-[${textColor}]`} />
+          <Icon className={`size-8.5`} style={{ color: textColor }} />
         ) : (
-          <LogoIcon.logo className={`size-8.5 text-[${textColor}]`} />
+          <LogoIcon.logo className={`size-8.5`} style={{ color: textColor }} />
         )}
       </div>
       <h1
@@ -36,7 +37,7 @@ export default function Logo({
       >
         {title || "EduOps"}
       </h1>
-      <p className="text-[13.5px] text-[#7a8399]">
+      <p className="text-[13.5px] text-muted-foreground">
         {description || "학원 경영을 위한 스마트한 첫 걸음"}
       </p>
     </div>
