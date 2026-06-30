@@ -15,6 +15,25 @@ export default function LoginForm() {
     router.push("/class");
   }
 
+  /*
+async function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+
+  // 1. API 호출
+  const res = await axios.post("/auth/login", { email, password });
+
+  // 2. 응답에서 유저 정보 + 토큰 꺼냄
+  const { user, accessToken } = res.data;
+
+  // 3. auth store에 저장 (지금 dev 버튼이랑 완전히 동일)
+  setAuth(user, accessToken);
+
+  // 4. role 보고 홈으로 이동 — ROLE_HOME 그대로 사용
+  router.push(ROLE_HOME[user.role]);
+}
+
+  */
+
   return (
     <div className="w-full max-w-sm bg-white rounded-2xl shadow-md p-8">
       <h1 className="text-2xl font-bold text-slate-800 mb-2">EduOps</h1>

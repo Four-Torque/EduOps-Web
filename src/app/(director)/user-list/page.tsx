@@ -1,3 +1,5 @@
-export default function UserListPage() {
-  return <div>사용자 목록</div>;
+import { UserTable } from "@/components/director/user/UserTable";
+
+export default function UserPage() {
+  return <UserTable />;
 }

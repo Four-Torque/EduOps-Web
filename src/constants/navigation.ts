@@ -1,3 +1,9 @@
+export const ROLE_HOME = {
+  DIRECTOR: "/finance",
+  MANAGER: "/school-info",
+  TEACHER: "/class",
+} as const;
+
 export interface SubNavItem {
   label: string;
   href: string;
@@ -11,16 +17,29 @@ export interface NavItem {
 
 export const DIRECTOR_NAV: NavItem[] = [
   {
+    label: "매출 관리",
+    children: [
+      { label: "매출 대시보드", href: "/finance" },
+    ],
+  },
+  {
     label: "사용자 관리",
     children: [
       { label: "사용자 목록", href: "/user-list" },
-      { label: "사용자 등록", href: "/user-register" },
     ],
   },
-  { label: "지재/결제 관리", href: "/inventory" },
-  { label: "매출 관리", href: "/finance" },
-  { label: "연락 관리", href: "/director-message" },
-
+  {
+    label: "자재/결제 관리",
+    children: [
+      { label: "자재 목록", href: "/inventory" },
+    ],
+  },
+  {
+    label: "문자/쪽지",
+    children: [
+      { label: "쪽지", href: "/director-message" },
+    ],
+  },
 ];
 
 export const MANAGER_NAV: NavItem[] = [
@@ -67,3 +86,13 @@ export const TEACHER_NAV: NavItem[] = [
     ],
   },
 ];
+
+// 원장용: 관리자 nav에서 원장 nav와 중복되는 항목 제외 후 합산
+const DIRECTOR_EXCLUDES_FROM_MANAGER = ["문자/쪽지"];
+
+export function getDirectorNav(): NavItem[] {
+  const filtered = MANAGER_NAV.filter(
+    (item) => !DIRECTOR_EXCLUDES_FROM_MANAGER.includes(item.label)
+  );
+  return [...DIRECTOR_NAV, ...filtered];
+}
