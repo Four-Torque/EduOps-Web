@@ -20,9 +20,7 @@ export default function RegisterVerifyPage() {
     }
   }, [token, verify]);
 
-  if (isError) {
-    return notFound();
-  }
+  if (isError) return notFound();
 
   return null;
 }
