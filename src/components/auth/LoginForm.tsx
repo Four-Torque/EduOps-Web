@@ -7,7 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { LockIcon, UserIcon } from "lucide-react";
+import { LockIcon, UserRoundIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod/v3";
@@ -70,7 +70,7 @@ export default function LoginForm() {
                   </FieldLabel>
                   <FormInput
                     {...field}
-                    icon={UserIcon}
+                    icon={UserRoundIcon}
                     id="email"
                     type="email"
                     ariaInvalid={fieldState.invalid}

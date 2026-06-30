@@ -21,7 +21,7 @@ export default function FormInput({
   return (
     <div
       aria-invalid={ariaInvalid}
-      className="relative flex items-center border border-[#dfe1e6] rounded-md focus-within:ring-0.5 focus-within:ring-[#2255b8] focus-within:border-[#2255b8] focus-within:shadow-[0_0_0_3px_rgba(34,85,184,0.1)] aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20"
+      className="relative flex items-center border border-[#dfe1e6] rounded-md focus-within:ring-0.5 focus-within:ring-[#2255b8] focus-within:border-[#2255b8] focus-within:shadow-[0_0_0_3px_rgba(34,85,184,0.1)] aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20"
     >
       {Icon && (
         <Icon className="absolute left-3.25 top-3 size-4.25 text-[#9aa3b5]" />
