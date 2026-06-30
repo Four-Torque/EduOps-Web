@@ -7,6 +7,7 @@ interface FormInputProps {
   id?: string;
   placeholder?: string;
   autoComplete?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function FormInput({
@@ -16,6 +17,7 @@ export default function FormInput({
   id,
   placeholder,
   autoComplete,
+  onChange,
   ...field
 }: FormInputProps) {
   return (
@@ -32,6 +34,7 @@ export default function FormInput({
         aria-invalid={ariaInvalid}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        onChange={onChange}
         className="py-3.25 pl-10 pr-3.5 h-10.75 text-sm transition-colors duration-180 border-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-invalid:border-none aria-invalid:ring-0 aria-invalid:text-foreground"
         {...field}
       />

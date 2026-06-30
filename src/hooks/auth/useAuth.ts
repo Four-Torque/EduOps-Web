@@ -1,6 +1,7 @@
 import { setCachedSession } from "@/lib/session";
 import {
   login,
+  logout,
   register,
   registerVerifyMail,
   resetPassword,
@@ -55,6 +56,20 @@ export function useLogin() {
       if (error instanceof Error) {
         // toast.error(error.message);
       }
+    },
+  });
+  return mutation;
+}
+
+export function useLogout() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      router.push("/login");
+      setCachedSession(null);
+      queryClient.setQueryData(["session"], null);
     },
   });
   return mutation;

@@ -30,6 +30,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useAuth";
 import SubmitButton from "../common/SubmitButton";
+import PasswordIndicator from "./PasswordIndicator";
 
 export default function RegisterForm() {
   const { mutate: register } = useRegister();
@@ -47,6 +48,20 @@ export default function RegisterForm() {
 
   function handleSubmit(values: z.infer<typeof RegisterFormSchema>) {
     register(values);
+  }
+
+  function formatPhoneNumber(value: string) {
+    if (!value) return "";
+
+    const phoneNumber = value.replace(/[^\d]/g, "");
+
+    if (phoneNumber.length <= 3) {
+      return phoneNumber;
+    }
+    if (phoneNumber.length <= 7) {
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    }
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
   }
 
   return (
@@ -166,6 +181,9 @@ export default function RegisterForm() {
                 )}
               />
             </div>
+
+            <PasswordIndicator value={form.watch("password")} />
+
             <Controller
               name="phone"
               control={form.control}
@@ -180,6 +198,10 @@ export default function RegisterForm() {
                     id="phone"
                     type="text"
                     ariaInvalid={fieldState.invalid}
+                    onChange={(e) => {
+                      const formatted = formatPhoneNumber(e.target.value);
+                      field.onChange(formatted);
+                    }}
                     placeholder="010-0000-0000"
                     autoComplete="off"
                   />

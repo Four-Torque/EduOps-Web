@@ -15,9 +15,7 @@ export default function ResetPasswordFormPage() {
     return null;
   }
 
-  if (isError) {
-    return notFound();
-  }
+  if (isError || !data) return notFound();
 
   return <ResetPasswordForm token={token || ""} email={data?.email || ""} />;
 }
