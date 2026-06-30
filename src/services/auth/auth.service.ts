@@ -23,6 +23,10 @@ export async function login(values: z.infer<typeof LoginFormSchema>) {
   return response.data;
 }
 
+export async function logout() {
+  await apiClient.post("/auth/logout");
+}
+
 export async function sendResetPasswordMail(email: string) {
   const values = { email, type: "reset" };
   const response = await apiClient.post("/auth/reset-password/send", values);
