@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useLocalStorage } from "@/hooks/common/useLocalStorage";
 import { useEffect, useState } from "react";
+import { useLogin } from "@/hooks/auth/useAuth";
 
 export default function LoginForm() {
   const [mounted, setMounted] = useState(false);
@@ -26,6 +27,7 @@ export default function LoginForm() {
     "rememberedEmail",
     "",
   );
+  const { mutate: login } = useLogin();
 
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
@@ -44,7 +46,7 @@ export default function LoginForm() {
   }
 
   function handleSubmit(values: z.infer<typeof LoginFormSchema>) {
-    console.log(values);
+    login(values);
   }
 
   function handleRememberEmailChange(checked: boolean) {
