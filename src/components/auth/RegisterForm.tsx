@@ -26,10 +26,10 @@ import { z } from "zod/v3";
 import { RegisterFormSchema } from "@/validations/auth.valid";
 import FormInput from "@/components/common/FormInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useAuth";
+import SubmitButton from "../common/SubmitButton";
 
 export default function RegisterForm() {
   const { mutate: register } = useRegister();
@@ -223,12 +223,7 @@ export default function RegisterForm() {
             )}
           />
 
-          <Button
-            className="size-full p-3.75 text-white border-none rounded-[7px] text-[16px] font-bold cursor-pointer tracking-[0.5px] transition-colors duration-180"
-            type="submit"
-          >
-            가입하기
-          </Button>
+          <SubmitButton title="가입하기" />
         </form>
 
         <Separator className="mt-6 mb-4.5 h-0" />

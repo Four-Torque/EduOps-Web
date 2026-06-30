@@ -55,3 +55,36 @@ export const RegisterFormSchema = z
       });
     }
   });
+
+export const EmailFormSchema = z.object({
+  email: z.string().email({ message: "이메일 형식이 아닙니다." }).trim(),
+});
+
+export const ResetPasswordFormSchema = z
+  .object({
+    email: z.string().email({ message: "이메일 형식이 아닙니다." }).trim(),
+    token: z.string().min(1, { message: "토큰이 필요합니다." }).trim(),
+    newPassword: z
+      .string()
+      .min(8, { message: "비밀번호는 8글자 이상이어야 합니다." })
+      .regex(/[A-Z]/, { message: "비밀번호는 대문자가 포함되어야 합니다." })
+      .regex(/[a-z]/, { message: "비밀번호는 소문자가 포함되어야 합니다." })
+      .regex(/[0-9]/, { message: "비밀번호는 숫자가 포함되어야 합니다." })
+      .regex(/[^a-zA-Z0-9]/, {
+        message: "비밀번호는 특수문자가 포함되어야 합니다.",
+      })
+      .trim(),
+    confirmNewPassword: z
+      .string()
+      .min(8, { message: "비밀번호를 8글자 이상이어야 합니다." })
+      .trim(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword !== data.confirmNewPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "비밀번호가 일치하지 않습니다.",
+        path: ["confirmNewPassword"],
+      });
+    }
+  });

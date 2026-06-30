@@ -14,12 +14,12 @@ import { z } from "zod/v3";
 import { LoginFormSchema } from "@/validations/auth.valid";
 import FormInput from "@/components/common/FormInput";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useLocalStorage } from "@/hooks/common/useLocalStorage";
 import { useEffect, useState } from "react";
 import { useLogin } from "@/hooks/auth/useAuth";
+import SubmitButton from "../common/SubmitButton";
 
 export default function LoginForm() {
   const [mounted, setMounted] = useState(false);
@@ -125,19 +125,14 @@ export default function LoginForm() {
             </label>
           </div>
 
-          <Button
-            className="size-full p-3.75 text-white border-none rounded-[7px] text-[16px] font-bold cursor-pointer tracking-[0.5px] transition-colors duration-180"
-            type="submit"
-          >
-            로그인
-          </Button>
+          <SubmitButton title="로그인" />
         </form>
 
         <Separator className="mt-6 mb-4.5" />
 
         <div className="flex justify-center items-center gap-0 text-[13px] text-muted-foreground">
           <Link
-            href="/forgot-password"
+            href="/reset-password"
             className="hover:text-primary transition-colors duration-180"
           >
             <p className="px-4">비밀번호 찾기</p>
