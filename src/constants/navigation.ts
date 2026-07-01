@@ -32,6 +32,7 @@ export const DIRECTOR_NAV: NavItem[] = [
     label: "자재/결제 관리",
     children: [
       { label: "자재 목록", href: "/inventory" },
+      { label: "결제 관리", href: "/director-billing" },
     ],
   },
   {
