@@ -115,7 +115,7 @@ export function Sidebar({ navItems }: SidebarProps) {
         {textVisible && (
           <div className="flex items-center gap-2 w-full">
             <div className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-              {user?.name?.[0] ?? "A"}
+              {user?.role === "DIRECTOR" ? "원" : user?.role === "MANAGER" ? "관" : "강"}
             </div>
             <div>
               <p className="text-[11px] font-semibold text-slate-800">

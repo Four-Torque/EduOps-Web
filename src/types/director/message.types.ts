@@ -25,3 +25,8 @@ export interface ChatRoom {
   unreadCount: number;
   messages: ChatMessage[];
 }
+
+export interface SendMessageRequest {
+  receiverId: number;
+  content: string;
+}
