@@ -1,17 +1,19 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useSession } from "@/hooks/user/useSession";
+import { ROLE_HOME } from "@/constants/navigation";
 
 export default function RootPage() {
-  const { data: session } = useSession();
+  const { data: session, isLoading } = useSession();
+  const router = useRouter();
 
-  return (
-    <div>
-      <h1>Root Page</h1>
-      <p>Welcome, {session?.name}!</p>
-      <p>Your email: {session?.email}</p>
-      <p>Your phone: {session?.phone}</p>
-      <p>Your role: {session?.role}</p>
-    </div>
-  );
+  useEffect(() => {
+    if (isLoading) return;
+    if (session) router.replace(ROLE_HOME[session.role]);
+    else router.replace("/login");
+  }, [session, isLoading, router]);
+
+  return null;
 }
