@@ -1,17 +1,16 @@
 "use client";
 
 import { Bell, Settings, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "../../store/authStore";
+import { useLogout } from "../../hooks/auth/useAuth";
+import { useAuthStore } from "../../store/auth.store";
 
 export default function Header() {
-  const router = useRouter();
-  const clearUser = useAuthStore((state) => state.clearUser);
+  const { mutate: logout } = useLogout();
+  const clearAuth = useAuthStore((s) => s.clearAuth);
 
   function handleLogout() {
-    clearUser();
-    localStorage.removeItem("token");
-    router.push("/login");
+    clearAuth();
+    logout();
   }
 
   return (
