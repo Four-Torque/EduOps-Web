@@ -1,5 +1,5 @@
 export const ROLE_HOME = {
-  DIRECTOR: "/finance",
+  DIRECTOR: "/user-list",
   MANAGER: "/school-info",
   TEACHER: "/class",
 } as const;

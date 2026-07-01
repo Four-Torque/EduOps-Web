@@ -5,7 +5,11 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/ui.store";
 
-export default function Topbar() {
+interface TopbarProps {
+  homePath: string;
+}
+
+export default function Topbar({ homePath }: TopbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const tabs = useUIStore((s) => s.tabs);
@@ -14,13 +18,16 @@ export default function Topbar() {
   function handleClose(href: string) {
     removeTab(href);
 
+    const remaining = tabs.filter((t) => t.href !== href);
+    if (remaining.length === 0) {
+      router.push(homePath);
+      return;
+    }
+
     if (pathname === href || pathname.startsWith(href)) {
-      const remaining = tabs.filter((t) => t.href !== href);
-      if (remaining.length > 0) {
-        const idx = tabs.findIndex((t) => t.href === href);
-        const next = remaining[idx - 1] ?? remaining[0];
-        router.push(next.href);
-      }
+      const idx = tabs.findIndex((t) => t.href === href);
+      const next = remaining[idx - 1] ?? remaining[0];
+      router.push(next.href);
     }
   }
 
