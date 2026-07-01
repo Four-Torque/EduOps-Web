@@ -60,7 +60,7 @@ apiClient.interceptors.response.use(
 
     try {
       if (!refreshPromise) {
-        refreshPromise = publicApi
+        refreshPromise = apiClient
           .post("/auth/refresh")
           .then(() => undefined)
           .finally(() => {
