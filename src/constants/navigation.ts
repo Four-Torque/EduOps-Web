@@ -1,8 +1,31 @@
+// 역할별 로그인 후 첫 진입 페이지 (탭을 모두 닫았을 때 돌아갈 홈이기도 함)
 export const ROLE_HOME = {
   DIRECTOR: "/user-list",
   MANAGER: "/school-info",
   TEACHER: "/class",
 } as const;
+
+// 최상위 메뉴의 고유 식별자 목록.
+// 코드(아이콘 매핑, 노출 제외 등)는 UI 라벨이 아니라 이 id를 참조한다.
+// 라벨은 다국어/문구 변경으로 언제든 바뀔 수 있지만 id는 바뀌지 않는다.
+export const NAV_IDS = [
+  "sales",
+  "user-management",
+  "director-material-approval",
+  "director-message",
+  "academy-info",
+  "student-detail",
+  "staff-attendance",
+  "material-request",
+  "billing",
+  "manager-message",
+  "schedule",
+  "student-attendance",
+  "class-files",
+  "grade",
+] as const;
+
+export type NavId = (typeof NAV_IDS)[number];
 
 export interface SubNavItem {
   label: string;
@@ -10,6 +33,7 @@ export interface SubNavItem {
 }
 
 export interface NavItem {
+  id: NavId;
   label: string;
   href?: string;
   children?: SubNavItem[];
@@ -17,25 +41,29 @@ export interface NavItem {
 
 export const DIRECTOR_NAV: NavItem[] = [
   {
-    label: "매출 관리",
-    children: [
-      { label: "매출 대시보드", href: "/finance" },
-    ],
-  },
-  {
+    id: "user-management",
     label: "사용자 관리",
     children: [
       { label: "사용자 목록", href: "/user-list" },
     ],
   },
   {
-    label: "자재/결제 관리",
+    id: "sales",
+    label: "매출 관리",
     children: [
-      { label: "자재 목록", href: "/inventory" },
-      { label: "결제 관리", href: "/director-billing" },
+      { label: "매출 대시보드", href: "/finance" },
     ],
   },
   {
+    id: "director-material-approval",
+    label: "자재/결재 관리",
+    children: [
+      { label: "자재 목록", href: "/inventory" },
+      { label: "결재 관리", href: "/director-billing" },
+    ],
+  },
+  {
+    id: "director-message",
     label: "문자/쪽지",
     children: [
       { label: "쪽지", href: "/director-message" },
@@ -45,6 +73,7 @@ export const DIRECTOR_NAV: NavItem[] = [
 
 export const MANAGER_NAV: NavItem[] = [
   {
+    id: "academy-info",
     label: "학원 정보",
     children: [
       { label: "학원 기본 정보", href: "/school-info" },
@@ -54,33 +83,37 @@ export const MANAGER_NAV: NavItem[] = [
       { label: "강사 관리", href: "/teacher-mgmt" },
     ],
   },
-  { label: "학생 상세", href: "/student-detail" },
-  { label: "직원 근태", href: "/attendance" },
-  { label: "자재 물품 신청", href: "/material" },
-  { label: "결제 관리", href: "/billing" },
-  { label: "문자/쪽지", href: "/manager-message" },
+  { id: "student-detail", label: "학생 상세", href: "/student-detail" },
+  { id: "staff-attendance", label: "직원 근태", href: "/attendance" },
+  { id: "material-request", label: "자재 물품 신청", href: "/material" },
+  { id: "billing", label: "결제 관리", href: "/billing" },
+  { id: "manager-message", label: "문자/쪽지", href: "/manager-message" },
 ];
 
 export const TEACHER_NAV: NavItem[] = [
   {
+    id: "schedule",
     label: "시간표",
     children: [
       { label: "수업 시간표", href: "/class" },
     ],
   },
   {
+    id: "student-attendance",
     label: "학생 출결관리",
     children: [
       { label: "학생 출결 관리", href: "/student-attendance" },
     ],
   },
   {
+    id: "class-files",
     label: "수업 파일 관리",
     children: [
       { label: "수업 파일 관리", href: "/files" },
     ],
   },
   {
+    id: "grade",
     label: "성적 관리",
     children: [
       { label: "학생 수업 테스트", href: "/test" },
@@ -88,12 +121,19 @@ export const TEACHER_NAV: NavItem[] = [
   },
 ];
 
-// 원장용: 관리자 nav에서 원장 nav와 중복되는 항목 제외 후 합산
-const DIRECTOR_EXCLUDES_FROM_MANAGER = ["문자/쪽지"];
+// 원장 nav에 관리자 메뉴를 재사용해 붙일 때, "보여줄 것만" 명시하는 화이트리스트.
+// 목록에 없는 관리자 메뉴는 기본적으로 원장에게 숨겨진다.
+// (블랙리스트로 하면 새 관리자 메뉴가 실수로 원장에게 노출될 수 있어 화이트리스트를 쓴다)
+const DIRECTOR_INCLUDES_FROM_MANAGER: NavId[] = [
+  "academy-info",
+  "student-detail",
+  "staff-attendance",
+  "billing",
+];
 
 export function getDirectorNav(): NavItem[] {
-  const filtered = MANAGER_NAV.filter(
-    (item) => !DIRECTOR_EXCLUDES_FROM_MANAGER.includes(item.label)
+  const managerMenusForDirector = MANAGER_NAV.filter(
+    (item) => DIRECTOR_INCLUDES_FROM_MANAGER.includes(item.id)
   );
-  return [...DIRECTOR_NAV, ...filtered];
+  return [...DIRECTOR_NAV, ...managerMenusForDirector];
 }

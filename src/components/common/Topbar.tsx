@@ -19,11 +19,14 @@ export default function Topbar({ homePath }: TopbarProps) {
     removeTab(href);
 
     const remaining = tabs.filter((t) => t.href !== href);
+
+    // 마지막 탭까지 닫으면 역할별 홈으로 돌아간다
     if (remaining.length === 0) {
       router.push(homePath);
       return;
     }
 
+    // 지금 보고 있던 탭을 닫은 경우에만 이동. 바로 왼쪽 탭, 없으면 첫 탭으로
     if (pathname === href || pathname.startsWith(href)) {
       const idx = tabs.findIndex((t) => t.href === href);
       const next = remaining[idx - 1] ?? remaining[0];

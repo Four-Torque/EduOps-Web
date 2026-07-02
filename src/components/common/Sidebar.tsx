@@ -8,7 +8,6 @@ import {
   TrendingUp,
   Users,
   Package,
-  Mail,
   Building2,
   User,
   Clock,
@@ -22,28 +21,29 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/ui.store";
-import { useAuthStore } from "@/store/auth.store";
-import type { NavItem } from "@/constants/navigation";
+import { useSession } from "@/hooks/user/useSession";
+import type { NavItem, NavId } from "@/constants/navigation";
 
 interface SidebarProps {
   navItems: NavItem[];
 }
 
-const NAV_ICONS: Record<string, React.ElementType> = {
-  "매출 관리": TrendingUp,
-  "사용자 관리": Users,
-  "자재/결제 관리": Package,
-  "연락 관리": Mail,
-  "학원 정보": Building2,
-  "학생 상세": User,
-  "직원 근태": Clock,
-  "자재 물품 신청": ShoppingBag,
-  "결제 관리": CreditCard,
-  "문자/쪽지": MessageSquare,
-  "시간표": Calendar,
-  "학생 출결관리": ClipboardCheck,
-  "수업 파일 관리": FolderOpen,
-  "성적 관리": BookOpen,
+// 메뉴 id → 아이콘. 라벨이 아니라 id로 매핑하므로 문구가 바뀌어도 아이콘이 유지된다.
+const NAV_ICONS: Record<NavId, React.ElementType> = {
+  "sales": TrendingUp,
+  "user-management": Users,
+  "director-material-approval": Package,
+  "director-message": MessageSquare,
+  "academy-info": Building2,
+  "student-detail": User,
+  "staff-attendance": Clock,
+  "material-request": ShoppingBag,
+  "billing": CreditCard,
+  "manager-message": MessageSquare,
+  "schedule": Calendar,
+  "student-attendance": ClipboardCheck,
+  "class-files": FolderOpen,
+  "grade": BookOpen,
 };
 
 export function Sidebar({ navItems }: SidebarProps) {
@@ -51,8 +51,8 @@ export function Sidebar({ navItems }: SidebarProps) {
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const addTab = useUIStore((s) => s.addTab);
-  const user = useAuthStore((s) => s.user);
-  const [openLabel, setOpenLabel] = useState<string | null>(null);
+  const { data: user } = useSession();
+  const [openId, setOpenId] = useState<NavId | null>(null);
   const [textVisible, setTextVisible] = useState(sidebarOpen);
   const asideRef = useRef<HTMLElement>(null);
 
@@ -60,7 +60,7 @@ export function Sidebar({ navItems }: SidebarProps) {
     const matched = navItems.find((item) =>
       item.children?.some((child) => pathname.startsWith(child.href))
     );
-    if (matched) setOpenLabel(matched.label);
+    if (matched) setOpenId(matched.id);
   }, [pathname, navItems]);
 
   // 닫힐 때: 즉시 텍스트 숨김
@@ -79,8 +79,8 @@ export function Sidebar({ navItems }: SidebarProps) {
     return () => el.removeEventListener("transitionend", handleTransitionEnd);
   }, [sidebarOpen]);
 
-  function handleParentClick(label: string) {
-    setOpenLabel((prev) => (prev === label ? null : label));
+  function handleParentClick(id: NavId) {
+    setOpenId((prev) => (prev === id ? null : id));
   }
 
   return (
@@ -131,13 +131,13 @@ export function Sidebar({ navItems }: SidebarProps) {
       <nav className={cn("flex-1 py-5 overflow-hidden", sidebarOpen ? "px-[35px]" : "px-0")}>
         <ul className="space-y-0.5">
           {navItems.map((item) => {
-            const Icon = NAV_ICONS[item.label];
+            const Icon = NAV_ICONS[item.id];
 
             // 접힌 상태: 아이콘만
             if (!sidebarOpen) {
               const target = item.children ? item.children[0] : { label: item.label, href: item.href };
               return (
-                <li key={item.label} className="flex justify-center py-2">
+                <li key={item.id} className="flex justify-center py-2">
                   {Icon && target.href && (
                     <Link
                       href={target.href}
@@ -152,16 +152,16 @@ export function Sidebar({ navItems }: SidebarProps) {
 
             // 자식이 있는 부모 메뉴
             if (item.children) {
-              const isOpen = openLabel === item.label;
+              const isOpen = openId === item.id;
               const hasActiveChild = item.children.some((child) =>
                 pathname.startsWith(child.href)
               );
 
               return (
-                <li key={item.label}>
+                <li key={item.id}>
                   {textVisible && (
                     <button
-                      onClick={() => handleParentClick(item.label)}
+                      onClick={() => handleParentClick(item.id)}
                       className={cn(
                         "flex items-center justify-between px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors w-full",
                         hasActiveChild
@@ -210,7 +210,7 @@ export function Sidebar({ navItems }: SidebarProps) {
               (pathname === item.href || pathname.startsWith(item.href + "/"));
 
             return (
-              <li key={item.href}>
+              <li key={item.id}>
                 {textVisible && (
                   <Link
                     href={item.href ?? "#"}

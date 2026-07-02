@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import AppShell from "../../components/common/AppShell";
-import { MANAGER_NAV } from "../../constants/navigation";
-import { useSession } from "@/hooks/user/useSession";
+import { getDirectorNav, MANAGER_NAV, ROLE_HOME } from "../../constants/navigation";
+import { useRoleGuard } from "@/hooks/user/useRoleGuard";
 
 export default function ManagerLayout({ children }: { children: React.ReactNode }) {
-  const { data: session, isLoading } = useSession();
-  const router = useRouter();
+  // 관리자 영역이지만 원장도 열람 가능
+  const { session, ready } = useRoleGuard(["MANAGER", "DIRECTOR"]);
+  if (!ready) return null;
 
-  useEffect(() => {
-    if (isLoading) return;
-    if (!session || session.role !== "MANAGER") router.replace("/");
-  }, [session, isLoading, router]);
+  // 원장이 관리자 페이지를 볼 때도 사이드바/홈은 원장 기준을 유지한다
+  const isDirector = session!.role === "DIRECTOR";
+  const navItems = isDirector ? getDirectorNav() : MANAGER_NAV;
+  const homePath = isDirector ? ROLE_HOME.DIRECTOR : ROLE_HOME.MANAGER;
 
-  if (isLoading || !session || session.role !== "MANAGER") return null;
-
-  return <AppShell navItems={MANAGER_NAV} homePath="/school-info">{children}</AppShell>;
+  return <AppShell navItems={navItems} homePath={homePath}>{children}</AppShell>;
 }

@@ -1,16 +1,19 @@
 "use client";
 
 import { Bell, Settings, LogOut } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLogout } from "../../hooks/auth/useAuth";
-import { useAuthStore } from "../../store/auth.store";
 
 export default function Header() {
   const { mutate: logout } = useLogout();
-  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const queryClient = useQueryClient();
 
   function handleLogout() {
-    clearAuth();
-    logout();
+    // 로그아웃 성공(쿠키 삭제) 후 세션 캐시를 제거해야
+    // 다음 로그인 때 이전 사용자 정보가 재사용되지 않는다
+    logout(undefined, {
+      onSuccess: () => queryClient.removeQueries({ queryKey: ["session"] }),
+    });
   }
 
   return (
