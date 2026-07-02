@@ -1,3 +1,3 @@
 export default function StudentDetailPage() {
-  return <div>학생 상세</div>;
+  return <div>원생 상세</div>;
 }

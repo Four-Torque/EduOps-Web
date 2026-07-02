@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "EduOps", template: "%s | EduOps" },
-  description: "교육 운영 관리 시스템 — 학생, 교사, 강좌, 성적을 한 곳에서",
+  description: "교육 운영 관리 시스템 — 원생, 강사, 강좌, 성적을 한 곳에서",
 };
 
 export default function RootLayout({

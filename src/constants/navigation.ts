@@ -49,7 +49,7 @@ export const DIRECTOR_NAV: NavItem[] = [
   },
   {
     id: "sales",
-    label: "매출 관리",
+    label: "매출",
     children: [
       { label: "매출 대시보드", href: "/finance" },
     ],
@@ -64,7 +64,7 @@ export const DIRECTOR_NAV: NavItem[] = [
   },
   {
     id: "director-message",
-    label: "문자/쪽지",
+    label: "쪽지",
     children: [
       { label: "쪽지", href: "/director-message" },
     ],
@@ -83,11 +83,41 @@ export const MANAGER_NAV: NavItem[] = [
       { label: "강사 관리", href: "/teacher-mgmt" },
     ],
   },
-  { id: "student-detail", label: "학생 상세", href: "/student-detail" },
-  { id: "staff-attendance", label: "직원 근태", href: "/attendance" },
-  { id: "material-request", label: "자재 물품 신청", href: "/material" },
-  { id: "billing", label: "결제 관리", href: "/billing" },
-  { id: "manager-message", label: "문자/쪽지", href: "/manager-message" },
+  {
+    id: "student-detail",
+    label: "원생 상세",
+    children: [
+      { label: "원생 상세 정보", href: "/student-detail" },
+    ],
+  },
+  {
+    id: "staff-attendance",
+    label: "근태",
+    children: [
+      { label: "직원 근태 관리", href: "/attendance" },
+    ],
+  },
+  {
+    id: "material-request",
+    label: "자재 신청",
+    children: [
+      { label: "자재 물품 신청", href: "/material" },
+    ],
+  },
+  {
+    id: "billing",
+    label: "결제",
+    children: [
+      { label: "결제 관리", href: "/billing" },
+    ],
+  },
+  {
+    id: "manager-message",
+    label: "쪽지",
+    children: [
+      { label: "쪽지 보내기", href: "/manager-message" },
+    ],
+  },
 ];
 
 export const TEACHER_NAV: NavItem[] = [
@@ -100,14 +130,14 @@ export const TEACHER_NAV: NavItem[] = [
   },
   {
     id: "student-attendance",
-    label: "학생 출결관리",
+    label: "원생 출결",
     children: [
-      { label: "학생 출결 관리", href: "/student-attendance" },
+      { label: "원생 출결 관리", href: "/student-attendance" },
     ],
   },
   {
     id: "class-files",
-    label: "수업 파일 관리",
+    label: "수업 파일",
     children: [
       { label: "수업 파일 관리", href: "/files" },
     ],
@@ -116,7 +146,7 @@ export const TEACHER_NAV: NavItem[] = [
     id: "grade",
     label: "성적 관리",
     children: [
-      { label: "학생 수업 테스트", href: "/test" },
+      { label: "원생 수업 테스트", href: "/test" },
     ],
   },
 ];

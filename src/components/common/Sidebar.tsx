@@ -18,6 +18,9 @@ import {
   ClipboardCheck,
   FolderOpen,
   BookOpen,
+  Crown,
+  UserCog,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/store/ui.store";
@@ -27,6 +30,13 @@ import type { NavItem, NavId } from "@/constants/navigation";
 interface SidebarProps {
   navItems: NavItem[];
 }
+
+// 역할 → 뱃지/아바타 아이콘
+const ROLE_ICONS: Record<string, React.ElementType> = {
+  DIRECTOR: Crown,
+  MANAGER: UserCog,
+  TEACHER: GraduationCap,
+};
 
 // 메뉴 id → 아이콘. 라벨이 아니라 id로 매핑하므로 문구가 바뀌어도 아이콘이 유지된다.
 const NAV_ICONS: Record<NavId, React.ElementType> = {
@@ -52,6 +62,7 @@ export function Sidebar({ navItems }: SidebarProps) {
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const addTab = useUIStore((s) => s.addTab);
   const { data: user } = useSession();
+  const RoleIcon = ROLE_ICONS[user?.role ?? "TEACHER"] ?? GraduationCap;
   const [openId, setOpenId] = useState<NavId | null>(null);
   const [textVisible, setTextVisible] = useState(sidebarOpen);
   const asideRef = useRef<HTMLElement>(null);
@@ -101,8 +112,8 @@ export function Sidebar({ navItems }: SidebarProps) {
             </div>
           )
         ) : (
-          <span className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-            {user?.role === "DIRECTOR" ? "원" : user?.role === "MANAGER" ? "관" : "강"}
+          <span className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white shrink-0">
+            <RoleIcon size={15} />
           </span>
         )}
       </div>
@@ -114,8 +125,8 @@ export function Sidebar({ navItems }: SidebarProps) {
       )}>
         {textVisible && (
           <div className="flex items-center gap-2 w-full">
-            <div className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
-              {user?.role === "DIRECTOR" ? "원" : user?.role === "MANAGER" ? "관" : "강"}
+            <div className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white shrink-0">
+              <RoleIcon size={15} />
             </div>
             <div>
               <p className="text-[11px] font-semibold text-slate-800">
