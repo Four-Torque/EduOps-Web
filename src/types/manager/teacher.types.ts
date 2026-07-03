@@ -10,6 +10,8 @@ export interface Teacher {
   email: string;
   phone: string;
   status: TeacherStatus;
+  hireDate: string; // 근무 시작일 (YYYY-MM-DD)
+  leaveDate: string | null; // 퇴사일 (재직 중이면 null)
 }
 
 // 담당 강좌 (Class_TB + enrollments 집계)

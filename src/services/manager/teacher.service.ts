@@ -6,9 +6,9 @@ import type {
 // TODO: import apiClient from "@/lib/axios";
 
 const MOCK_TEACHERS: TeacherListItem[] = [
-  { id: 1, name: "김강사", email: "kim@edu.com", phone: "010-1111-2222", status: "ACTIVE", classCount: 3, studentCount: 42 },
-  { id: 2, name: "이선생", email: "lee@edu.com", phone: "010-3333-4444", status: "ACTIVE", classCount: 2, studentCount: 25 },
-  { id: 3, name: "박튜터", email: "park@edu.com", phone: "010-5555-6666", status: "LEAVE", classCount: 0, studentCount: 0 },
+  { id: 1, name: "김강사", email: "kim@edu.com", phone: "010-1111-2222", status: "ACTIVE", hireDate: "2024-03-02", leaveDate: null, classCount: 3, studentCount: 42 },
+  { id: 2, name: "이선생", email: "lee@edu.com", phone: "010-3333-4444", status: "ACTIVE", hireDate: "2025-01-06", leaveDate: null, classCount: 2, studentCount: 25 },
+  { id: 3, name: "박튜터", email: "park@edu.com", phone: "010-5555-6666", status: "LEAVE", hireDate: "2023-05-15", leaveDate: "2026-02-28", classCount: 0, studentCount: 0 },
 ];
 
 const MOCK_DETAILS: Record<number, TeacherDetail> = {
@@ -18,6 +18,8 @@ const MOCK_DETAILS: Record<number, TeacherDetail> = {
     email: "kim@edu.com",
     phone: "010-1111-2222",
     status: "ACTIVE",
+    hireDate: "2024-03-02",
+    leaveDate: null,
     classes: [
       { id: 101, name: "중등 수학 A", fee: 250000, status: "OPEN", startDate: "2026-03-02", endDate: null, studentCount: 18 },
       { id: 102, name: "중등 수학 B", fee: 250000, status: "OPEN", startDate: "2026-03-02", endDate: null, studentCount: 15 },
@@ -36,6 +38,8 @@ const MOCK_DETAILS: Record<number, TeacherDetail> = {
     email: "lee@edu.com",
     phone: "010-3333-4444",
     status: "ACTIVE",
+    hireDate: "2025-01-06",
+    leaveDate: null,
     classes: [
       { id: 201, name: "초등 영어 A", fee: 200000, status: "OPEN", startDate: "2026-03-02", endDate: null, studentCount: 13 },
       { id: 202, name: "초등 영어 B", fee: 200000, status: "OPEN", startDate: "2026-03-02", endDate: null, studentCount: 12 },
@@ -51,6 +55,8 @@ const MOCK_DETAILS: Record<number, TeacherDetail> = {
     email: "park@edu.com",
     phone: "010-5555-6666",
     status: "LEAVE",
+    hireDate: "2023-05-15",
+    leaveDate: "2026-02-28",
     classes: [],
     salary: null,
     recentAttendance: [],

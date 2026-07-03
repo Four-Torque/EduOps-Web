@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useTeacherDetail } from "@/hooks/manager/teacher.hooks";
 import type {
   TeacherStatus,
@@ -34,22 +33,21 @@ function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
-// 공통 카드 셸
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-xl border border-slate-200 bg-white ${className}`}>
-      {children}
-    </div>
+    <div className={`rounded-xl border border-slate-200 bg-white ${className}`}>{children}</div>
   );
 }
 
 function CardTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-[13px] font-semibold text-slate-800 mb-4">{children}</h2>;
+  return <h2 className="mb-4 text-[13px] font-semibold text-slate-800">{children}</h2>;
 }
 
-export default function TeacherDetailPage() {
-  const params = useParams<{ id: string }>();
-  const id = Number(params.id);
+interface TeacherDetailProps {
+  id: number;
+}
+
+export default function TeacherDetail({ id }: TeacherDetailProps) {
   const { data: teacher, isLoading, error } = useTeacherDetail(id);
 
   if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
@@ -57,38 +55,42 @@ export default function TeacherDetailPage() {
     return <div className="text-sm text-red-500">강사 정보를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="max-w-5xl space-y-5">
+    <div className="space-y-5">
       {/* 프로필 카드 */}
       <Card className="p-6">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-[#0069A8] flex items-center justify-center text-white text-lg font-bold shrink-0">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#0069A8] text-lg font-bold text-white">
             {teacher.name[0]}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-slate-800">{teacher.name}</h1>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${TEACHER_STATUS_STYLE[teacher.status]}`}>
+              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${TEACHER_STATUS_STYLE[teacher.status]}`}>
                 {TEACHER_STATUS_LABEL[teacher.status]}
               </span>
             </div>
-            <p className="text-[13px] text-slate-400 mt-1">
+            <p className="mt-1 text-[13px] text-slate-400">
               {teacher.email} · {teacher.phone}
             </p>
           </div>
         </div>
       </Card>
 
-      {/* 기본 정보 + 급여 (2열) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* 기본 정보 + 급여 */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card className="p-6">
           <CardTitle>기본 정보</CardTitle>
-          <dl className="grid grid-cols-[80px_1fr] gap-y-3 text-[13px]">
+          <dl className="grid grid-cols-[90px_1fr] gap-y-3 text-[13px]">
             <dt className="text-slate-400">이메일</dt>
             <dd className="text-slate-700">{teacher.email}</dd>
             <dt className="text-slate-400">연락처</dt>
             <dd className="text-slate-700">{teacher.phone}</dd>
             <dt className="text-slate-400">재직상태</dt>
             <dd className="text-slate-700">{TEACHER_STATUS_LABEL[teacher.status]}</dd>
+            <dt className="text-slate-400">근무 시작일</dt>
+            <dd className="text-slate-700">{teacher.hireDate}</dd>
+            <dt className="text-slate-400">퇴사일</dt>
+            <dd className="text-slate-700">{teacher.leaveDate ?? "-"}</dd>
           </dl>
         </Card>
 
@@ -119,7 +121,7 @@ export default function TeacherDetailPage() {
         ) : (
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-left text-slate-400 border-b border-slate-100">
+              <tr className="border-b border-slate-100 text-left text-slate-400">
                 <th className="pb-2.5 font-medium">강좌명</th>
                 <th className="pb-2.5 font-medium text-right">수강료</th>
                 <th className="pb-2.5 font-medium text-right">원생 수</th>
@@ -148,7 +150,7 @@ export default function TeacherDetailPage() {
         ) : (
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-left text-slate-400 border-b border-slate-100">
+              <tr className="border-b border-slate-100 text-left text-slate-400">
                 <th className="pb-2.5 font-medium">날짜</th>
                 <th className="pb-2.5 font-medium text-center">출근</th>
                 <th className="pb-2.5 font-medium text-center">퇴근</th>
