@@ -42,23 +42,6 @@ export function CourseSearchBar() {
         </Select>
       </div>
 
-      {/* 수준 필터 */}
-      <div className="flex items-center gap-1.5">
-        <span className="text-[11.5px] text-slate-500 whitespace-nowrap">수준</span>
-        <Select value={level} onValueChange={(v) => setLevel(v as never)}>
-          <SelectTrigger className="w-[120px] text-[12.5px]" size="default">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {COURSE_LEVEL_OPTIONS.map((o) => (
-              <SelectItem key={o.value} value={o.value} className="text-[12.5px]">
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       {/* 뷰 전환 버튼 (그리드/리스트) */}
       <div className="flex items-center border border-slate-200 rounded overflow-hidden">
         <button className="p-1.5 bg-slate-100 text-slate-700">

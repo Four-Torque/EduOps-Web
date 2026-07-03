@@ -1,4 +1,4 @@
-import { Pencil, Settings } from "lucide-react";
+import { Pencil, Settings, Trash2 } from "lucide-react";
 import type { AcademyBranch } from "@/types/manager/academy-info.types";
 
 interface AcademyBranchTableProps {
@@ -6,12 +6,12 @@ interface AcademyBranchTableProps {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  active:   "Active",
+  active: "Active",
   inactive: "Inactive",
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  active:   "text-emerald-700 bg-emerald-50",
+  active: "text-emerald-700 bg-emerald-50",
   inactive: "text-slate-500 bg-slate-100",
 };
 
@@ -55,9 +55,15 @@ export function AcademyBranchTable({ branches }: AcademyBranchTableProps) {
                   </span>
                 </td>
                 <td className="px-3.5 py-2.5">
-                  <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                  <div className="flex items-center gap-2.5">
+                     <button className="text-slate-400 hover:text-slate-600 transition-colors">
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
+                  <button className="text-slate-400 hover:text-red-500 ...">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                  </div>
+                 
                 </td>
               </tr>
             ))}
