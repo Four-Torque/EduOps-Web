@@ -1,3 +1,5 @@
-export default function SchoolInfoPage() {
-  return <div>학원 기본 정보</div>;
+import { AcademyInfoContainer } from "@/components/manager/academic/academic-info/AcademyInfoContainer";
+
+export default function AcademicInfoPage() {
+  return <AcademyInfoContainer />;
 }

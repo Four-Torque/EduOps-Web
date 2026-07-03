@@ -1,3 +1,13 @@
+import { ScheduleHeader } from "@/components/manager/academic/schedule/ScheduleHeader";
+import { ScheduleFilterBar } from "@/components/manager/academic/schedule/ScheduleFilterBar";
+import { ScheduleCalendar } from "@/components/manager/academic/schedule/ScheduleCalendar";
+
 export default function SchedulePage() {
-  return <div className="p-8"><h1 className="text-2xl font-bold">반/스케줄 관리</h1></div>;
+  return (
+    <div className="p-6">
+      <ScheduleHeader />
+      <ScheduleFilterBar />
+      <ScheduleCalendar />
+    </div>
+  );
 }

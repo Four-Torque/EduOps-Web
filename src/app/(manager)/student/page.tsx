@@ -1,3 +1,9 @@
+import { StudentTable } from "@/components/manager/academic/student/StudentTable";
+
 export default function StudentPage() {
-  return <div>원생 관리</div>;
+  return (
+    <div>
+      <StudentTable />
+    </div>
+  );
 }

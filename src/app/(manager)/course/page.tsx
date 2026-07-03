@@ -1,3 +1,10 @@
+// src/app/(manager)/course/page.tsx
+import { CourseGrid } from "@/components/manager/academic/course/CourseGrid";
+
 export default function CoursePage() {
-  return <div>강좌 관리</div>;
+  return (
+    <div className="p-6">
+      <CourseGrid />
+    </div>
+  );
 }
