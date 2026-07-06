@@ -2,7 +2,6 @@
 
 import { Table } from "@/components/common/Table";
 import { InventoryFilterBar } from "@/components/director/inventory/InventoryFilterBar";
-import { INVENTORY_TABLE_COLUMNS } from "@/constants/director/inventory.constants";
 import {
   useDeleteAssetApplications,
   useFindAssetApplications,
@@ -12,6 +11,7 @@ import { useAssetApplicationStore } from "@/store/asset/asset.store";
 import { InventoryTabFilter } from "@/types/director/inventory.types";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { getAssetApplicationsColumns } from "./column";
 
 export default function MaterialPage() {
   const searchParams = useSearchParams();
@@ -42,6 +42,8 @@ export default function MaterialPage() {
     onCreateOpen();
   }
 
+  const columns = getAssetApplicationsColumns();
+
   return (
     <>
       <h1 className="text-[18px] font-bold text-slate-900 mb-4">
@@ -54,7 +56,7 @@ export default function MaterialPage() {
         }}
       />
       <Table
-        columns={[...INVENTORY_TABLE_COLUMNS]}
+        columns={columns}
         data={data}
         isLoading={isLoading}
         showCheckbox
