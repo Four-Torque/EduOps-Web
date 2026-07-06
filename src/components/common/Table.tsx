@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState, MouseEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import { InventoryStatusPopover } from "../director/inventory/InventoryStatusPopover";
 import { StatusBadge } from "./StatusBadge";
 import { Pagination } from "./Pagination";
-import { useSearchParams } from "next/navigation";
 
 interface PopoverState {
   itemId: string;
   rect: DOMRect;
 }
 
-interface ColumnProps {
+export interface ColumnProps {
   key: string;
   label: string;
   type?: "text" | "number" | "money";
@@ -45,27 +45,30 @@ export function Table({
   onDelete,
   onCreate,
   deleteButtonLabel = "선택 삭제",
-  createButtonLabel = "+ 자재 요청",
+  createButtonLabel = "생성",
   onEditStatus,
   statusReadonly = false,
 }: TableProps) {
   const [popover, setPopover] = useState<PopoverState | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   const searchParams = useSearchParams();
   const page = searchParams.get("page") || "1";
+
   const items = data?.data ?? [];
   const totalItems = data?.total ?? 0;
   const totalPages = data?.totalPages ?? 1;
 
   const allChecked =
     items.length > 0 &&
-    items.every((item: any) => selectedIds.includes(item[rowKey]));
+    items.every((item: any) => selectedIds.includes(String(item[rowKey])));
 
   useEffect(() => {
     setSelectedIds([]);
   }, [items]);
 
   function openPopover(id: string, e: MouseEvent) {
+    if (statusReadonly) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     setPopover((prev) => (prev?.itemId === id ? null : { itemId: id, rect }));
   }
@@ -88,7 +91,14 @@ export function Table({
     if (allChecked) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(items.map((item: any) => item[rowKey]));
+      setSelectedIds(items.map((item: any) => String(item[rowKey])));
+    }
+  }
+
+  function handleDelete(ids: string[]) {
+    if (onDelete) {
+      onDelete(ids);
+      setSelectedIds([]);
     }
   }
 
@@ -96,137 +106,34 @@ export function Table({
 
   return (
     <div>
-      {(onDelete || onCreate) && (
-        <div className="w-full flex justify-between items-center mb-2">
-          <div>
-            {onDelete && (
-              <button
-                onClick={() => onDelete(selectedIds)}
-                disabled={selectedIds.length === 0}
-                className="cursor-pointer text-[11.5px] font-medium text-slate-500 border border-slate-300 bg-white px-3 py-1.5 rounded hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:pointer-events-none"
-              >
-                {deleteButtonLabel}
-              </button>
-            )}
-          </div>
-          <div>
-            {onCreate && (
-              <button
-                onClick={onCreate}
-                className="cursor-pointer text-[11.5px] font-medium text-white border border-slate-300 bg-primary px-3 py-1.5 rounded hover:bg-primary/80 transition-colors"
-              >
-                {createButtonLabel}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      <TableActions
+        onDelete={onDelete ? handleDelete : undefined}
+        onCreate={onCreate}
+        selectedIds={selectedIds}
+        deleteButtonLabel={deleteButtonLabel}
+        createButtonLabel={createButtonLabel}
+      />
 
       <div className="border border-slate-200 rounded overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead>
-            <tr className="border-b border-slate-200 bg-[#f5f6f8]">
-              {showCheckbox && (
-                <th className="px-3.5 py-2.25 w-10">
-                  <input
-                    type="checkbox"
-                    checked={allChecked}
-                    onChange={() => toggleSelectAll()}
-                    className="w-3.5 h-3.5 accent-primary cursor-pointer"
-                  />
-                </th>
-              )}
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  className={`px-3.5 py-2.25 text-[11.5px] font-semibold text-slate-500 text-center ${col.className ?? ""}`}
-                >
-                  {col.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td
-                  colSpan={totalColSpan}
-                  className="px-3.5 py-8 text-center text-[12px] text-slate-400"
-                >
-                  불러오는 중...
-                </td>
-              </tr>
-            ) : items.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={totalColSpan}
-                  className="px-3.5 py-8 text-center text-[12px] text-slate-400"
-                >
-                  데이터가 존재하지 않습니다.
-                </td>
-              </tr>
-            ) : (
-              items.map((item: any) => {
-                const rowId = item[rowKey];
-                return (
-                  <tr
-                    key={rowId}
-                    className="border-b border-slate-100 last:border-slate-200 hover:bg-slate-50 transition-colors"
-                  >
-                    {showCheckbox && (
-                      <td className="px-3.5 py-2.5 text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedIds.includes(rowId)}
-                          onChange={() => toggleSelect(rowId)}
-                          className="w-3.5 h-3.5 accent-primary cursor-pointer"
-                        />
-                      </td>
-                    )}
-                    {columns.map((col) => (
-                      <td
-                        key={col.key}
-                        className="px-3.5 py-2.5 text-[12.5px] text-center text-slate-600"
-                      >
-                        {(() => {
-                          if (col.render) {
-                            return col.render(item, { openPopover });
-                          }
-                          if (col.key === "status") {
-                            return (
-                              <StatusBadge
-                                status={item.status}
-                                readonly={statusReadonly}
-                                onClick={(e) => openPopover(item.id, e)}
-                              />
-                            );
-                          }
-                          const rawValue = item[col.key];
-
-                          if (
-                            rawValue !== undefined &&
-                            rawValue !== null &&
-                            rawValue !== ""
-                          ) {
-                            const numericValue = Number(rawValue);
-                            if (!isNaN(numericValue)) {
-                              if (col.type === "money") {
-                                return `₩${numericValue.toLocaleString()}`;
-                              }
-                              if (col.type === "number") {
-                                return numericValue.toLocaleString();
-                              }
-                            }
-                          }
-                          return rawValue ?? "-";
-                        })()}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
+          <TableHeader
+            columns={columns}
+            showCheckbox={showCheckbox}
+            allChecked={allChecked}
+            onToggleSelectAll={toggleSelectAll}
+          />
+          <TableBody
+            items={items}
+            columns={columns}
+            isLoading={isLoading}
+            showCheckbox={showCheckbox}
+            rowKey={rowKey}
+            selectedIds={selectedIds}
+            statusReadonly={statusReadonly}
+            totalColSpan={totalColSpan}
+            onToggleSelect={toggleSelect}
+            onOpenPopover={openPopover}
+          />
         </table>
 
         {!isLoading && totalItems > 0 && (
@@ -245,5 +152,195 @@ export function Table({
         />
       )}
     </div>
+  );
+}
+
+function TableActions({
+  onDelete,
+  onCreate,
+  selectedIds,
+  deleteButtonLabel,
+  createButtonLabel,
+}: {
+  onDelete?: (selectedIds: string[]) => void;
+  onCreate?: () => void;
+  selectedIds: string[];
+  deleteButtonLabel: string;
+  createButtonLabel: string;
+}) {
+  if (!onDelete && !onCreate) return null;
+  return (
+    <div className="w-full flex justify-between items-center mb-2">
+      <div>
+        {onDelete && (
+          <button
+            type="button"
+            onClick={() => onDelete(selectedIds)}
+            disabled={selectedIds.length === 0}
+            className="cursor-pointer text-[11.5px] font-medium text-slate-500 border border-slate-300 bg-white px-3 py-1.5 rounded hover:bg-slate-50 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+          >
+            {deleteButtonLabel}
+          </button>
+        )}
+      </div>
+      <div>
+        {onCreate && (
+          <button
+            type="button"
+            onClick={onCreate}
+            className="cursor-pointer text-[11.5px] font-medium text-white border border-slate-300 bg-primary px-3 py-1.5 rounded hover:bg-primary/80 transition-colors"
+          >
+            {createButtonLabel}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TableHeader({
+  columns,
+  showCheckbox,
+  allChecked,
+  onToggleSelectAll,
+}: {
+  columns: ColumnProps[];
+  showCheckbox: boolean;
+  allChecked: boolean;
+  onToggleSelectAll: () => void;
+}) {
+  return (
+    <thead>
+      <tr className="border-b border-slate-200 bg-[#f5f6f8]">
+        {showCheckbox && (
+          <th className="px-3.5 py-2.25 w-10">
+            <input
+              type="checkbox"
+              checked={allChecked}
+              onChange={onToggleSelectAll}
+              className="w-3.5 h-3.5 accent-primary cursor-pointer"
+            />
+          </th>
+        )}
+        {columns.map((col) => (
+          <th
+            key={col.key}
+            className={`px-3.5 py-2.25 text-[11.5px] font-semibold text-slate-500 text-center ${col.className ?? ""}`}
+          >
+            {col.label}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+}
+
+function TableBody({
+  items,
+  columns,
+  isLoading,
+  showCheckbox,
+  rowKey,
+  selectedIds,
+  statusReadonly,
+  totalColSpan,
+  onToggleSelect,
+  onOpenPopover,
+}: {
+  items: any[];
+  columns: ColumnProps[];
+  isLoading?: boolean;
+  showCheckbox: boolean;
+  rowKey: string;
+  selectedIds: string[];
+  statusReadonly: boolean;
+  totalColSpan: number;
+  onToggleSelect: (id: string) => void;
+  onOpenPopover: (id: string, e: React.MouseEvent) => void;
+}) {
+  if (isLoading) {
+    return (
+      <tbody>
+        <tr>
+          <td
+            colSpan={totalColSpan}
+            className="px-3.5 py-8 text-center text-[12px] text-slate-400"
+          >
+            불러오는 중...
+          </td>
+        </tr>
+      </tbody>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <tbody>
+        <tr>
+          <td
+            colSpan={totalColSpan}
+            className="px-3.5 py-8 text-center text-[12px] text-slate-400"
+          >
+            데이터가 존재하지 않습니다.
+          </td>
+        </tr>
+      </tbody>
+    );
+  }
+
+  function renderCellValue(item: any, col: ColumnProps, rowId: string) {
+    if (col.render) return col.render(item, { openPopover: onOpenPopover });
+    if (col.key === "status") {
+      return (
+        <StatusBadge
+          status={item.status}
+          readonly={statusReadonly}
+          onClick={(e) => onOpenPopover(rowId, e)}
+        />
+      );
+    }
+
+    const rawValue = item[col.key];
+    if (rawValue !== undefined && rawValue !== null && rawValue !== "") {
+      const numericValue = Number(rawValue);
+      if (!isNaN(numericValue)) {
+        if (col.type === "money") return `₩${numericValue.toLocaleString()}`;
+        if (col.type === "number") return numericValue.toLocaleString();
+      }
+    }
+    return rawValue ?? "-";
+  }
+
+  return (
+    <tbody>
+      {items.map((item) => {
+        const rowId = String(item[rowKey]);
+        return (
+          <tr
+            key={rowId}
+            className="border-b border-slate-100 last:border-slate-200 hover:bg-slate-50 transition-colors"
+          >
+            {showCheckbox && (
+              <td className="px-3.5 py-2.5 text-center">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.includes(rowId)}
+                  onChange={() => onToggleSelect(rowId)}
+                  className="w-3.5 h-3.5 accent-primary cursor-pointer"
+                />
+              </td>
+            )}
+            {columns.map((col) => (
+              <td
+                key={col.key}
+                className="px-3.5 py-2.5 text-[12.5px] text-center text-slate-600"
+              >
+                {renderCellValue(item, col, rowId)}
+              </td>
+            ))}
+          </tr>
+        );
+      })}
+    </tbody>
   );
 }
