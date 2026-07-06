@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Input } from "../ui/input";
 
 interface FormInputProps {
@@ -35,7 +36,10 @@ export default function FormInput({
         placeholder={placeholder}
         autoComplete={autoComplete}
         onChange={onChange}
-        className="py-3.25 pl-10 pr-3.5 h-10.75 text-sm transition-colors duration-180 border-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-invalid:border-none aria-invalid:ring-0 aria-invalid:text-foreground"
+        className={cn(
+          "py-3.25 pr-3.5 h-10.75 text-sm transition-colors duration-180 border-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-invalid:border-none aria-invalid:ring-0 aria-invalid:text-foreground",
+          Icon && "pl-10",
+        )}
         {...field}
       />
     </div>

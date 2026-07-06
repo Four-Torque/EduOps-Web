@@ -12,12 +12,12 @@ interface PopoverAction {
 const POPOVER_ACTIONS: PopoverAction[] = [
   {
     label: "승인",
-    status: "paid",
+    status: "ACCEPTED",
     className: "text-white bg-[#0069A8] hover:bg-[#005a8e]",
   },
   {
     label: "반려",
-    status: "pending",
+    status: "REJECTED",
     className: "text-slate-600 bg-slate-100 hover:bg-slate-200",
   },
 ];
@@ -28,7 +28,11 @@ interface InventoryStatusPopoverProps {
   onClose: () => void;
 }
 
-export function InventoryStatusPopover({ anchorRect, onSelect, onClose }: InventoryStatusPopoverProps) {
+export function InventoryStatusPopover({
+  anchorRect,
+  onSelect,
+  onClose,
+}: InventoryStatusPopoverProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,13 +47,20 @@ export function InventoryStatusPopover({ anchorRect, onSelect, onClose }: Invent
     <div
       ref={ref}
       className="fixed z-50 bg-white border border-slate-200 rounded shadow-lg p-2.5 flex flex-col gap-1.5"
-      style={{ top: anchorRect.bottom + 6, left: anchorRect.left, minWidth: 80 }}
+      style={{
+        top: anchorRect.bottom + 6,
+        left: anchorRect.left,
+        minWidth: 80,
+      }}
     >
       {POPOVER_ACTIONS.map((action) => (
         <button
           key={action.status}
-          onClick={() => { onSelect(action.status); onClose(); }}
-          className={`text-[11.5px] font-medium px-3 py-1.5 rounded transition-colors ${action.className}`}
+          onClick={() => {
+            onSelect(action.status as InventoryPaymentStatus);
+            onClose();
+          }}
+          className={`cursor-pointer text-[11.5px] font-medium px-3 py-1.5 rounded transition-colors ${action.className}`}
         >
           {action.label}
         </button>
