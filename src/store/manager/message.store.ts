@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { ChatRoom, ChatMessage, MessageContact  } from "@/types/message/message.types";
-import { MOCK_CHAT_ROOMS } from "@/constants/director/message.constants";
+import type { ChatRoom, ChatMessage, MessageContact } from "@/types/message/message.types";
+import { MOCK_CHAT_ROOMS } from "@/constants/manager/message.constants";
 
 interface MessageUIState {
   chatRooms: ChatRoom[];
@@ -51,7 +51,7 @@ export const useMessageStore = create<MessageUIState>()(
         const newMessage: ChatMessage = {
           id: Date.now(),
           senderId: 0,
-          senderRole: "director",
+          senderRole: "manager",
           content: content.trim(),
           sentAt: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
           isMine: true,
@@ -90,24 +90,28 @@ export const useMessageStore = create<MessageUIState>()(
         );
       },
 
-      createChatRoom: (contact: MessageContact) => {
-  const { chatRooms } = get();
-  const existing = chatRooms.find((r) => r.contact.id === contact.id);
-  if (existing) {
-    set({ activeChatRoomId: existing.id, isNewMessageModalOpen: false });
-    return;
-  }
-  const newRoom: ChatRoom = {
-    id: Date.now(),
-    contact,
-    lastMessage: "",
-    lastMessageAt: "",
-    unreadCount: 0,
-    messages: [],
-  };
-  set({ chatRooms: [newRoom, ...chatRooms], activeChatRoomId: newRoom.id, isNewMessageModalOpen: false });
-},
+      createChatRoom: (contact) => {
+        const { chatRooms } = get();
+        const existing = chatRooms.find((r) => r.contact.id === contact.id);
+        if (existing) {
+          set({ activeChatRoomId: existing.id, isNewMessageModalOpen: false }, false, "message/set-active-existing");
+          return;
+        }
+        const newRoom: ChatRoom = {
+          id: Date.now(),
+          contact,
+          lastMessage: "",
+          lastMessageAt: "",
+          unreadCount: 0,
+          messages: [],
+        };
+        set(
+          { chatRooms: [newRoom, ...chatRooms], activeChatRoomId: newRoom.id, isNewMessageModalOpen: false },
+          false,
+          "message/create-chat-room",
+        );
+      },
     }),
-    { name: "MessageStore" },
+    { name: "ManagerMessageStore" },
   ),
 );
