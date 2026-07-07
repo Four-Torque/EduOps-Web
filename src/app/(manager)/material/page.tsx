@@ -10,7 +10,7 @@ import { useConfirm } from "@/hooks/common/useConfirm";
 import { useAssetApplicationStore } from "@/store/asset/asset.store";
 import { InventoryTabFilter } from "@/types/director/inventory.types";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getAssetApplicationsColumns } from "./column";
 
 export default function MaterialPage() {
@@ -42,7 +42,9 @@ export default function MaterialPage() {
     onCreateOpen();
   }
 
-  const columns = getAssetApplicationsColumns();
+  const columns = useMemo(() => {
+    return getAssetApplicationsColumns();
+  }, []);
 
   return (
     <>
