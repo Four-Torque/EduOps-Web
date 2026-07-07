@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -7,41 +8,84 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { REQUEST_STATUS_OPTIONS } from "@/constants/director/inventory.constants";
-import type { InventoryTabFilter } from "@/types/director/inventory.types";
+import { useFindCategories } from "@/hooks/category/useCategory";
+import { useFindVendors } from "@/hooks/vendor/useVendor";
+import { debounce } from "@/lib/utils";
+import { useAssetStore } from "@/store/asset/asset.store";
+import { useEffect, useMemo } from "react";
 
-interface InventoryFilterBarProps {
-  statusFilter: InventoryTabFilter;
-  onStatusFilterChange: (status: InventoryTabFilter) => void;
-}
+export function InventoryFilterBar() {
+  const { categoryId, vendorId, setCategoryId, setVendorId, setQ } =
+    useAssetStore();
+  const { data: categories } = useFindCategories();
+  const { data } = useFindVendors({
+    page: "1",
+    limit: "10000",
+  });
+  const vendors = data?.data ?? [];
 
-export function InventoryFilterBar({
-  statusFilter,
-  onStatusFilterChange,
-}: InventoryFilterBarProps) {
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((term: string) => {
+        setQ(term);
+      }, 500),
+    [],
+  );
+  useEffect(() => {
+    return () => debouncedSearch.cancel?.();
+  }, [debouncedSearch]);
+
   return (
-    <div className="px-4 py-3 mb-6 border border-slate-200 rounded bg-white">
-      <Select
-        value={statusFilter}
-        onValueChange={(value) =>
-          onStatusFilterChange(value as InventoryTabFilter)
-        }
-      >
-        <SelectTrigger className="w-40 text-[12.5px]" size="default">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {REQUEST_STATUS_OPTIONS.map((option) => (
-            <SelectItem
-              key={option.value}
-              value={option.value}
-              className="text-[12.5px]"
-            >
-              {option.label}
+    <div className="px-4 py-3 mb-6 border border-slate-200 rounded bg-white flex justify-between items-center">
+      <Input
+        placeholder="품목명으로 검색"
+        className="w-75"
+        onChange={(e) => debouncedSearch(e.target.value)}
+      />
+
+      <div className="flex items-center gap-2">
+        <Select
+          value={categoryId}
+          onValueChange={(value) => setCategoryId(value)}
+        >
+          <SelectTrigger className="w-40 text-[12.5px]" size="default">
+            <SelectValue placeholder="카테고리" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="" className="text-[12.5px]">
+              전체
             </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            {categories?.map((category: any) => (
+              <SelectItem
+                key={category.id}
+                value={category.id}
+                className="text-[12.5px]"
+              >
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={vendorId} onValueChange={(value) => setVendorId(value)}>
+          <SelectTrigger className="w-40 text-[12.5px]" size="default">
+            <SelectValue placeholder="구매처" />
+          </SelectTrigger>
+          <SelectContent position="popper">
+            <SelectItem value="" className="text-[12.5px]">
+              전체
+            </SelectItem>
+            {vendors?.map((vendor: any) => (
+              <SelectItem
+                key={vendor.id}
+                value={vendor.id}
+                className="text-[12.5px]"
+              >
+                {vendor.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
