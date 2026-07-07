@@ -1,18 +1,42 @@
 "use client";
 
-import { useManagerChatRooms, useSendManagerMessage } from "@/hooks/manager/message.hooks";
+import { MessageContainer } from "@/components/common/message/MessageContainer";
+import { useMessageStore }  from "@/store/manager/message.store";
+import { MOCK_CONTACTS }    from "@/constants/manager/message.constants";
+import { useSession }       from "@/hooks/user/useSession";
 
 export default function ManagerMessagePage() {
-  const { data: rooms, isLoading } = useManagerChatRooms();
-  const { mutate: sendMessage } = useSendManagerMessage(0);
+  const store = useMessageStore();
+  const { data: user, isLoading } = useSession();
 
-  if (isLoading) return <div>불러오는 중...</div>;
+  console.log("현재 user:", user);
+  console.log("현재 role:", user?.role);
+
+  const contactGroups = [
+    { label: "원장",   contacts: MOCK_CONTACTS.filter((c) => c.role === "director") },
+    { label: "강사",   contacts: MOCK_CONTACTS.filter((c) => c.role === "teacher")  },
+  ];
+
+  if (isLoading) return null;
 
   return (
-    <div>
-      <h1>쪽지함</h1>
-      {/* TODO: 채팅방 목록 UI */}
-      {/* TODO: 메시지 전송 폼 */}
+    <div className="h-[calc(100vh-theme(spacing.24))]">
+      <MessageContainer
+        chatRooms={store.chatRooms}
+        activeChatRoomId={store.activeChatRoomId}
+        searchQuery={store.searchQuery}
+        onSearchChange={store.setSearchQuery}
+        onSelectRoom={store.setActiveChatRoom}
+        inputText={store.inputText}
+        onInputChange={store.setInputText}
+        onSend={() => store.sendMessage(store.inputText)}
+        onDeleteRoom={() => store.activeChatRoomId && store.deleteChatRoom(store.activeChatRoomId)}
+        isContactModalOpen={store.isNewMessageModalOpen}
+        contactGroups={contactGroups}
+        onOpenContactModal={store.openNewMessageModal}
+        onCloseContactModal={store.closeNewMessageModal}
+        onSelectContact={store.createChatRoom}
+      />
     </div>
   );
 }
