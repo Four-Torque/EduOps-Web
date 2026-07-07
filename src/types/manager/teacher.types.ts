@@ -1,11 +1,12 @@
 // ERD 기준 강사(User_TB, role=TEACHER) 관련 타입
+// id는 백엔드(UUID 문자열) 기준을 따른다.
 
-export type TeacherStatus = "ACTIVE" | "INACTIVE" | "LEAVE"; // 재직, 휴직, 퇴사
-export type ClassStatus = "OPEN" | "CLOSE";
+export type TeacherStatus = "WORKING" | "RESIGNED" | "ON_LEAVE"; // 재직, 휴직, 퇴사
+export type ClassStatus = "OPEN" | "CLOSED";
 export type SalaryStatus = "PENDING" | "COMPLETE";
 
 export interface Teacher {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -14,9 +15,9 @@ export interface Teacher {
   leaveDate: string | null; // 퇴사일 (재직 중이면 null)
 }
 
-// 담당 강좌 (Class_TB + enrollments 집계)
+// 담당 강좌 (GET /class?teacherId=)
 export interface TeacherClass {
-  id: number;
+  id: string;
   name: string;
   fee: number;
   status: ClassStatus;
@@ -25,7 +26,7 @@ export interface TeacherClass {
   studentCount: number;
 }
 
-// 급여 (salaries)
+// 급여 (GET /salary?userId=&status=)
 export interface TeacherSalary {
   baseSalary: number;
   bonus: number;
@@ -33,7 +34,7 @@ export interface TeacherSalary {
   status: SalaryStatus;
 }
 
-// 근태 1일 기록 (staff_attendance)
+// 근태 1일 기록 (GET /staff-attendance?userId=)
 export interface TeacherAttendanceRecord {
   workDate: string; // YYYY-MM-DD
   checkInTime: string | null;
@@ -46,9 +47,16 @@ export interface TeacherListItem extends Teacher {
   studentCount: number;
 }
 
-// 상세: 기본 정보 + 담당 강좌 + 급여 + 최근 근태
+// 상세: 기본 정보 + 담당 강좌 + 급여 + 최근 근태 (여러 API를 조합해 구성)
 export interface TeacherDetail extends Teacher {
   classes: TeacherClass[];
   salary: TeacherSalary | null;
   recentAttendance: TeacherAttendanceRecord[];
 }
+
+// 강사 기본 정보 수정 시 편집 가능한 필드
+// email은 백엔드 수정 API(UpdateUserRequest)에 없어 편집 대상에서 제외
+export type UpdateTeacherInput = Pick<
+  Teacher,
+  "name" | "phone" | "status" | "hireDate" | "leaveDate"
+>;
