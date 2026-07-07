@@ -17,6 +17,8 @@ export async function findAssets(params: {
   page: string;
   limit: string;
   search?: string;
+  categoryId?: string;
+  vendorId?: string;
 }) {
   const response = await apiClient.get("asset", {
     params,
@@ -28,6 +30,19 @@ export async function createAssetApplication(
   data: z.infer<typeof AssetApplicationFormSchema>,
 ) {
   const response = await apiClient.post("asset-application", data);
+  return response.data;
+}
+
+export async function editAssetApplicationStatus(values: {
+  id: string;
+  status: string;
+  rejectedReason?: string;
+}) {
+  const { id, status, rejectedReason } = values;
+  const response = await apiClient.put(`asset-application/${id}/status`, {
+    status,
+    rejectedReason,
+  });
   return response.data;
 }
 

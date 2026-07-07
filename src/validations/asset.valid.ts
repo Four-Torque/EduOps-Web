@@ -8,3 +8,7 @@ export const AssetApplicationFormSchema = z.object({
   vendorId: z.string().min(1, "업체를 선택하세요."),
   reason: z.string().optional(),
 });
+
+export const RejectAssetApplicationFormSchema = z.object({
+  rejectedReason: z.string().min(1, "거절 사유를 입력하세요."),
+});

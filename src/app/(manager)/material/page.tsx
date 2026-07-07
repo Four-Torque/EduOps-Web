@@ -1,23 +1,23 @@
 "use client";
 
 import { Table } from "@/components/common/Table";
-import { InventoryFilterBar } from "@/components/director/inventory/InventoryFilterBar";
 import {
   useDeleteAssetApplications,
   useFindAssetApplications,
 } from "@/hooks/asset/useAsset";
 import { useConfirm } from "@/hooks/common/useConfirm";
 import { useAssetApplicationStore } from "@/store/asset/asset.store";
-import { InventoryTabFilter } from "@/types/director/inventory.types";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getAssetApplicationsColumns } from "./column";
+import { MaterialFilterBar } from "@/components/manager/material/MaterialFilterBar";
+import { MaterialTabFilter } from "@/types/manager/material.types";
 
 export default function MaterialPage() {
   const searchParams = useSearchParams();
   const { mutate: deleteAssetApplications } = useDeleteAssetApplications();
   const { onCreateOpen } = useAssetApplicationStore();
-  const [statusFilter, setStatusFilter] = useState<InventoryTabFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<MaterialTabFilter>("all");
   const [ConfirmDialog, confirm] = useConfirm(
     "정말 삭제하시겠습니까?",
     "삭제된 데이터는 복구할 수 없습니다.",
@@ -42,14 +42,16 @@ export default function MaterialPage() {
     onCreateOpen();
   }
 
-  const columns = getAssetApplicationsColumns();
+  const columns = useMemo(() => {
+    return getAssetApplicationsColumns();
+  }, []);
 
   return (
     <>
       <h1 className="text-[18px] font-bold text-slate-900 mb-4">
         자재 물품 신청
       </h1>
-      <InventoryFilterBar
+      <MaterialFilterBar
         statusFilter={statusFilter}
         onStatusFilterChange={(status) => {
           setStatusFilter(status);

@@ -2,9 +2,11 @@
 
 import { useEffect, useState, MouseEvent } from "react";
 import { useSearchParams } from "next/navigation";
-import { InventoryStatusPopover } from "../director/inventory/InventoryStatusPopover";
 import { StatusBadge } from "./StatusBadge";
 import { Pagination } from "./Pagination";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import { TableStatusPopover } from "./TableStatusPopover";
 
 interface PopoverState {
   itemId: string;
@@ -14,7 +16,7 @@ interface PopoverState {
 export interface ColumnProps {
   key: string;
   label: string;
-  type?: "text" | "number" | "money";
+  type?: "text" | "number" | "money" | "date";
   className?: string;
   render?: (
     item: any,
@@ -136,16 +138,18 @@ export function Table({
           />
         </table>
 
-        {!isLoading && totalItems > 0 && (
+        {!isLoading && (
           <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
-            <Pagination currentPage={Number(page)} totalPages={totalPages} />
+            {totalItems > 0 && (
+              <Pagination currentPage={Number(page)} totalPages={totalPages} />
+            )}
           </div>
         )}
       </div>
 
       {onEditStatus && popover && (
-        <InventoryStatusPopover
+        <TableStatusPopover
           anchorRect={popover.rect}
           onSelect={handleStatusSelect}
           onClose={() => setPopover(null)}
@@ -295,7 +299,9 @@ function TableBody({
         <StatusBadge
           status={item.status}
           readonly={statusReadonly}
-          onClick={(e) => onOpenPopover(rowId, e)}
+          onClick={(e) => {
+            if (item.status === "PENDING") onOpenPopover(rowId, e);
+          }}
         />
       );
     }
@@ -307,6 +313,8 @@ function TableBody({
         if (col.type === "money") return `₩${numericValue.toLocaleString()}`;
         if (col.type === "number") return numericValue.toLocaleString();
       }
+      if (col.type === "date")
+        return format(new Date(rawValue), "yyyy-MM-dd", { locale: ko });
     }
     return rawValue ?? "-";
   }
