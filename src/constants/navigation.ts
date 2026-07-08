@@ -16,7 +16,7 @@ export const NAV_IDS = [
   "academy-info",
   "student-detail",
   "staff-attendance",
-  "material-request",
+  "material-management",
   "billing",
   "manager-message",
   "schedule",
@@ -43,16 +43,12 @@ export const DIRECTOR_NAV: NavItem[] = [
   {
     id: "user-management",
     label: "사용자 관리",
-    children: [
-      { label: "사용자 목록", href: "/user-list" },
-    ],
+    children: [{ label: "사용자 목록", href: "/user-list" }],
   },
   {
     id: "sales",
     label: "매출",
-    children: [
-      { label: "매출 대시보드", href: "/finance" },
-    ],
+    children: [{ label: "매출 대시보드", href: "/finance" }],
   },
   {
     id: "director-material-approval",
@@ -65,9 +61,7 @@ export const DIRECTOR_NAV: NavItem[] = [
   {
     id: "director-message",
     label: "쪽지",
-    children: [
-      { label: "쪽지", href: "/director-message" },
-    ],
+    children: [{ label: "쪽지", href: "/director-message" }],
   },
 ];
 
@@ -86,37 +80,30 @@ export const MANAGER_NAV: NavItem[] = [
   {
     id: "student-detail",
     label: "원생 상세",
-    children: [
-      { label: "원생 상세 정보", href: "/student-detail" },
-    ],
+    children: [{ label: "원생 상세 정보", href: "/student-detail" }],
   },
   {
     id: "staff-attendance",
     label: "근태",
-    children: [
-      { label: "직원 근태 관리", href: "/attendance" },
-    ],
+    children: [{ label: "직원 근태 관리", href: "/attendance" }],
   },
   {
-    id: "material-request",
-    label: "자재 신청",
+    id: "material-management",
+    label: "자재 관리",
     children: [
       { label: "자재 물품 신청", href: "/material" },
+      { label: "구매처 관리", href: "/vendor" },
     ],
   },
   {
     id: "billing",
     label: "결제",
-    children: [
-      { label: "결제 관리", href: "/billing" },
-    ],
+    children: [{ label: "결제 관리", href: "/billing" }],
   },
   {
     id: "manager-message",
     label: "쪽지",
-    children: [
-      { label: "쪽지 보내기", href: "/manager-message" },
-    ],
+    children: [{ label: "쪽지 보내기", href: "/manager-message" }],
   },
 ];
 
@@ -124,30 +111,22 @@ export const TEACHER_NAV: NavItem[] = [
   {
     id: "schedule",
     label: "시간표",
-    children: [
-      { label: "수업 시간표", href: "/class" },
-    ],
+    children: [{ label: "수업 시간표", href: "/class" }],
   },
   {
     id: "student-attendance",
     label: "원생 출결",
-    children: [
-      { label: "원생 출결 관리", href: "/student-attendance" },
-    ],
+    children: [{ label: "원생 출결 관리", href: "/student-attendance" }],
   },
   {
     id: "class-files",
     label: "수업 파일",
-    children: [
-      { label: "수업 파일 관리", href: "/files" },
-    ],
+    children: [{ label: "수업 파일 관리", href: "/files" }],
   },
   {
     id: "grade",
     label: "성적 관리",
-    children: [
-      { label: "원생 수업 테스트", href: "/test" },
-    ],
+    children: [{ label: "원생 수업 테스트", href: "/test" }],
   },
 ];
 
@@ -162,8 +141,8 @@ const DIRECTOR_INCLUDES_FROM_MANAGER: NavId[] = [
 ];
 
 export function getDirectorNav(): NavItem[] {
-  const managerMenusForDirector = MANAGER_NAV.filter(
-    (item) => DIRECTOR_INCLUDES_FROM_MANAGER.includes(item.id)
+  const managerMenusForDirector = MANAGER_NAV.filter((item) =>
+    DIRECTOR_INCLUDES_FROM_MANAGER.includes(item.id),
   );
   return [...DIRECTOR_NAV, ...managerMenusForDirector];
 }
