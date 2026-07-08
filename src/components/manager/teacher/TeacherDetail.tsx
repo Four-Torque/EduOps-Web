@@ -1,27 +1,30 @@
 "use client";
 
-import { useTeacherDetail } from "@/hooks/manager/teacher.hooks";
+import { useState } from "react";
+import { Pencil } from "lucide-react";
+import { useTeacherDetail, useUpdateTeacher } from "@/hooks/manager/teacher.hooks";
 import type {
   TeacherStatus,
   ClassStatus,
   SalaryStatus,
+  UpdateTeacherInput,
 } from "@/types/manager/teacher.types";
 
 const TEACHER_STATUS_LABEL: Record<TeacherStatus, string> = {
-  ACTIVE: "재직",
-  INACTIVE: "휴직",
-  LEAVE: "퇴사",
+  WORKING: "재직",
+  ON_LEAVE: "휴직",
+  RESIGNED: "퇴사",
 };
 
 const TEACHER_STATUS_STYLE: Record<TeacherStatus, string> = {
-  ACTIVE: "bg-[#0069A8]/10 text-[#0069A8]",
-  INACTIVE: "bg-amber-50 text-amber-600",
-  LEAVE: "bg-slate-100 text-slate-400",
+  WORKING: "bg-[#0069A8]/10 text-[#0069A8]",
+  ON_LEAVE: "bg-amber-50 text-amber-600",
+  RESIGNED: "bg-slate-100 text-slate-400",
 };
 
 const CLASS_STATUS_LABEL: Record<ClassStatus, string> = {
   OPEN: "진행중",
-  CLOSE: "종료",
+  CLOSED: "종료",
 };
 
 const SALARY_STATUS_LABEL: Record<SalaryStatus, string> = {
@@ -44,36 +47,78 @@ function CardTitle({ children }: { children: React.ReactNode }) {
 }
 
 interface TeacherDetailProps {
-  id: number;
+  id: string;
 }
 
 export default function TeacherDetail({ id }: TeacherDetailProps) {
   const { data: teacher, isLoading, error } = useTeacherDetail(id);
+  const { mutate: updateTeacher, isPending } = useUpdateTeacher();
+  const [isEditing, setIsEditing] = useState(false);
+  const [form, setForm] = useState<UpdateTeacherInput | null>(null);
 
   if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
   if (error || !teacher)
     return <div className="text-sm text-red-500">강사 정보를 찾을 수 없습니다.</div>;
 
+  function startEdit() {
+    if (!teacher) return;
+    setForm({
+      name: teacher.name,
+      phone: teacher.phone,
+      status: teacher.status,
+      hireDate: teacher.hireDate,
+      leaveDate: teacher.leaveDate,
+    });
+    setIsEditing(true);
+  }
+
+  function cancelEdit() {
+    setIsEditing(false);
+    setForm(null);
+  }
+
+  function handleSave() {
+    if (!form) return;
+    updateTeacher(
+      { id, data: form },
+      { onSuccess: () => setIsEditing(false) },
+    );
+  }
+
   return (
     <div className="space-y-5">
       {/* 프로필 카드 */}
       <Card className="p-6">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#0069A8] text-lg font-bold text-white">
-            {teacher.name[0]}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-800">{teacher.name}</h1>
-              <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${TEACHER_STATUS_STYLE[teacher.status]}`}>
-                {TEACHER_STATUS_LABEL[teacher.status]}
-              </span>
+        {isEditing && form ? (
+          <TeacherEditForm
+            form={form}
+            onChange={setForm}
+            onSave={handleSave}
+            onCancel={cancelEdit}
+            isSaving={isPending}
+          />
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-bold text-slate-800">{teacher.name}</h1>
+                <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${TEACHER_STATUS_STYLE[teacher.status]}`}>
+                  {TEACHER_STATUS_LABEL[teacher.status]}
+                </span>
+              </div>
+              <p className="mt-1 text-[13px] text-slate-400">
+                {teacher.email} · {teacher.phone}
+              </p>
             </div>
-            <p className="mt-1 text-[13px] text-slate-400">
-              {teacher.email} · {teacher.phone}
-            </p>
+            <button
+              onClick={startEdit}
+              className="flex items-center gap-1 rounded border border-slate-200 px-2.5 py-1.5 text-[12px] text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              수정
+            </button>
           </div>
-        </div>
+        )}
       </Card>
 
       {/* 기본 정보 + 급여 */}
@@ -169,5 +214,95 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
         )}
       </Card>
     </div>
+  );
+}
+
+interface TeacherEditFormProps {
+  form: UpdateTeacherInput;
+  onChange: (form: UpdateTeacherInput) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  isSaving: boolean;
+}
+
+function TeacherEditForm({ form, onChange, onSave, onCancel, isSaving }: TeacherEditFormProps) {
+  function set<K extends keyof UpdateTeacherInput>(key: K, value: UpdateTeacherInput[K]) {
+    onChange({ ...form, [key]: value });
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <Field label="이름">
+          <input
+            value={form.name}
+            onChange={(e) => set("name", e.target.value)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          />
+        </Field>
+        <Field label="재직상태">
+          <select
+            value={form.status}
+            onChange={(e) => set("status", e.target.value as TeacherStatus)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          >
+            {(Object.keys(TEACHER_STATUS_LABEL) as TeacherStatus[]).map((status) => (
+              <option key={status} value={status}>
+                {TEACHER_STATUS_LABEL[status]}
+              </option>
+            ))}
+          </select>
+        </Field>
+        <Field label="연락처">
+          <input
+            value={form.phone}
+            onChange={(e) => set("phone", e.target.value)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          />
+        </Field>
+        <Field label="근무 시작일">
+          <input
+            type="date"
+            value={form.hireDate}
+            onChange={(e) => set("hireDate", e.target.value)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          />
+        </Field>
+        <Field label="퇴사일">
+          <input
+            type="date"
+            value={form.leaveDate ?? ""}
+            onChange={(e) => set("leaveDate", e.target.value || null)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          />
+        </Field>
+      </div>
+
+      <div className="flex justify-end gap-2 pt-1">
+        <button
+          onClick={onCancel}
+          disabled={isSaving}
+          className="rounded border border-slate-200 px-3 py-1.5 text-[12px] text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50"
+        >
+          취소
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isSaving}
+          className="rounded bg-[#0069A8] px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#005a8e] disabled:opacity-50"
+        >
+          {isSaving ? "저장 중..." : "저장"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[11.5px] text-slate-400">{label}</span>
+      {children}
+    </label>
   );
 }

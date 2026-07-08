@@ -2,24 +2,36 @@
 
 import { useRef, useEffect, useState } from "react";
 import { Send, Paperclip, MoreVertical, Trash2 } from "lucide-react";
-import { useMessageStore } from "@/store/director/message.store";
-import { ROLE_LABEL } from "@/constants/director/message.constants";
-import type { ChatMessage } from "@/types/director/message.types";
+import { MessageBubble } from "./MessageBubble";
+import { Input } from "@/components/ui/input";
+import type { ChatRoom, ChatMessage } from "@/types/message/message.types";
 
-export function MessageChatRoom() {
-  const {
-    chatRooms, activeChatRoomId,
-    inputText, setInputText,
-    sendMessage, deleteChatRoom,
-  } = useMessageStore();
+const ROLE_LABEL: Record<string, string> = {
+  director: "원장",
+  manager:  "관리자",
+  teacher:  "강사",
+};
 
+interface MessageChatRoomProps {
+  activeRoom: ChatRoom | null;
+  inputText: string;
+  onInputChange: (text: string) => void;
+  onSend: () => void;
+  onDelete: () => void;
+}
+
+export function MessageChatRoom({
+  activeRoom,
+  inputText,
+  onInputChange,
+  onSend,
+  onDelete,
+}: MessageChatRoomProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef   = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const activeRoom = chatRooms.find((r) => r.id === activeChatRoomId);
-
-  // 새 메시지 올 때 스크롤 하단 이동
+  // 새 메시지 시 스크롤 하단
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeRoom?.messages.length]);
@@ -35,21 +47,15 @@ export function MessageChatRoom() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSend = () => {
-    if (!inputText.trim()) return;
-    sendMessage(inputText);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      onSend();
     }
   };
 
   const handleDelete = () => {
-    if (!activeChatRoomId) return;
-    deleteChatRoom(activeChatRoomId);
+    onDelete();
     setIsMenuOpen(false);
   };
 
@@ -99,7 +105,6 @@ export function MessageChatRoom() {
 
       {/* 메시지 영역 */}
       <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
-        {/* 날짜 구분 */}
         <div className="flex items-center gap-2 my-1">
           <div className="flex-1 h-px bg-slate-100" />
           <p className="text-[10.5px] text-slate-400">오늘</p>
@@ -107,31 +112,11 @@ export function MessageChatRoom() {
         </div>
 
         {activeRoom.messages.map((msg: ChatMessage) => (
-          <div
+          <MessageBubble
             key={msg.id}
-            className={`flex ${msg.isMine ? "justify-end" : "justify-start"}`}
-          >
-            {/* 상대방 아바타 */}
-            {!msg.isMine && (
-              <div className="w-7 h-7 rounded-full bg-[#0069A8] text-white text-[11px] font-semibold flex items-center justify-center shrink-0 mr-2 mt-0.5">
-                {activeRoom.contact.avatarInitial}
-              </div>
-            )}
-
-            <div className={`flex flex-col ${msg.isMine ? "items-end" : "items-start"} max-w-[70%]`}>
-              <div
-                className={[
-                  "px-3.5 py-2.5 rounded-2xl text-[12.5px] leading-relaxed whitespace-pre-wrap",
-                  msg.isMine
-                    ? "bg-slate-800 text-white rounded-tr-sm"
-                    : "bg-slate-100 text-slate-800 rounded-tl-sm",
-                ].join(" ")}
-              >
-                {msg.content}
-              </div>
-              <p className="text-[10px] text-slate-400 mt-1">{msg.sentAt}</p>
-            </div>
-          </div>
+            message={msg}
+            avatarInitial={activeRoom.contact.avatarInitial}
+          />
         ))}
         <div ref={bottomRef} />
       </div>
@@ -141,7 +126,7 @@ export function MessageChatRoom() {
         <div className="flex items-end gap-2 border border-slate-200 rounded-xl px-3 py-2.5 bg-white">
           <textarea
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={(e) => onInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="메세지 입력..."
             rows={1}
@@ -152,7 +137,7 @@ export function MessageChatRoom() {
               <Paperclip className="w-4 h-4" />
             </button>
             <button
-              onClick={handleSend}
+              onClick={onSend}
               disabled={!inputText.trim()}
               className="w-7 h-7 rounded-full bg-[#0069A8] text-white flex items-center justify-center hover:bg-[#005a8e] transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >

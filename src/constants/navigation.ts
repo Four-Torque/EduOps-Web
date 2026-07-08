@@ -14,7 +14,6 @@ export const NAV_IDS = [
   "director-material-approval",
   "director-message",
   "academy-info",
-  "student-detail",
   "staff-attendance",
   "material-management",
   "billing",
@@ -78,11 +77,6 @@ export const MANAGER_NAV: NavItem[] = [
     ],
   },
   {
-    id: "student-detail",
-    label: "원생 상세",
-    children: [{ label: "원생 상세 정보", href: "/student-detail" }],
-  },
-  {
     id: "staff-attendance",
     label: "근태",
     children: [{ label: "직원 근태 관리", href: "/attendance" }],
@@ -135,7 +129,6 @@ export const TEACHER_NAV: NavItem[] = [
 // (블랙리스트로 하면 새 관리자 메뉴가 실수로 원장에게 노출될 수 있어 화이트리스트를 쓴다)
 const DIRECTOR_INCLUDES_FROM_MANAGER: NavId[] = [
   "academy-info",
-  "student-detail",
   "staff-attendance",
   "billing",
 ];

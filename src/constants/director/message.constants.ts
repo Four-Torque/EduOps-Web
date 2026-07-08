@@ -1,4 +1,4 @@
-import type { MessageContact, ChatRoom } from "@/types/director/message.types";
+import type { MessageContact, ChatRoom } from "@/types/message/message.types";
 
 export const MOCK_CONTACTS: MessageContact[] = [
   { id: 1, name: "이순자", role: "teacher",  department: "인문학", avatarInitial: "이" },

@@ -4,7 +4,7 @@ import { ScheduleCalendar } from "@/components/manager/academic/schedule/Schedul
 
 export default function SchedulePage() {
   return (
-    <div className="p-6">
+    <div>
       <ScheduleHeader />
       <ScheduleFilterBar />
       <ScheduleCalendar />
