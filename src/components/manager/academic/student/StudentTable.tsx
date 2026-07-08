@@ -33,7 +33,6 @@ const { openModal } = useStudentRegisterStore();
     <div>
       {/* 헤더 + 학생 등록 버튼 */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-[18px] font-bold text-slate-900">학생 관리</h1>
         <button
            onClick={() => openModal()} 
           className="text-[11.5px] font-medium text-white bg-[#0069A8] px-3 py-1.5 rounded hover:bg-[#005a8e] transition-colors"

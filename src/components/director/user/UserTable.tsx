@@ -44,7 +44,6 @@ export function UserTable() {
     <div>
       {/* 헤더 */}
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-[18px] font-bold text-slate-900">사용자 목록</h1>
         <button
           onClick={() => deleteUsers(selectedIds)}
           disabled={selectedIds.length === 0}
