@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ChevronLeft,
+  LayoutDashboard,
   TrendingUp,
   Users,
   Package,
@@ -39,6 +40,7 @@ const ROLE_ICONS: Record<string, React.ElementType> = {
 
 // 메뉴 id → 아이콘. 라벨이 아니라 id로 매핑하므로 문구가 바뀌어도 아이콘이 유지된다.
 const NAV_ICONS: Record<NavId, React.ElementType> = {
+  dashboard: LayoutDashboard,
   sales: TrendingUp,
   "user-management": Users,
   "director-material-approval": Package,

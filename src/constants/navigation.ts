@@ -9,6 +9,7 @@ export const ROLE_HOME = {
 // 코드(아이콘 매핑, 노출 제외 등)는 UI 라벨이 아니라 이 id를 참조한다.
 // 라벨은 다국어/문구 변경으로 언제든 바뀔 수 있지만 id는 바뀌지 않는다.
 export const NAV_IDS = [
+  "dashboard",
   "sales",
   "user-management",
   "director-material-approval",
@@ -40,14 +41,19 @@ export interface NavItem {
 
 export const DIRECTOR_NAV: NavItem[] = [
   {
+    id: "dashboard",
+    label: "대시보드",
+    children: [{ label: "학원 현황", href: "/director-dashboard" }],
+  },
+  {
     id: "user-management",
     label: "사용자 관리",
     children: [{ label: "사용자 목록", href: "/user-list" }],
   },
   {
     id: "sales",
-    label: "매출",
-    children: [{ label: "매출 대시보드", href: "/finance" }],
+    label: "매출관리",
+    children: [{ label: "매출현황", href: "/finance" }],
   },
   {
     id: "director-material-approval",
