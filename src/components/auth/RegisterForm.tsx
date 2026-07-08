@@ -31,6 +31,7 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useAuth";
 import SubmitButton from "../common/SubmitButton";
 import PasswordIndicator from "./PasswordIndicator";
+import { formatPhoneNumber } from "@/lib/utils";
 
 export default function RegisterForm() {
   const { mutate: register } = useRegister();
@@ -48,20 +49,6 @@ export default function RegisterForm() {
 
   function handleSubmit(values: z.infer<typeof RegisterFormSchema>) {
     register(values);
-  }
-
-  function formatPhoneNumber(value: string) {
-    if (!value) return "";
-
-    const phoneNumber = value.replace(/[^\d]/g, "");
-
-    if (phoneNumber.length <= 3) {
-      return phoneNumber;
-    }
-    if (phoneNumber.length <= 7) {
-      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
-    }
-    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
   }
 
   return (
@@ -199,7 +186,10 @@ export default function RegisterForm() {
                     type="text"
                     ariaInvalid={fieldState.invalid}
                     onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
+                      const formatted = formatPhoneNumber(
+                        e.target.value,
+                        "phone",
+                      );
                       field.onChange(formatted);
                     }}
                     placeholder="010-0000-0000"

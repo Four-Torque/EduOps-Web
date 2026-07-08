@@ -67,7 +67,7 @@ export function Table({
 
   useEffect(() => {
     setSelectedIds([]);
-  }, [items.length]);
+  }, [items?.length]);
 
   function openPopover(id: string, e: MouseEvent) {
     if (statusReadonly) return;

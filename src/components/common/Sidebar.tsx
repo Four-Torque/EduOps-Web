@@ -39,19 +39,19 @@ const ROLE_ICONS: Record<string, React.ElementType> = {
 
 // 메뉴 id → 아이콘. 라벨이 아니라 id로 매핑하므로 문구가 바뀌어도 아이콘이 유지된다.
 const NAV_ICONS: Record<NavId, React.ElementType> = {
-  "sales": TrendingUp,
+  sales: TrendingUp,
   "user-management": Users,
   "director-material-approval": Package,
   "director-message": MessageSquare,
   "academy-info": Building2,
   "staff-attendance": Clock,
-  "material-request": ShoppingBag,
-  "billing": CreditCard,
+  "material-management": ShoppingBag,
+  billing: CreditCard,
   "manager-message": MessageSquare,
-  "schedule": Calendar,
+  schedule: Calendar,
   "student-attendance": ClipboardCheck,
   "class-files": FolderOpen,
-  "grade": BookOpen,
+  grade: BookOpen,
 };
 
 export function Sidebar({ navItems }: SidebarProps) {
@@ -67,7 +67,7 @@ export function Sidebar({ navItems }: SidebarProps) {
 
   useEffect(() => {
     const matched = navItems.find((item) =>
-      item.children?.some((child) => pathname.startsWith(child.href))
+      item.children?.some((child) => pathname.startsWith(child.href)),
     );
     if (matched) setOpenId(matched.id);
   }, [pathname, navItems]);
@@ -102,7 +102,12 @@ export function Sidebar({ navItems }: SidebarProps) {
       )}
     >
       {/* 브랜드 로고 */}
-      <div className={cn("pt-[30px] pb-5 shrink-0", sidebarOpen ? "px-[35px]" : "flex justify-center")}>
+      <div
+        className={cn(
+          "pt-[30px] pb-5 shrink-0",
+          sidebarOpen ? "px-[35px]" : "flex justify-center",
+        )}
+      >
         {sidebarOpen ? (
           textVisible && (
             <div className="text-[20px] font-extrabold text-[#0069A8] tracking-tight leading-none">
@@ -117,10 +122,12 @@ export function Sidebar({ navItems }: SidebarProps) {
       </div>
 
       {/* 유저 정보 */}
-      <div className={cn(
-        "px-[35px] flex items-center gap-2 mb-1 shrink-0",
-        sidebarOpen ? "h-auto" : "h-0 overflow-hidden",
-      )}>
+      <div
+        className={cn(
+          "px-[35px] flex items-center gap-2 mb-1 shrink-0",
+          sidebarOpen ? "h-auto" : "h-0 overflow-hidden",
+        )}
+      >
         {textVisible && (
           <div className="flex items-center gap-2 w-full">
             <div className="w-7 h-7 rounded-md bg-[#0069A8] flex items-center justify-center text-white shrink-0">
@@ -128,31 +135,49 @@ export function Sidebar({ navItems }: SidebarProps) {
             </div>
             <div>
               <p className="text-[11px] font-semibold text-slate-800">
-                {user?.role === "DIRECTOR" ? "원장님" : user?.role === "MANAGER" ? "관리자" : "강사"}
+                {user?.role === "DIRECTOR"
+                  ? "원장님"
+                  : user?.role === "MANAGER"
+                    ? "관리자"
+                    : "강사"}
               </p>
-              <p className="text-[9.5px] text-slate-400">{user?.name ?? "이름"}</p>
+              <p className="text-[9.5px] text-slate-400">
+                {user?.name ?? "이름"}
+              </p>
             </div>
           </div>
         )}
       </div>
 
       {/* 네비게이션 */}
-      <nav className={cn("flex-1 py-5 overflow-hidden", sidebarOpen ? "px-[35px]" : "px-0")}>
+      <nav
+        className={cn(
+          "flex-1 py-5 overflow-hidden",
+          sidebarOpen ? "px-[35px]" : "px-0",
+        )}
+      >
         <ul className="space-y-0.5">
           {navItems.map((item) => {
             const Icon = NAV_ICONS[item.id];
 
             // 접힌 상태: 아이콘만
             if (!sidebarOpen) {
-              const target = item.children ? item.children[0] : { label: item.label, href: item.href };
+              const target = item.children
+                ? item.children[0]
+                : { label: item.label, href: item.href };
               return (
                 <li key={item.id} className="flex justify-center py-2">
                   {Icon && target.href && (
                     <Link
                       href={target.href}
-                      onClick={() => addTab({ label: target.label, href: target.href! })}
+                      onClick={() =>
+                        addTab({ label: target.label, href: target.href! })
+                      }
                     >
-                      <Icon size={15} className="text-slate-400 hover:text-slate-700 transition-colors cursor-pointer" />
+                      <Icon
+                        size={15}
+                        className="text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                      />
                     </Link>
                   )}
                 </li>
@@ -163,7 +188,7 @@ export function Sidebar({ navItems }: SidebarProps) {
             if (item.children) {
               const isOpen = openId === item.id;
               const hasActiveChild = item.children.some((child) =>
-                pathname.startsWith(child.href)
+                pathname.startsWith(child.href),
               );
 
               return (
@@ -190,7 +215,9 @@ export function Sidebar({ navItems }: SidebarProps) {
                           <li key={child.href}>
                             <Link
                               href={child.href}
-                              onClick={() => addTab({ label: child.label, href: child.href })}
+                              onClick={() =>
+                                addTab({ label: child.label, href: child.href })
+                              }
                               className={cn(
                                 "flex items-center gap-2 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors",
                                 isActive
@@ -198,10 +225,12 @@ export function Sidebar({ navItems }: SidebarProps) {
                                   : "text-slate-400 hover:text-slate-700",
                               )}
                             >
-                              <span className={cn(
-                                "w-1 h-1 rounded-full shrink-0",
-                                isActive ? "bg-[#E8732A]" : "bg-slate-300",
-                              )} />
+                              <span
+                                className={cn(
+                                  "w-1 h-1 rounded-full shrink-0",
+                                  isActive ? "bg-[#E8732A]" : "bg-slate-300",
+                                )}
+                              />
                               {child.label}
                             </Link>
                           </li>
@@ -223,7 +252,10 @@ export function Sidebar({ navItems }: SidebarProps) {
                 {textVisible && (
                   <Link
                     href={item.href ?? "#"}
-                    onClick={() => item.href && addTab({ label: item.label, href: item.href })}
+                    onClick={() =>
+                      item.href &&
+                      addTab({ label: item.label, href: item.href })
+                    }
                     className={cn(
                       "flex items-center gap-1.5 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors w-full",
                       isActive
