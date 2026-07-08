@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { AttendanceStatus, Student } from "@/types/teacher/attendance.type";
 
+import { Card } from "@/components/ui/card"
+
 interface AttendanceTableProps {
   students: Student[];
   onStatusChange: (id: string, status: AttendanceStatus) => void;
@@ -16,7 +18,7 @@ interface AttendanceTableProps {
 
 export default function AttendanceTable({ students, onStatusChange }: AttendanceTableProps) {
   return (
-    <div className="border rounded-xl bg-white flex flex-col mt-4 shadow-sm overflow-hidden">
+    <Card className="flex flex-col mt-4 shadow-sm overflow-hidden bg-white p-0">
       <div className="flex items-center justify-between p-3 px-5 border-b bg-gray-50/50">
         <div className="flex items-center gap-5">
           <h2 className="text-base font-bold text-gray-800">출결 리스트</h2>
@@ -97,6 +99,6 @@ export default function AttendanceTable({ students, onStatusChange }: Attendance
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   )
 }
