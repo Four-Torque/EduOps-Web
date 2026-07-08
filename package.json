@@ -32,7 +32,6 @@
     "radix-ui": "^1.6.0",
     "react": "19.2.4",
     "react-big-calendar": "^1.20.0",
-    "react-day-picker": "^10.0.1",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.80.0",
     "react-hot-toast": "^2.6.0",
@@ -45,7 +44,6 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@preact/signals": "^2.9.3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -53,7 +51,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
-    "preact": "^10.29.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
