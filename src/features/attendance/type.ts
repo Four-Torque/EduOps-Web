@@ -34,3 +34,25 @@ export interface AttendanceFilter {
   search: string;
   page: number;
 }
+
+// =============================================================================== //
+// 학생 출결 관련 Type
+// =============================================================================== //
+
+export type StudentAttendanceStatus = "ATTENDED" | "TARDY" | "ABSENT" | "LEFT_EARLY" | null;
+
+export interface ClassStudentAttendance {
+  studentId: string;
+  studentName: string;
+  studentPhone: string;
+  attendanceId: string | null;
+  lectureDate: string | null;
+  status: "ATTENDED" | "ABSENT" | "TARDY" | "LEFT_EARLY" | null;
+}
+
+export interface StudentAttendance {
+  id: string;
+  name: string;
+  phone: string;
+  status: StudentAttendanceStatus;
+}
