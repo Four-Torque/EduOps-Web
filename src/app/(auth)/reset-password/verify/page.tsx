@@ -1,7 +1,7 @@
 "use client";
 
-import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
-import { useResetPasswordVerifyMail } from "@/hooks/auth/useAuth";
+import ResetPasswordForm from "@/features/auth/components/form/ResetPasswordForm";
+import { useResetPasswordVerifyMail } from "@/features/auth/query";
 import { notFound, useSearchParams } from "next/navigation";
 
 export default function ResetPasswordFormPage() {

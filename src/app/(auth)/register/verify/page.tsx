@@ -1,6 +1,6 @@
 "use client";
 
-import { useRegisterVerifyMail } from "@/hooks/auth/useAuth";
+import { useRegisterVerifyMail } from "@/features/auth/query";
 import { notFound, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

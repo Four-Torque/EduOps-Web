@@ -1,11 +1,11 @@
-import { ColumnProps } from "@/components/common/Table";
-import { Button } from "@/components/ui/button";
+import { ColumnProps } from "@/shared/components/Table";
+import { Button } from "@/shared/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
 import { EditIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 
 interface VendorColumnProps {

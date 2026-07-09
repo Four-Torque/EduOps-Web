@@ -4,7 +4,7 @@ import { useState, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
-import ModalProvider from "@/components/common/ModalProvider";
+import ModalProvider from "@/shared/components/ModalProvider";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => {

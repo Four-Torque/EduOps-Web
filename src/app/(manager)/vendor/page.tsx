@@ -1,13 +1,13 @@
 "use client";
 
-import { Table } from "@/components/common/Table";
-import { useConfirm } from "@/hooks/common/useConfirm";
+import { VendorFilterBar } from "@/features/vendor/components/VendorFilterBar";
+import { useFindVendors, useDeleteVendors } from "@/features/vendor/query";
+import { useVendorStore } from "@/features/vendor/store";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { getVendorColumns } from "./column";
-import { useDeleteVendors, useFindVendors } from "@/hooks/vendor/useVendor";
-import { VendorFilterBar } from "@/components/manager/vendor/VendorFilterBar";
-import { useVendorStore } from "@/store/manager/vendor.store";
+import { Table } from "@/shared/components/Table";
 
 export default function VendorPage() {
   const searchParams = useSearchParams();

@@ -1,4 +1,4 @@
-import { ColumnProps } from "@/components/common/Table";
+import { ColumnProps } from "@/shared/components/Table";
 
 export const getAssetInventoryColumns = (): ColumnProps[] => [
   { key: "name", label: "품목", type: "text" },

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import Providers from "./providers";
-import { cn } from "@/lib/utils";
-import "@/styles/globals.css"; // ← 추가
+import { cn } from "@/shared/lib/utils";
+import "../../styles/globals.css";
 
 const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-sans" });
 

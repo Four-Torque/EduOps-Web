@@ -1,4 +1,4 @@
-import { AttendanceTable } from "@/components/manager/academic/attendance/AttendanceTable";
+import { AttendanceTable } from "@/features/attendance/components/AttendanceTable";
 
 export default function AttendancePage() {
   return <AttendanceTable />;

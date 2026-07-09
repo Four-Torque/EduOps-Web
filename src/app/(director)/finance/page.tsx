@@ -1,17 +1,17 @@
 "use client";
 
-import { useMemo } from "react";
-import { RevenueKpi } from "@/components/director/finance/RevenueKpi";
-import { RevenueFilterBar } from "@/components/director/finance/RevenueFilterBar";
-import { RevenueTable } from "@/components/director/finance/RevenueTable";
-import { RevenueChart } from "@/components/director/finance/RevenueChart";
-import { QuickActions } from "@/components/director/finance/QuickActions";
+import { QuickActions } from "@/features/finance/components/QuickActions";
+import { RevenueChart } from "@/features/finance/components/RevenueChart";
+import { RevenueFilterBar } from "@/features/finance/components/RevenueFilterBar";
+import { RevenueKpi } from "@/features/finance/components/RevenueKpi";
+import { RevenueTable } from "@/features/finance/components/RevenueTable";
+import { useFinanceStore } from "@/features/finance/store";
 import {
-  MOCK_REVENUE_STATS,
   MOCK_REVENUE_ITEMS,
+  MOCK_REVENUE_STATS,
   MOCK_MONTHLY_REVENUE,
-} from "@/constants/director/finance.mock";
-import { useFinanceStore } from "@/store/director/finance.store";
+} from "@/shared/constants/director/finance.mock";
+import { useMemo } from "react";
 
 const PAGE_SIZE = 5;
 

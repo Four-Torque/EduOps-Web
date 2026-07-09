@@ -1,10 +1,18 @@
 "use client";
 
-import AppShell from "../../components/common/AppShell";
-import { getDirectorNav, MANAGER_NAV, ROLE_HOME } from "../../constants/navigation";
-import { useRoleGuard } from "@/hooks/user/useRoleGuard";
+import AppShell from "@/shared/components/AppShell";
+import {
+  getDirectorNav,
+  MANAGER_NAV,
+  ROLE_HOME,
+} from "@/shared/constants/navigation";
+import { useRoleGuard } from "@/shared/hooks/useRoleGuard";
 
-export default function ManagerLayout({ children }: { children: React.ReactNode }) {
+export default function ManagerLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // 관리자 영역이지만 원장도 열람 가능
   const { session, ready } = useRoleGuard(["MANAGER", "DIRECTOR"]);
   if (!ready) return null;
@@ -14,5 +22,9 @@ export default function ManagerLayout({ children }: { children: React.ReactNode 
   const navItems = isDirector ? getDirectorNav() : MANAGER_NAV;
   const homePath = isDirector ? ROLE_HOME.DIRECTOR : ROLE_HOME.MANAGER;
 
-  return <AppShell navItems={navItems} homePath={homePath}>{children}</AppShell>;
+  return (
+    <AppShell navItems={navItems} homePath={homePath}>
+      {children}
+    </AppShell>
+  );
 }

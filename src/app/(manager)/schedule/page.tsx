@@ -1,6 +1,6 @@
-import { ScheduleHeader } from "@/components/manager/academic/schedule/ScheduleHeader";
-import { ScheduleFilterBar } from "@/components/manager/academic/schedule/ScheduleFilterBar";
-import { ScheduleCalendar } from "@/components/manager/academic/schedule/ScheduleCalendar";
+import { ScheduleHeader } from "@/features/schedule/components/ScheduleHeader";
+import { ScheduleFilterBar } from "@/features/schedule/components/ScheduleFilterBar";
+import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalendar2";
 
 export default function SchedulePage() {
   return (

@@ -1,12 +1,12 @@
 "use client";
 
-import { Table } from "@/components/common/Table";
-import { getAssetInventoryColumns } from "./column";
-import { useFindAssets } from "@/hooks/asset/useAsset";
+import { InventoryFilterBar } from "@/features/asset/components/InventoryFilterBar";
+import { useFindAssets } from "@/features/asset/query";
+import { useAssetStore } from "@/features/asset/store";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
-import { InventoryFilterBar } from "@/components/director/inventory/InventoryFilterBar";
-import { useAssetStore } from "@/store/asset/asset.store";
+import { getAssetInventoryColumns } from "./column";
+import { Table } from "@/shared/components/Table";
 
 export default function InventoryPage() {
   const { q, categoryId, vendorId } = useAssetStore();

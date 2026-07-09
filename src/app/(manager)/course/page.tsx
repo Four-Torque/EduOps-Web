@@ -1,8 +1,6 @@
 // src/app/(manager)/course/page.tsx
-import { CourseGrid } from "@/components/manager/academic/course/CourseGrid";
+import { CourseGrid } from "@/features/class/components/CourseGrid";
 
 export default function CoursePage() {
-  return (
-      <CourseGrid />
-  );
+  return <CourseGrid />;
 }

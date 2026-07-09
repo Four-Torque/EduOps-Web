@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/hooks/user/useSession";
-import { ROLE_HOME } from "@/constants/navigation";
+import { useSession } from "@/shared/hooks/useSession";
+import { ROLE_HOME } from "@/shared/constants/navigation";
 
 export default function RootPage() {
   const { data: session, isLoading } = useSession();
