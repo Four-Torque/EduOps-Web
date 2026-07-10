@@ -9,7 +9,7 @@ import type {
   UpdateTeacherInput,
   ClassStatus,
   SalaryStatus,
-} from "@/types/manager/teacher.types";
+} from "./type";
 
 // 백엔드 원시 응답 형태 (User_TB / Class_TB / salaries / staff_attendance)
 interface ApiUser {

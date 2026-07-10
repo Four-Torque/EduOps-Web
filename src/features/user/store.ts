@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { UserTabFilter } from "@/types/director/user.types";
+import type { UserTabFilter } from "./type";
 
 interface DirectorUserUIState {
   date: string;
@@ -61,3 +61,21 @@ export const useDirectorUserStore = create<DirectorUserUIState>()(
     { name: "DirectorUserStore" },
   ),
 );
+
+interface TeacherStore {
+  q: string;
+  setQ: (q: string) => void;
+  id: string;
+  isViewOpen: boolean;
+  onViewOpen: (id: string) => void;
+  onViewClose: () => void;
+}
+
+export const useTeacherStore = create<TeacherStore>((set) => ({
+  q: "",
+  setQ: (q: string) => set({ q }),
+  id: "",
+  isViewOpen: false,
+  onViewOpen: (id: string) => set({ isViewOpen: true, id }),
+  onViewClose: () => set({ isViewOpen: false, id: "" }),
+}));

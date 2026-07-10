@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import {
+import { Pencil } from "lucide-react";
+import { useTeacherDetail, useUpdateTeacher } from "../query";
+import type {
   TeacherStatus,
   ClassStatus,
   SalaryStatus,
@@ -61,26 +63,26 @@ interface TeacherDetailProps {
 }
 
 export default function TeacherDetail({ id }: TeacherDetailProps) {
-  // const { data: teacher, isLoading, error } = useTeacherDetail(id);
-  // const { mutate: updateTeacher, isPending } = useUpdateTeacher();
+  const { data: teacher, isLoading, error } = useTeacherDetail(id);
+  const { mutate: updateTeacher, isPending } = useUpdateTeacher();
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<UpdateTeacherInput | null>(null);
 
-  // if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
-  // if (error || !teacher)
-  //   return <div className="text-sm text-red-500">강사 정보를 찾을 수 없습니다.</div>;
+  if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
+  if (error || !teacher)
+    return <div className="text-sm text-red-500">강사 정보를 찾을 수 없습니다.</div>;
 
-  // function startEdit() {
-  //   if (!teacher) return;
-  //   setForm({
-  //     name: teacher.name,
-  //     phone: teacher.phone,
-  //     status: teacher.status,
-  //     hireDate: teacher.hireDate,
-  //     leaveDate: teacher.leaveDate,
-  //   });
-  //   setIsEditing(true);
-  // }
+  function startEdit() {
+    if (!teacher) return;
+    setForm({
+      name: teacher.name,
+      phone: teacher.phone,
+      status: teacher.status,
+      hireDate: teacher.hireDate,
+      leaveDate: teacher.leaveDate,
+    });
+    setIsEditing(true);
+  }
 
   function cancelEdit() {
     setIsEditing(false);
@@ -89,23 +91,23 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
 
   function handleSave() {
     if (!form) return;
-    // updateTeacher(
-    //   { id, data: form },
-    //   { onSuccess: () => setIsEditing(false) },
-    // );
+    updateTeacher(
+      { id, data: form },
+      { onSuccess: () => setIsEditing(false) },
+    );
   }
 
   return (
     <div className="space-y-5">
       {/* 프로필 카드 */}
-      {/* <Card className="p-6"> */}
-      {/* {isEditing && form ? (
+      <Card className="p-6">
+        {isEditing && form ? (
           <TeacherEditForm
             form={form}
             onChange={setForm}
             onSave={handleSave}
             onCancel={cancelEdit}
-             isSaving={isPending}
+            isSaving={isPending}
           />
         ) : (
           <div className="flex items-center gap-4">
@@ -116,6 +118,7 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
                   {TEACHER_STATUS_LABEL[teacher.status]}
                 </span>
               </div>
+              <p className="text-[11px] text-slate-400">ID: {teacher.id}</p>
               <p className="mt-1 text-[13px] text-slate-400">
                 {teacher.email} · {teacher.phone}
               </p>
@@ -128,11 +131,11 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
               수정
             </button>
           </div>
-        )} */}
-      {/* </Card> */}
+        )}
+      </Card>
 
       {/* 기본 정보 + 급여 */}
-      {/* <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
         <Card className="p-6">
           <CardTitle>기본 정보</CardTitle>
           <dl className="grid grid-cols-[90px_1fr] gap-y-3 text-[13px]">
@@ -168,6 +171,7 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
         </Card>
       </div>
 
+      {/* 담당 강좌 */}
       <Card className="p-6">
         <CardTitle>담당 강좌 ({teacher.classes.length})</CardTitle>
         {teacher.classes.length === 0 ? (
@@ -196,6 +200,7 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
         )}
       </Card>
 
+      {/* 최근 근태 */}
       <Card className="p-6">
         <CardTitle>최근 근태</CardTitle>
         {teacher.recentAttendance.length === 0 ? (
@@ -220,7 +225,7 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
             </tbody>
           </table>
         )}
-      </Card> */}
+      </Card>
     </div>
   );
 }
