@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import { Pencil } from "lucide-react";
-import { useTeacherDetail, useUpdateTeacher } from "../query";
+import {
+  useTeacherDetail,
+  useUpdateTeacher,
+  useCreateTeacherSalary,
+  useUpdateTeacherSalary,
+} from "../query";
 import type {
   TeacherStatus,
-  ClassStatus,
   SalaryStatus,
+  TeacherSalary,
   UpdateTeacherInput,
 } from "../type";
 
@@ -22,18 +27,25 @@ const TEACHER_STATUS_STYLE: Record<TeacherStatus, string> = {
   RESIGNED: "bg-slate-100 text-slate-400",
 };
 
-const CLASS_STATUS_LABEL: Record<ClassStatus, string> = {
-  OPEN: "진행중",
-  CLOSED: "종료",
-};
-
 const SALARY_STATUS_LABEL: Record<SalaryStatus, string> = {
   PENDING: "지급 대기",
-  COMPLETE: "지급 완료",
+  COMPLETED: "지급 완료",
+};
+
+const SALARY_STATUS_STYLE: Record<SalaryStatus, string> = {
+  PENDING: "bg-amber-50 text-amber-600",
+  COMPLETED: "bg-[#0069A8]/10 text-[#0069A8]",
 };
 
 function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
+}
+
+interface SalaryFormState {
+  baseSalary: string;
+  bonus: string;
+  paymentDate: string;
+  status: SalaryStatus;
 }
 
 function Card({
@@ -65,8 +77,18 @@ interface TeacherDetailProps {
 export default function TeacherDetail({ id }: TeacherDetailProps) {
   const { data: teacher, isLoading, error } = useTeacherDetail(id);
   const { mutate: updateTeacher, isPending } = useUpdateTeacher();
+  const { mutate: createSalary, isPending: isCreatingSalary } = useCreateTeacherSalary();
+  const { mutate: updateSalary, isPending: isUpdatingSalary } = useUpdateTeacherSalary();
+  const isSavingSalary = isCreatingSalary || isUpdatingSalary;
+
   const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState<UpdateTeacherInput | null>(null);
+
+  // 급여는 여러 건(PENDING 다건 포함)일 수 있어 리스트로 보여주고,
+  // 클릭해서 들어간 개별 레코드만 수정한다.
+  const [salaryFormMode, setSalaryFormMode] = useState<"list" | "create" | "edit">("list");
+  const [editingSalaryId, setEditingSalaryId] = useState<string | null>(null);
+  const [salaryForm, setSalaryForm] = useState<SalaryFormState | null>(null);
 
   if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
   if (error || !teacher)
@@ -95,6 +117,55 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
       { id, data: form },
       { onSuccess: () => setIsEditing(false) },
     );
+  }
+
+  function openCreateSalary() {
+    setSalaryForm({ baseSalary: "", bonus: "", paymentDate: "", status: "PENDING" });
+    setEditingSalaryId(null);
+    setSalaryFormMode("create");
+  }
+
+  function openEditSalary(salary: TeacherSalary) {
+    setSalaryForm({
+      baseSalary: String(salary.baseSalary),
+      bonus: String(salary.bonus),
+      paymentDate: salary.paymentDate ?? "",
+      status: salary.status,
+    });
+    setEditingSalaryId(salary.id);
+    setSalaryFormMode("edit");
+  }
+
+  function closeSalaryForm() {
+    setSalaryFormMode("list");
+    setSalaryForm(null);
+    setEditingSalaryId(null);
+  }
+
+  function handleSaveSalary() {
+    if (!salaryForm) return;
+    const payload = {
+      baseSalary: Number(salaryForm.baseSalary) || 0,
+      bonus: Number(salaryForm.bonus) || 0,
+      paymentDate: salaryForm.paymentDate || undefined,
+    };
+
+    if (salaryFormMode === "edit" && editingSalaryId) {
+      // 리스트에서 클릭해 들어간 그 레코드를 직접 수정 (지급여부 포함)
+      updateSalary(
+        {
+          salaryId: editingSalaryId,
+          userId: id,
+          data: { ...payload, status: salaryForm.status },
+        },
+        { onSuccess: closeSalaryForm },
+      );
+    } else {
+      createSalary(
+        { userId: id, ...payload },
+        { onSuccess: closeSalaryForm },
+      );
+    }
   }
 
   return (
@@ -153,20 +224,50 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
         </Card>
 
         <Card className="p-6">
-          <CardTitle>급여</CardTitle>
-          {!teacher.salary ? (
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-[13px] font-semibold text-slate-800">
+              급여 {salaryFormMode === "list" && `(${teacher.salaries.length})`}
+            </h2>
+            {salaryFormMode === "list" }
+          </div>
+
+          {salaryFormMode !== "list" && salaryForm ? (
+            <SalaryEditForm
+              form={salaryForm}
+              onChange={setSalaryForm}
+              onSave={handleSaveSalary}
+              onCancel={closeSalaryForm}
+              isSaving={isSavingSalary}
+              showStatus={salaryFormMode === "edit"}
+            />
+          ) : teacher.salaries.length === 0 ? (
             <p className="text-[13px] text-slate-400">급여 정보가 없습니다.</p>
           ) : (
-            <dl className="grid grid-cols-[80px_1fr] gap-y-3 text-[13px]">
-              <dt className="text-slate-400">기본급</dt>
-              <dd className="text-slate-700">{formatWon(teacher.salary.baseSalary)}</dd>
-              <dt className="text-slate-400">보너스</dt>
-              <dd className="text-slate-700">{formatWon(teacher.salary.bonus)}</dd>
-              <dt className="text-slate-400">지급일</dt>
-              <dd className="text-slate-700">{teacher.salary.paymentDate ?? "-"}</dd>
-              <dt className="text-slate-400">상태</dt>
-              <dd className="text-slate-700">{SALARY_STATUS_LABEL[teacher.salary.status]}</dd>
-            </dl>
+            <ul className="space-y-2">
+              {teacher.salaries.map((salary) => (
+                <li key={salary.id}>
+                  <button
+                    onClick={() => openEditSalary(salary)}
+                    className="w-full rounded border border-slate-200 p-3 text-left transition-colors hover:bg-slate-50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] font-medium text-slate-800">
+                        {formatWon(salary.baseSalary)}
+                        {salary.bonus > 0 && (
+                          <span className="text-slate-400"> + {formatWon(salary.bonus)}</span>
+                        )}
+                      </span>
+                      <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${SALARY_STATUS_STYLE[salary.status]}`}>
+                        {SALARY_STATUS_LABEL[salary.status]}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-[11.5px] text-slate-400">
+                      지급일 {salary.paymentDate ?? "-"}
+                    </p>
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
         </Card>
       </div>
@@ -192,7 +293,7 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
                   <td className="py-2.5 text-slate-700">{cls.name}</td>
                   <td className="py-2.5 text-right text-slate-600">{formatWon(cls.fee)}</td>
                   <td className="py-2.5 text-right text-slate-600">{cls.studentCount}명</td>
-                  <td className="py-2.5 text-center text-slate-500">{CLASS_STATUS_LABEL[cls.status]}</td>
+                  <td className="py-2.5 text-center text-slate-500">{cls.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -301,6 +402,88 @@ function TeacherEditForm({
           />
         </Field>
       </div>
+
+      <div className="flex justify-end gap-2 pt-1">
+        <button
+          onClick={onCancel}
+          disabled={isSaving}
+          className="rounded border border-slate-200 px-3 py-1.5 text-[12px] text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50"
+        >
+          취소
+        </button>
+        <button
+          onClick={onSave}
+          disabled={isSaving}
+          className="rounded bg-[#0069A8] px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-[#005a8e] disabled:opacity-50"
+        >
+          {isSaving ? "저장 중..." : "저장"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface SalaryEditFormProps {
+  form: SalaryFormState;
+  onChange: (form: SalaryFormState) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  isSaving: boolean;
+  // 리스트에서 기존 레코드를 클릭해 들어온 경우에만 지급여부도 함께 수정 가능.
+  // 새로 등록하는 경우엔 생성 API가 지급여부를 안 받으므로 숨긴다.
+  showStatus: boolean;
+}
+
+function SalaryEditForm({
+  form,
+  onChange,
+  onSave,
+  onCancel,
+  isSaving,
+  showStatus,
+}: SalaryEditFormProps) {
+  function set<K extends keyof SalaryFormState>(key: K, value: SalaryFormState[K]) {
+    onChange({ ...form, [key]: value });
+  }
+
+  return (
+    <div className="space-y-3">
+      <Field label="기본급">
+        <input
+          type="number"
+          value={form.baseSalary}
+          onChange={(e) => set("baseSalary", e.target.value)}
+          className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+        />
+      </Field>
+      <Field label="보너스">
+        <input
+          type="number"
+          value={form.bonus}
+          onChange={(e) => set("bonus", e.target.value)}
+          className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+        />
+      </Field>
+      <Field label="지급일">
+        <input
+          type="date"
+          value={form.paymentDate}
+          onChange={(e) => set("paymentDate", e.target.value)}
+          className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+        />
+      </Field>
+      {showStatus && (
+        <Field label="지급 여부">
+          <select
+            value={form.status}
+            onChange={(e) => set("status", e.target.value as SalaryStatus)}
+            className="h-8 w-full rounded border border-slate-300 px-2.5 text-[12.5px] outline-none focus:border-[#0069A8]"
+          >
+            <option value="PENDING">지급 대기</option>
+            <option value="COMPLETED">지급 완료</option>
+          </select>
+        </Field>
+      )}
 
       <div className="flex justify-end gap-2 pt-1">
         <button

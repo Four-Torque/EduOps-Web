@@ -4,8 +4,16 @@ import {
   fetchTeacherDetail,
   deleteTeacher,
   updateTeacher,
+  createTeacherSalary,
+  updateTeacherSalary,
+  payTeacherSalary,
 } from "./api";
-import type { TeacherListItem, TeacherDetail, UpdateTeacherInput } from "./type";
+import type {
+  TeacherListItem,
+  TeacherDetail,
+  UpdateTeacherInput,
+  SalaryStatus,
+} from "./type";
 
 export const teacherQueryKeys = {
   all: () => ["manager", "teacher"] as const,
@@ -84,6 +92,60 @@ export function useUpdateTeacher() {
     // 성공/실패 무관하게 서버와 최종 동기화
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: teacherQueryKeys.all() });
+    },
+  });
+}
+
+export function useCreateTeacherSalary() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      userId: string;
+      baseSalary: number;
+      bonus: number;
+      paymentDate?: string;
+    }) => createTeacherSalary(data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: teacherQueryKeys.detail(variables.userId),
+      });
+    },
+  });
+}
+
+export function useUpdateTeacherSalary() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      salaryId,
+      data,
+    }: {
+      salaryId: string;
+      userId: string;
+      data: {
+        baseSalary?: number;
+        bonus?: number;
+        paymentDate?: string;
+        status?: SalaryStatus;
+      };
+    }) => updateTeacherSalary(salaryId, data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: teacherQueryKeys.detail(variables.userId),
+      });
+    },
+  });
+}
+
+export function usePayTeacherSalary() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ salaryId }: { salaryId: string; userId: string }) =>
+      payTeacherSalary(salaryId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: teacherQueryKeys.detail(variables.userId),
+      });
     },
   });
 }

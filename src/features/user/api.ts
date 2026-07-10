@@ -47,6 +47,7 @@ interface ApiPaginatedClass {
 }
 
 interface ApiSalary {
+  id: string;
   baseSalary: number;
   bonus: number;
   paymentDate: string | null;
@@ -115,7 +116,7 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
         params: { userId: id, status: "PENDING" },
       }),
       apiClient.get<{ body: ApiSalary[] }>("/salary", {
-        params: { userId: id, status: "COMPLETE" },
+        params: { userId: id, status: "COMPLETED" },
       }),
       apiClient.get<{ body: ApiStaffAttendance[] }>("/staff-attendance", {
         params: { userId: id },
@@ -135,9 +136,11 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
         }))
       : [];
 
-  // status가 필수 파라미터라 PENDING/COMPLETE 두 번 조회 후, 가장 최근 건을 현재 급여로 사용.
+  // status가 필수 파라미터라 PENDING/COMPLETED를 각각 조회해 합친다.
+  // 한 강사에게 PENDING이 여러 건 있을 수 있어 "현재 급여" 하나를 고르지 않고
+  // 전부 목록으로 반환한다 (최신순으로 정렬만 해서 보여준다).
   // 둘 중 하나라도 실패하면 성공한 쪽만으로 계산한다.
-  const salaries = [
+  const rawSalaries = [
     ...(pendingSalaryRes.status === "fulfilled"
       ? pendingSalaryRes.value.data.body
       : []),
@@ -145,17 +148,16 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
       ? completeSalaryRes.value.data.body
       : []),
   ];
-  const latestSalary = salaries.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-  )[0];
-  const salary: TeacherSalary | null = latestSalary
-    ? {
-        baseSalary: latestSalary.baseSalary,
-        bonus: latestSalary.bonus,
-        paymentDate: toDateOnly(latestSalary.paymentDate),
-        status: latestSalary.status,
-      }
-    : null;
+  const salaries: TeacherSalary[] = rawSalaries
+    .slice()
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .map((s) => ({
+      id: s.id,
+      baseSalary: s.baseSalary,
+      bonus: s.bonus,
+      paymentDate: toDateOnly(s.paymentDate),
+      status: s.status,
+    }));
 
   const recentAttendance: TeacherAttendanceRecord[] =
     attendanceRes.status === "fulfilled"
@@ -173,7 +175,7 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
   return {
     ...toTeacherListItem(user),
     classes,
-    salary,
+    salaries,
     recentAttendance,
   };
 }
@@ -200,4 +202,48 @@ export async function updateTeacher(
     joinedAt: data.hireDate ? new Date(data.hireDate).toISOString() : undefined,
     resignedAt: data.leaveDate ? new Date(data.leaveDate).toISOString() : null,
   });
+}
+
+// 급여 이력이 아예 없는 강사에게 최초 급여를 등록할 때만 사용 (급여 지급일에 실제로
+// 지급되는 것과 무관하게, 지급 예정 정보를 하나 만드는 것). 이미 레코드가 있으면
+// updateTeacherSalary로 그 레코드를 직접 수정해야 한다.
+export async function createTeacherSalary(data: {
+  userId: string;
+  baseSalary: number;
+  bonus: number;
+  paymentDate?: string;
+}): Promise<void> {
+  await apiClient.post("/salary", {
+    userId: data.userId,
+    baseSalary: data.baseSalary,
+    bonus: data.bonus,
+    paymentDate: data.paymentDate
+      ? new Date(data.paymentDate).toISOString()
+      : undefined,
+  });
+}
+
+// 기존 급여 지급 정보를 직접 수정한다 (지급일이 되기 전 금액/지급일/지급여부를 정정하는 용도).
+export async function updateTeacherSalary(
+  salaryId: string,
+  data: {
+    baseSalary?: number;
+    bonus?: number;
+    paymentDate?: string;
+    status?: SalaryStatus;
+  },
+): Promise<void> {
+  await apiClient.patch(`/salary/${salaryId}`, {
+    baseSalary: data.baseSalary,
+    bonus: data.bonus,
+    paymentDate: data.paymentDate
+      ? new Date(data.paymentDate).toISOString()
+      : undefined,
+    status: data.status,
+  });
+}
+
+// 급여를 실제로 지급 완료 처리한다 (PENDING → COMPLETED, 되돌릴 수 없음).
+export async function payTeacherSalary(salaryId: string): Promise<void> {
+  await apiClient.patch(`/salary/${salaryId}/pay`);
 }

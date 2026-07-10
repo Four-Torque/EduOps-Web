@@ -34,7 +34,7 @@ export interface DirectorUserListResponse {
 
 export type TeacherStatus = "WORKING" | "RESIGNED" | "ON_LEAVE"; // 재직, 휴직, 퇴사
 export type ClassStatus = "OPEN" | "CLOSED";
-export type SalaryStatus = "PENDING" | "COMPLETE";
+export type SalaryStatus = "PENDING" | "COMPLETED";
 
 export interface Teacher {
   id: string;
@@ -59,6 +59,7 @@ export interface TeacherClass {
 
 // 급여 (GET /salary?userId=&status=)
 export interface TeacherSalary {
+  id: string; // PATCH /salary/{id}로 이 레코드를 직접 수정할 때 필요
   baseSalary: number;
   bonus: number;
   paymentDate: string | null;
@@ -78,10 +79,10 @@ export interface TeacherListItem extends Teacher {
   studentCount: number;
 }
 
-// 상세: 기본 정보 + 담당 강좌 + 급여 + 최근 근태 (여러 API를 조합해 구성)
+// 상세: 기본 정보 + 담당 강좌 + 급여 목록 + 최근 근태 (여러 API를 조합해 구성)
 export interface TeacherDetail extends Teacher {
   classes: TeacherClass[];
-  salary: TeacherSalary | null;
+  salaries: TeacherSalary[]; // 한 강사에게 PENDING이 여러 건 있을 수 있어 배열로 관리
   recentAttendance: TeacherAttendanceRecord[];
 }
 
