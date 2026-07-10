@@ -40,6 +40,8 @@ function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
 }
 
+const ATTENDANCE_PAGE_SIZE = 10;
+
 interface SalaryFormState {
   baseSalary: string;
   bonus: string;
@@ -84,6 +86,8 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
   const [isEditingSalary, setIsEditingSalary] = useState(false);
   const [editingSalaryId, setEditingSalaryId] = useState<string | null>(null);
   const [salaryForm, setSalaryForm] = useState<SalaryFormState | null>(null);
+
+  const [attendancePage, setAttendancePage] = useState(1);
 
   if (isLoading) return <div className="text-sm text-slate-400">불러오는 중...</div>;
   if (error || !teacher)
@@ -251,35 +255,6 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
         </Card>
       </div>
 
-      {/* 담당 강좌 */}
-      <Card className="p-6">
-        <CardTitle>담당 강좌 ({teacher.classes.length})</CardTitle>
-        {teacher.classes.length === 0 ? (
-          <p className="text-[13px] text-slate-400">담당 중인 강좌가 없습니다.</p>
-        ) : (
-          <table className="w-full text-[13px]">
-            <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-400">
-                <th className="pb-2.5 font-medium">강좌명</th>
-                <th className="pb-2.5 font-medium text-right">수강료</th>
-                <th className="pb-2.5 font-medium text-right">원생 수</th>
-                <th className="pb-2.5 font-medium text-center">상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              {teacher.classes.map((cls) => (
-                <tr key={cls.id} className="border-b border-slate-50 last:border-0">
-                  <td className="py-2.5 text-slate-700">{cls.name}</td>
-                  <td className="py-2.5 text-right text-slate-600">{formatWon(cls.fee)}</td>
-                  <td className="py-2.5 text-right text-slate-600">{cls.studentCount}명</td>
-                  <td className="py-2.5 text-center text-slate-500">{cls.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </Card>
-
       {/* 최근 근태 */}
       <Card className="p-6">
         <CardTitle>최근 근태</CardTitle>
@@ -295,13 +270,18 @@ export default function TeacherDetail({ id }: TeacherDetailProps) {
               </tr>
             </thead>
             <tbody>
-              {teacher.recentAttendance.map((record) => (
-                <tr key={record.workDate} className="border-b border-slate-50 last:border-0">
-                  <td className="py-2.5 text-slate-700">{record.workDate}</td>
-                  <td className="py-2.5 text-center text-slate-600">{record.checkInTime ?? "-"}</td>
-                  <td className="py-2.5 text-center text-slate-600">{record.checkOutTime ?? "-"}</td>
-                </tr>
-              ))}
+              {teacher.recentAttendance
+                .slice(
+                  (attendancePage - 1) * ATTENDANCE_PAGE_SIZE,
+                  attendancePage * ATTENDANCE_PAGE_SIZE,
+                )
+                .map((record) => (
+                  <tr key={record.workDate} className="border-b border-slate-50 last:border-0">
+                    <td className="py-2.5 text-slate-700">{record.workDate}</td>
+                    <td className="py-2.5 text-center text-slate-600">{record.checkInTime ?? "-"}</td>
+                    <td className="py-2.5 text-center text-slate-600">{record.checkOutTime ?? "-"}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         )}

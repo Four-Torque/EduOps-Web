@@ -44,16 +44,6 @@ export const getTeacherColumns = ({
   },
   { key: "email", label: "이메일", type: "text" },
   { key: "phone", label: "연락처", type: "text" },
-  {
-    key: "classCount",
-    label: "담당 강좌",
-    render: (item) => `${item.classCount}개`,
-  },
-  {
-    key: "studentCount",
-    label: "담당 원생",
-    render: (item) => `${item.studentCount}명`,
-  },
   { key: "hireDate", label: "근무 시작일", type: "date" },
   {
     key: "status",
