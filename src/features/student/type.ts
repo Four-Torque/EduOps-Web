@@ -1,21 +1,14 @@
 export type StudentStatus = "active" | "inactive";
-export type StudentTabFilter = "active" | "waiting" | "graduated";
+export type StudentTabFilter = "전체" | "학생" | "대기자" | "졸업생 / 비활동 회원";
 
 export interface Student {
   id: string;
   name: string;
   avatarInitial: string;
-  studentCode: string;
   birthDate: string;
-  classInfo: string;
+  address: string;
   Phonenumber: string;
-  status: "active" | "inactive" | "pending";
-}
-
-export interface StudentListResponse {
-  items: Student[];
-  totalItems: number;
-  totalPages: number;
+  status: StudentStatus;
 }
 
 export interface StudentStats {
@@ -25,20 +18,17 @@ export interface StudentStats {
   waitingConsultations: number;
 }
 
+export interface StudentListResponse {
+  data: Student[];
+  total: number;
+  totalPages: number;
+}
+
 export interface StudentRegisterFormState {
   name: string;
   birthDate: string;
   phone: string;
-  grade: string;
-  classId: string;
-  status: "active" | "inactive" | "pending";
-}
-
-export type StudentRegisterFormErrors = Partial<
-  Record<keyof StudentRegisterFormState, string>
->;
-
-export interface ClassOption {
-  id: string;
-  name: string;
+  address: string;
+  addressDetail: string;
+  status: StudentStatus;
 }

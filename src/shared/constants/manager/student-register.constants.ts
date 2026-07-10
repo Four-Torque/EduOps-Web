@@ -1,6 +1,8 @@
-import type { ClassOption } from "@/types/manager/student-register.types";
+export interface ClassOption {
+  id: string;
+  name: string;
+}
 
-// TODO: 실제 반 목록 API 연동 시 교체
 export const MOCK_CLASS_OPTIONS: ClassOption[] = [
   { id: "class-1", name: "수능대비 영어반"   },
   { id: "class-2", name: "기초튼튼 수학반"   },
@@ -9,6 +11,6 @@ export const MOCK_CLASS_OPTIONS: ClassOption[] = [
 ];
 
 export const STUDENT_STATUS_OPTIONS = [
-  { label: "Active",   value: "active"   },
-  { label: "Inactive", value: "inactive" },
+  { label: "재학중", value: "active"   },
+  { label: "비활동", value: "inactive" },
 ];

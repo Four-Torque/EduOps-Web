@@ -1,147 +1,97 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { Student, StudentTabFilter } from "@/features/student/type";
-import {
-  StudentRegisterFormState,
-  StudentRegisterFormErrors,
-} from "@/types/manager/student-register.types";
+import type { StudentTabFilter, StudentStatus, StudentRegisterFormState } from "./type";
+
+// ─── Student Store ────────────────────────────────────────────────────────────
 
 interface StudentUIState {
   tab: StudentTabFilter;
   searchQuery: string;
-  page: number;
-  selectedIds: string[];
+  editingStudentId: string | null;
 
   setTab: (tab: StudentTabFilter) => void;
   setSearchQuery: (query: string) => void;
-  setPage: (page: number) => void;
-  toggleSelect: (id: string) => void;
-  toggleSelectAll: (ids: string[]) => void;
-  clearSelection: () => void;
+  onEditOpen: (id: string) => void;
+  onEditClose: () => void;
 }
 
 export const useStudentStore = create<StudentUIState>()(
   devtools(
     (set) => ({
-      tab: "active",
+      tab: "전체",
       searchQuery: "",
-      page: 1,
-      selectedIds: [],
+      editingStudentId: null,
 
       setTab: (tab) =>
-        set({ tab, page: 1, selectedIds: [] }, false, "student/set-tab"),
+        set({ tab }, false, "student/set-tab"),
 
       setSearchQuery: (searchQuery) =>
-        set({ searchQuery, page: 1 }, false, "student/set-search-query"),
+        set({ searchQuery }, false, "student/set-search-query"),
 
-      setPage: (page) => set({ page }, false, "student/set-page"),
+      onEditOpen: (id) =>
+        set({ editingStudentId: id }, false, "student/on-edit-open"),
 
-      toggleSelect: (id: string) =>
-        set(
-          (state) => ({
-            selectedIds: state.selectedIds.includes(id)
-              ? state.selectedIds.filter((x) => x !== id)
-              : [...state.selectedIds, id],
-          }),
-          false,
-          "student/toggle-select",
-        ),
-
-      toggleSelectAll: (ids: string[]) =>
-        set(
-          (state) => {
-            const allSelected = ids.every((id) =>
-              state.selectedIds.includes(id),
-            );
-            return { selectedIds: allSelected ? [] : [...ids] };
-          },
-          false,
-          "student/toggle-select-all",
-        ),
-
-      clearSelection: () =>
-        set({ selectedIds: [] }, false, "student/clear-selection"),
+      onEditClose: () =>
+        set({ editingStudentId: null }, false, "student/on-edit-close"),
     }),
     { name: "StudentStore" },
   ),
 );
 
-interface StudentEditStore {
-  isOpen: boolean;
-  student: Student | null;
-  openModal: (student: Student) => void;
-  closeModal: () => void;
-}
+// ─── Student Register Store ───────────────────────────────────────────────────
 
-export const useStudentEditStore = create<StudentEditStore>((set) => ({
-  isOpen: false,
-  student: null,
-  openModal: (student) => set({ isOpen: true, student }),
-  closeModal: () => set({ isOpen: false, student: null }),
-}));
+const INITIAL_FORM: StudentRegisterFormState = {
+  name:          "",
+  birthDate:     "",
+  phone:         "",
+  address:       "",
+  addressDetail: "",
+  status:        "active",
+};
 
 interface StudentRegisterUIState {
   isModalOpen: boolean;
-  form: StudentRegisterFormState;
-  errors: StudentRegisterFormErrors;
-  mode: "register" | "edit";
-  editStudentId: string | null;
+  editingId:   string | null;
+  form:        StudentRegisterFormState;
+  errors:      Partial<Record<keyof StudentRegisterFormState, string>>;
 
-  openModal: (
-    initialData?: Partial<StudentRegisterFormState>,
-    studentId?: string,
-  ) => void; // ← 변경
+  openModal:  (form?: Partial<StudentRegisterFormState>, id?: string) => void;
   closeModal: () => void;
-  setField: (field: keyof StudentRegisterFormState, value: string) => void;
-  setErrors: (errors: StudentRegisterFormErrors) => void;
-  resetForm: () => void;
+  setField:   (field: keyof StudentRegisterFormState, value: string) => void;
+  setErrors:  (errors: Partial<Record<keyof StudentRegisterFormState, string>>) => void;
 }
-
-const INITIAL_FORM: StudentRegisterFormState = {
-  name: "",
-  birthDate: "",
-  phone: "",
-  grade: "",
-  classId: "",
-  status: "active",
-};
 
 export const useStudentRegisterStore = create<StudentRegisterUIState>()(
   devtools(
     (set) => ({
       isModalOpen: false,
-      form: INITIAL_FORM,
-      errors: {},
+      editingId:   null,
+      form:        INITIAL_FORM,
+      errors:      {},
 
-      openModal: (initialData?, studentId?) =>
+      openModal: (form, id) =>
         set(
           {
             isModalOpen: true,
-            mode: initialData ? "edit" : "register", // ← 추가
-            editStudentId: studentId ?? null, // ← 추가
-            form: { ...INITIAL_FORM, ...initialData },
+            form:        form ? { ...INITIAL_FORM, ...form } : INITIAL_FORM,
+            editingId:   id ?? null,
+            errors:      {},
           },
           false,
-          "student-register/open-modal",
+          "student-register/open",
         ),
 
       closeModal: () =>
         set(
-          {
-            isModalOpen: false,
-            form: INITIAL_FORM,
-            errors: {},
-            mode: "register",
-            editStudentId: null,
-          },
+          { isModalOpen: false, form: INITIAL_FORM, editingId: null, errors: {} },
           false,
-          "student-register/close-modal",
+          "student-register/close",
         ),
 
       setField: (field, value) =>
         set(
           (state) => ({
-            form: { ...state.form, [field]: value },
+            form:   { ...state.form, [field]: value },
             errors: { ...state.errors, [field]: undefined },
           }),
           false,
@@ -150,13 +100,6 @@ export const useStudentRegisterStore = create<StudentRegisterUIState>()(
 
       setErrors: (errors) =>
         set({ errors }, false, "student-register/set-errors"),
-
-      resetForm: () =>
-        set(
-          { form: INITIAL_FORM, errors: {} },
-          false,
-          "student-register/reset-form",
-        ),
     }),
     { name: "StudentRegisterStore" },
   ),

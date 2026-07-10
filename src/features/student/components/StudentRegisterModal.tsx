@@ -25,8 +25,6 @@ function validateForm(form: StudentRegisterFormState) {
   if (!form.name.trim()) errors.name = "이름을 입력해주세요.";
   if (!form.birthDate.trim()) errors.birthDate = "생년월일을 입력해주세요.";
   if (!form.phone.trim()) errors.phone = "핸드폰 번호를 입력해주세요.";
-  if (!form.grade.trim()) errors.grade = "학년을 입력해주세요.";
-  if (!form.classId) errors.classId = "수업을 선택해주세요.";
 
   return errors;
 }
@@ -102,14 +100,7 @@ export function StudentRegisterModal() {
                 />
               </FormField>
 
-              <FormField label="학년" error={errors.grade}>
-                <Input
-                  value={form.grade}
-                  onChange={(e) => setField("grade", e.target.value)}
-                  placeholder="예: 3년"
-                  className="text-[12.5px]"
-                />
-              </FormField>
+          
             </div>
 
             {/* 핸드폰 번호 */}
@@ -120,29 +111,6 @@ export function StudentRegisterModal() {
                 placeholder="010-1234-5678"
                 className="text-[12.5px]"
               />
-            </FormField>
-
-            {/* 수업명 Select */}
-            <FormField label="수업명" error={errors.classId}>
-              <Select
-                value={form.classId}
-                onValueChange={(value) => setField("classId", value)}
-              >
-                <SelectTrigger className="w-full text-[12.5px]" size="default">
-                  <SelectValue placeholder="수업을 선택해주세요" />
-                </SelectTrigger>
-                <SelectContent>
-                  {MOCK_CLASS_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={option.id}
-                      value={option.id}
-                      className="text-[12.5px]"
-                    >
-                      {option.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </FormField>
 
             {/* 상태 Select */}
