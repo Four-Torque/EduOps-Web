@@ -33,7 +33,6 @@ export interface DirectorUserListResponse {
 // id는 백엔드(UUID 문자열) 기준을 따른다.
 
 export type TeacherStatus = "WORKING" | "RESIGNED" | "ON_LEAVE"; // 재직, 휴직, 퇴사
-export type ClassStatus = "OPEN" | "CLOSED";
 export type SalaryStatus = "PENDING" | "COMPLETED";
 
 export interface Teacher {
@@ -44,17 +43,6 @@ export interface Teacher {
   status: TeacherStatus;
   hireDate: string; // 근무 시작일 (YYYY-MM-DD)
   leaveDate: string | null; // 퇴사일 (재직 중이면 null)
-}
-
-// 담당 강좌 (GET /class?teacherId=)
-export interface TeacherClass {
-  id: string;
-  name: string;
-  fee: number;
-  status: ClassStatus;
-  startDate: string | null;
-  endDate: string | null;
-  studentCount: number;
 }
 
 // 급여 (GET /salary?userId=&status=)
@@ -73,15 +61,11 @@ export interface TeacherAttendanceRecord {
   checkOutTime: string | null;
 }
 
-// 목록 행: 기본 정보 + 집계값
-export interface TeacherListItem extends Teacher {
-  classCount: number;
-  studentCount: number;
-}
+// 목록 행: 기본 정보
+export type TeacherListItem = Teacher;
 
-// 상세: 기본 정보 + 담당 강좌 + 급여 목록 + 최근 근태 (여러 API를 조합해 구성)
+// 상세: 기본 정보 + 급여 목록 + 최근 근태 (여러 API를 조합해 구성)
 export interface TeacherDetail extends Teacher {
-  classes: TeacherClass[];
   salaries: TeacherSalary[]; // 한 강사에게 PENDING이 여러 건 있을 수 있어 배열로 관리
   recentAttendance: TeacherAttendanceRecord[];
 }

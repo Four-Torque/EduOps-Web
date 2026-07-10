@@ -3,11 +3,9 @@ import type {
   TeacherListItem,
   TeacherDetail,
   TeacherStatus,
-  TeacherClass,
   TeacherSalary,
   TeacherAttendanceRecord,
   UpdateTeacherInput,
-  ClassStatus,
   SalaryStatus,
 } from "./type";
 
@@ -28,22 +26,6 @@ interface ApiPaginatedUser {
   total: number;
   page: number;
   data: ApiUser[];
-}
-
-interface ApiClass {
-  id: string;
-  name: string;
-  fee: number;
-  status: ClassStatus;
-  startDate: string | null;
-  endDate: string | null;
-  currentStudents: number;
-}
-
-interface ApiPaginatedClass {
-  page: number;
-  total: number;
-  data: ApiClass[];
 }
 
 interface ApiSalary {
@@ -78,10 +60,6 @@ function toTeacherListItem(user: ApiUser): TeacherListItem {
     status: user.employmentStatus,
     hireDate: toDateOnly(user.joinedAt) ?? "",
     leaveDate: toDateOnly(user.resignedAt),
-    // 담당 강좌/원생 수는 이 목록 API가 제공하지 않는다.
-    // TODO: 백엔드가 집계값을 내려주면 그대로 매핑, 그전까지는 0으로 표시
-    classCount: 0,
-    studentCount: 0,
   };
 }
 
@@ -102,16 +80,13 @@ export async function fetchTeachers(): Promise<TeacherListItem[]> {
 }
 
 export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
-  // 기본 정보(user)는 필수, 나머지(강좌/급여/근태)는 개별 API 장애가 상세 조회 전체를
+  // 기본 정보(user)는 필수, 나머지(급여/근태)는 개별 API 장애가 상세 조회 전체를
   // 막지 않도록 allSettled로 조회해 실패 시 빈 값으로 대체한다.
   const userRes = await apiClient.get<{ body: ApiUser }>(`/user/${id}`);
   const user = userRes.data.body;
 
-  const [classRes, pendingSalaryRes, completeSalaryRes, attendanceRes] =
+  const [pendingSalaryRes, completeSalaryRes, attendanceRes] =
     await Promise.allSettled([
-      apiClient.get<{ body: ApiPaginatedClass }>("/class", {
-        params: { teacherId: id, limit: 100 },
-      }),
       apiClient.get<{ body: ApiSalary[] }>("/salary", {
         params: { userId: id, status: "PENDING" },
       }),
@@ -122,19 +97,6 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
         params: { userId: id },
       }),
     ]);
-
-  const classes: TeacherClass[] =
-    classRes.status === "fulfilled"
-      ? classRes.value.data.body.data.map((cls) => ({
-          id: cls.id,
-          name: cls.name,
-          fee: cls.fee,
-          status: cls.status,
-          startDate: toDateOnly(cls.startDate),
-          endDate: toDateOnly(cls.endDate),
-          studentCount: cls.currentStudents,
-        }))
-      : [];
 
   // status가 필수 파라미터라 PENDING/COMPLETED를 각각 조회해 합친다.
   // 한 강사에게 PENDING이 여러 건 있을 수 있어 "현재 급여" 하나를 고르지 않고
@@ -164,7 +126,6 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
       ? attendanceRes.value.data.body
           .slice()
           .sort((a, b) => b.workDate.localeCompare(a.workDate))
-          .slice(0, 5)
           .map((record) => ({
             workDate: record.workDate,
             checkInTime: toTimeOnly(record.checkInTime),
@@ -174,7 +135,6 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
 
   return {
     ...toTeacherListItem(user),
-    classes,
     salaries,
     recentAttendance,
   };

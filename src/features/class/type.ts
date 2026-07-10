@@ -20,6 +20,16 @@ export interface CourseListResponse {
   totalPages: number;
 }
 
+// 강좌 안에 중첩된 요일 반복 시간표 1칸 (GET /class 응답의 schedules[])
+export interface ClassSchedule {
+  id: string;
+  classId: string;
+  dayOfWeek: number; // 0(일) ~ 6(토)
+  startTime: string; // "HH:mm"
+  endTime: string; // "HH:mm"
+  room: string;
+}
+
 export interface ClassInfo {
   id: string;
   teacherId: string;
@@ -31,6 +41,7 @@ export interface ClassInfo {
   status: "OPEN" | "CLOSED";
   createdAt: string;
   updatedAt: string;
+  schedules: ClassSchedule[];
 }
 
 export interface PaginatedClassResponse {
