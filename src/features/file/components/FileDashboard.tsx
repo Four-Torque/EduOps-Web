@@ -25,7 +25,7 @@ export function FileDashboard() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-4">
       <FileFilterBar
         teacherId={user ? user.id : ""}
         classId={classId} 

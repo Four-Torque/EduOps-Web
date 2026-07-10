@@ -1,15 +1,3 @@
-export type FileFormat = "PDF" | "PPT" | "DOC" | "XLS" | "IMAGE" | "ETC";
-
-export type FileItem = {
-  id: string;
-  fileName: string;
-  className: string;
-  format: FileFormat;
-  size: number; 
-  uploadedAt: string;
-  uploaderId?: string;
-  uploaderName?: string;
-};
 
 export interface ClassFileResponse {
   id: string;

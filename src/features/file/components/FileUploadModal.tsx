@@ -1,19 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { UploadCloud } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/shared/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/shared/components/ui/dialog";
+import { CardModal } from "@/shared/components/CardModal";
 import { Input } from "@/shared/components/ui/input";
 import {
   Select,
@@ -39,6 +31,7 @@ export function FileUploadModal() {
   const { data: classData, isLoading: isClassesLoading } = useQuery({
     queryKey: ["classes"],
     queryFn: () => fetchTeacherClasses(teacherId),
+    enabled: !!teacherId && open,
   });
   
   const classes = classData?.data || [];
@@ -72,21 +65,30 @@ export function FileUploadModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <UploadCloud className="size-4" />
-          파일 업로드
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>파일 업로드</DialogTitle>
-          <DialogDescription>
-            새로운 수업 자료를 업로드합니다.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col gap-4 py-4">
+    <>
+      <Button className="gap-2" onClick={() => setOpen(true)}>
+        <UploadCloud className="size-4" />
+        파일 업로드
+      </Button>
+
+      <CardModal
+        open={open}
+        onOpenChange={setOpen}
+        title="파일 업로드"
+        description="새로운 수업 자료를 업로드합니다."
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+              취소
+            </Button>
+            <Button onClick={handleUpload} disabled={isLoading || !classId || !file}>
+              {isLoading ? "업로드 중..." : "업로드 완료"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="class">대상 클래스</Label>
             <Select value={classId} onValueChange={setClassId} disabled={isClassesLoading}>
@@ -117,15 +119,7 @@ export function FileUploadModal() {
             />
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
-            취소
-          </Button>
-          <Button onClick={handleUpload} disabled={isLoading || !classId || !file}>
-            {isLoading ? "업로드 중..." : "업로드 완료"}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </CardModal>
+    </>
   );
 }

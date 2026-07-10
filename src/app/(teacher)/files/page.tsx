@@ -3,8 +3,8 @@ import { FileDashboard } from "@/features/file/components/FileDashboard";
 
 export default function FilesPage() {
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-end">
+    <div className="flex flex-col gap-4 p-8">
+      <div className="flex items-center justify-end">
         <FileUploadModal />
       </div>
       

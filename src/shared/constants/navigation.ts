@@ -23,6 +23,7 @@ export const NAV_IDS = [
   "student-attendance",
   "class-files",
   "grade",
+  "syllabus"
 ] as const;
 
 export type NavId = (typeof NAV_IDS)[number];
@@ -126,8 +127,13 @@ export const TEACHER_NAV: NavItem[] = [
   {
     id: "grade",
     label: "성적 관리",
-    children: [{ label: "원생 수업 테스트", href: "/test" }],
+    children: [{ label: "원생 수업 테스트", href: "/exam" }],
   },
+  {
+    id: "syllabus",
+    label: "강의계획서",
+    children: [{ label: "강의계획서", href: "/syllabus" }],
+  }
 ];
 
 // 원장 nav에 관리자 메뉴를 재사용해 붙일 때, "보여줄 것만" 명시하는 화이트리스트.

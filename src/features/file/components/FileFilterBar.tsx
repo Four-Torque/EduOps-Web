@@ -32,7 +32,7 @@ export function FileFilterBar({ teacherId, classId, setClassId, fileName, setFil
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-center w-full bg-white p-4 rounded-xl border">
       <div className="relative flex-1 w-full">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <Input
           placeholder="파일명 검색..."
           className="pl-9 w-full"
