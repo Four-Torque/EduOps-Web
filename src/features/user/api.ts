@@ -204,25 +204,6 @@ export async function updateTeacher(
   });
 }
 
-// 급여 이력이 아예 없는 강사에게 최초 급여를 등록할 때만 사용 (급여 지급일에 실제로
-// 지급되는 것과 무관하게, 지급 예정 정보를 하나 만드는 것). 이미 레코드가 있으면
-// updateTeacherSalary로 그 레코드를 직접 수정해야 한다.
-export async function createTeacherSalary(data: {
-  userId: string;
-  baseSalary: number;
-  bonus: number;
-  paymentDate?: string;
-}): Promise<void> {
-  await apiClient.post("/salary", {
-    userId: data.userId,
-    baseSalary: data.baseSalary,
-    bonus: data.bonus,
-    paymentDate: data.paymentDate
-      ? new Date(data.paymentDate).toISOString()
-      : undefined,
-  });
-}
-
 // 기존 급여 지급 정보를 직접 수정한다 (지급일이 되기 전 금액/지급일/지급여부를 정정하는 용도).
 export async function updateTeacherSalary(
   salaryId: string,
