@@ -1,3 +1,14 @@
+import { FileUploadModal } from "@/features/file/components/FileUploadModal";
+import { FileDashboard } from "@/features/file/components/FileDashboard";
+
 export default function FilesPage() {
-  return <div className="p-8"><h1 className="text-2xl font-bold">수업 파일 관리</h1></div>;
+  return (
+    <div className="p-8 space-y-6">
+      <div className="flex items-end">
+        <FileUploadModal />
+      </div>
+      
+      <FileDashboard />
+    </div>
+  );
 }
