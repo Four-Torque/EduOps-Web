@@ -5,8 +5,7 @@ import { StudentInputField }  from "./StudentInputField";
 import { StudentSelectField } from "./StudentSelectField";
 import { AddressField }       from "@/shared/components/field/AddressField";
 import { useStudentRegisterStore } from "@/features/student/store";
-import { useQueryClient }          from "@tanstack/react-query";
-import { studentQueryKeys }        from "@/features/student/query";
+import { useCreateStudent } from "@/features/student/query";
 import { STUDENT_STATUS_OPTIONS }  from "@/shared/constants/manager/student-register.constants";
 import type { StudentRegisterFormState } from "@/features/student/type";
 import SubmitButton from "@/shared/components/SubmitButton";
@@ -22,7 +21,7 @@ function validateForm(form: StudentRegisterFormState) {
 
 export function StudentRegisterForm() {
   const { form, errors, editingId, closeModal, setField, setErrors } = useStudentRegisterStore();
-  const queryClient = useQueryClient();
+  const { mutate: createStudent, isPending } = useCreateStudent();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +30,7 @@ export function StudentRegisterForm() {
       setErrors(validationErrors);
       return;
     }
-    // TODO: API 연동
-    queryClient.invalidateQueries({ queryKey: studentQueryKeys.all() });
-    closeModal();
+    createStudent(form);
   };
 
   return (
@@ -50,7 +47,7 @@ export function StudentRegisterForm() {
           error={errors.address}
         />
         <StudentSelectField label="상태" fieldKey="status" options={STUDENT_STATUS_OPTIONS} />
-        <SubmitButton title={editingId ? "수정" : "등록"} />
+        <SubmitButton title={editingId ? "수정" : "등록"} disabled={isPending} />
       </FieldGroup>
     </form>
   );

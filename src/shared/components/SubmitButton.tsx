@@ -4,9 +4,10 @@ import { cn } from "@/shared/lib/utils";
 interface SubmitButtonProps {
   title: string;
   className?: string;
+    disabled?: boolean; 
 }
 
-export default function SubmitButton({ title, className }: SubmitButtonProps) {
+export default function SubmitButton({ title, className, disabled  }: SubmitButtonProps) {
   return (
     <Button
       className={cn(
@@ -14,6 +15,8 @@ export default function SubmitButton({ title, className }: SubmitButtonProps) {
         className,
       )}
       type="submit"
+      disabled={disabled}  
+
     >
       {title}
     </Button>

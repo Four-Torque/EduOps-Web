@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { MOCK_STUDENTS, MOCK_STUDENT_STATS } from "@/shared/constants/manager/student.constants";
-import type { StudentTabFilter } from "./type";
+import { createStudent } from "./api";
+import { useStudentRegisterStore } from "./store";
+import type { StudentTabFilter, StudentRegisterFormState } from "./type";
 
 export const studentQueryKeys = {
   all:   () => ["students"]              as const,
@@ -22,14 +25,14 @@ export function useStudents(params: {
       // 탭별 필터링
       if (params.tab === "학생")
         filtered = filtered.filter((s) => s.status === "active");
-      else (params.tab === "졸업생 / 비활동 회원")
+      else if (params.tab === "졸업생 / 비활동 회원")
         filtered = filtered.filter((s) => s.status === "inactive");
       // "전체"는 필터링 없이 전체 반환
 
       // 검색 필터링
       if (params.search)
         filtered = filtered.filter(
-          (s) => s.name.includes(params.search)
+          (s) => s.name.includes(params.search) || s.studentCode.includes(params.search),
         );
 
       const page  = Number(params.page)  || 1;
@@ -58,6 +61,23 @@ export function useDeleteStudent() {
     mutationFn: async (_id: string) => ({ message: "삭제되었습니다." }), // TODO: API 연동
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentQueryKeys.all() });
+    },
+  });
+}
+
+export function useCreateStudent() {
+  const queryClient = useQueryClient();
+  const closeModal = useStudentRegisterStore((state) => state.closeModal);
+
+  return useMutation({
+    mutationFn: (form: StudentRegisterFormState) => createStudent(form),
+    onSuccess: () => {
+      toast.success("학생이 등록되었습니다.");
+      queryClient.invalidateQueries({ queryKey: studentQueryKeys.all() });
+      closeModal();
+    },
+    onError: (error) => {
+      if (error instanceof Error) toast.error(error.message);
     },
   });
 }
