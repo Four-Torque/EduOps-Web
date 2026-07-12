@@ -79,3 +79,27 @@ export const useTeacherStore = create<TeacherStore>((set) => ({
   onViewOpen: (id: string) => set({ isViewOpen: true, id }),
   onViewClose: () => set({ isViewOpen: false, id: "" }),
 }));
+
+interface UserStore {
+  q: string;
+  setQ: (q: string) => void;
+  isCreateOpen: boolean;
+  onCreateOpen: () => void;
+  onCreateClose: () => void;
+  isEditOpen: boolean;
+  editId: string;
+  onEditOpen: (id: string) => void;
+  onEditClose: () => void;
+}
+
+export const useUserStore = create<UserStore>((set) => ({
+  q: "",
+  setQ: (q: string) => set({ q }),
+  isCreateOpen: false,
+  onCreateOpen: () => set({ isCreateOpen: true }),
+  onCreateClose: () => set({ isCreateOpen: false }),
+  isEditOpen: false,
+  editId: "",
+  onEditOpen: (id: string) => set({ isEditOpen: true, editId: id }),
+  onEditClose: () => set({ isEditOpen: false, editId: "" }),
+}));

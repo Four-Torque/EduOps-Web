@@ -1,11 +1,11 @@
 import type {
   BillingTabFilter,
   BillingListResponse,
-} from "@/types/manager/billing.types";
+} from "@/features/finance/type";
 import {
   MOCK_BILLING_TRANSACTIONS,
   BILLING_PAGE_SIZE,
-} from "@/constants/manager/billing.constants";
+} from "@/shared/constants/manager/billing.constants";
 
 // TODO: import { apiClient } from "@/lib/axios";
 

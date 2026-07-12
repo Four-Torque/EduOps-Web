@@ -5,6 +5,8 @@ import EditVendorDialog from "@/features/vendor/components/EditVendorDialog";
 import CreateAssetApplicationDialog from "@/features/asset/components/CreateAssetApplicationDialog";
 import RejectAssetApplicationDialog from "@/features/asset/components/RejectAssetApplicationDialog";
 import TeacherDetailModal from "@/features/user/components/TeacherDetailModal";
+import CreateUserDialog from "@/features/user/components/CreateUserDialog";
+import EditUserDialog from "@/features/user/components/EditUserDialog";
 
 export default function ModalProvider() {
   return (
@@ -14,6 +16,8 @@ export default function ModalProvider() {
       <CreateVendorDialog />
       <EditVendorDialog />
       <TeacherDetailModal />
+      <CreateUserDialog />
+      <EditUserDialog />
     </>
   );
 }

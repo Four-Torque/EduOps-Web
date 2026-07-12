@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { UserApprovalStatus } from "@/types/director/user.types";
+export type UserApprovalStatus = "approved" | "cancelled";
 
 interface PopoverAction {
   label: string;

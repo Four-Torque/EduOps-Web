@@ -10,7 +10,7 @@ export type User = {
   status: "ACTIVE" | "INACTIVE" | "LEAVED";
 };
 
-export type UserApprovalStatus = "pending" | "approved" | "cancelled";
+export type UserApprovalStatus = "pending";
 export type UserRoleType = "선생님" | "관리자";
 export type UserTabFilter = "all" | UserApprovalStatus;
 

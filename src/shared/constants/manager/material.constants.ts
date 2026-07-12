@@ -1,4 +1,4 @@
-import { MaterialTabFilter } from "@/types/manager/material.types";
+import { MaterialTabFilter } from "@/features/asset/type";
 
 export const REQUEST_STATUS_OPTIONS: {
   label: string;

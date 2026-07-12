@@ -8,6 +8,8 @@ import type {
   UpdateTeacherInput,
   SalaryStatus,
 } from "./type";
+import z from "zod/v3";
+import { UserFormSchema } from "./schema";
 
 // 백엔드 원시 응답 형태 (User_TB / Class_TB / salaries / staff_attendance)
 interface ApiUser {
@@ -112,7 +114,10 @@ export async function fetchTeacherDetail(id: string): Promise<TeacherDetail> {
   ];
   const salaries: TeacherSalary[] = rawSalaries
     .slice()
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
     .map((s) => ({
       id: s.id,
       baseSalary: s.baseSalary,
@@ -187,4 +192,53 @@ export async function updateTeacherSalary(
 // 급여를 실제로 지급 완료 처리한다 (PENDING → COMPLETED, 되돌릴 수 없음).
 export async function payTeacherSalary(salaryId: string): Promise<void> {
   await apiClient.patch(`/salary/${salaryId}/pay`);
+}
+
+export async function findUsers(params: {
+  page?: string;
+  limit?: string;
+  search?: string;
+  isApproved?: boolean;
+}) {
+  const response = await apiClient.get("/user", {
+    params,
+  });
+  return response.data.body;
+}
+
+export async function approveUser(id: string) {
+  const response = await apiClient.put(`/user/${id}/approve`);
+  return response.data;
+}
+
+export async function createUser(values: z.infer<typeof UserFormSchema>) {
+  const { joinedAt, resignedAt, ...rest } = values;
+  const payload = {
+    ...rest,
+  };
+  const response = await apiClient.post("/user", payload);
+  return response.data;
+}
+
+export async function updateUser(
+  id: string,
+  values: z.infer<typeof UserFormSchema>,
+) {
+  const { password, ...rest } = values;
+  const payload = {
+    ...rest,
+  };
+  const response = await apiClient.patch(`/user/${id}`, payload);
+  return response.data;
+}
+
+export async function deactivateUsers(ids: string[]) {
+  const response = await Promise.all(
+    ids.map((id) =>
+      apiClient.patch(`/user/${id}`, {
+        status: "INACTIVE",
+        employmentStatus: "RESIGNED",
+      }),
+    ),
+  );
 }
