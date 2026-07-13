@@ -54,6 +54,7 @@ const NAV_ICONS: Record<NavId, React.ElementType> = {
   "student-attendance": ClipboardCheck,
   "class-files": FolderOpen,
   grade: BookOpen,
+  syllabus: BookOpen,
 };
 
 export function Sidebar({ navItems }: SidebarProps) {
