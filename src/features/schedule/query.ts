@@ -2,7 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchWeeklySchedule,
   createScheduleBulk,
+  createBulkSchedule,
   deleteSchedule,
+  fetchClassSchedules
 } from "./api";
 import apiClient from "@/shared/lib/axios";
 
@@ -28,21 +30,34 @@ export function useCreateScheduleBulk() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createScheduleBulk,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
+      queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
   });
 }
 
-export function useDeleteSchedule() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteSchedule,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
-    },
-  });
-}
+// export const useCreateBulkSchedule = () => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => createBulkSchedule(payload),
+//     onSuccess: (_, variables) => {
+//       queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
+//       queryClient.invalidateQueries({ queryKey: ["classes"] });
+//     },
+//   });
+// };
+
+// export function useDeleteSchedule() {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: deleteSchedule,
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
+//     },
+//   });
+// }
 
 export function useAllClasses() {
   return useQuery({
@@ -56,3 +71,25 @@ export function useAllClasses() {
     },
   });
 }
+
+
+
+
+export const useClassSchedules = (classId: string) => {
+  return useQuery({
+    queryKey: ["classSchedules", classId],
+    queryFn: () => fetchClassSchedules(classId),
+    enabled: !!classId,
+  });
+};
+
+export const useDeleteSchedule = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteSchedule(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classSchedules"] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+    },
+  });
+};

@@ -38,6 +38,17 @@ export async function createScheduleBulk(data: {
   await apiClient.post("/schedule", data);
 }
 
+export const createBulkSchedule = async (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => {
+  const response = await apiClient.post("/schedule", payload);
+  return response.data;
+};
+
 export async function deleteSchedule(id: string): Promise<void> {
   await apiClient.delete(`/schedule/${id}`);
 }
+
+export const fetchClassSchedules = async (classId: string) => {
+  const response = await apiClient.get("/schedule", { params: { classId } });
+  return response.data.body ?? response.data;
+};
+

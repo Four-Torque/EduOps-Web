@@ -17,6 +17,8 @@ export const studentQueryKeys = {
   detail: (id: string) => ["students", "detail", id] as const,
 };
 
+import apiClient from "@/shared/lib/axios";
+
 export function useStudents(params: {
   page: string;
   limit: string;
