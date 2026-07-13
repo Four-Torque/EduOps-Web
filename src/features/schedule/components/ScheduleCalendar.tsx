@@ -1,4 +1,3 @@
-// @/components/manager/academic/schedule/ScheduleCalendar.tsx
 "use client";
 
 import { Calendar } from "react-big-calendar";
@@ -6,15 +5,28 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { localizer } from "@/shared/lib/calendar-localizer";
 import { useScheduleStore } from "../store";
 import { ScheduleEvent } from "../type";
+import { useDeleteSchedule } from "../query";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 interface ScheduleCalendarProps {
-  // 외부(각 page)에서 이미 조회/변환해 넣어주는 이벤트 목록. 이 컴포넌트는 데이터를
-  // 직접 가져오지 않는다 — 관리자/강사 페이지가 서로 다른 범위의 데이터를 넣어 재사용한다.
   events?: ScheduleEvent[];
 }
 
 export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
   const { view, date, setView, setDate } = useScheduleStore();
+  const { mutate: deleteEvent } = useDeleteSchedule();
+
+  const [ConfirmDialog, confirm] = useConfirm(
+    "정말 이 시간표 항목을 삭제하시겠습니까?",
+    "삭제된 스케줄 정보는 복구할 수 없습니다.",
+  );
+
+  const handleSelectEvent = async (event: ScheduleEvent) => {
+    const ok = await confirm();
+    if (ok) {
+      deleteEvent(event.id);
+    }
+  };
 
   return (
     <div className="border border-slate-200 rounded-lg p-4 bg-white h-[700px]">
@@ -32,12 +44,7 @@ export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
         max={new Date(1970, 0, 1, 18, 0)} // 18:00까지
         step={60}
         timeslots={1}
-        // 이벤트 클릭
-        onSelectEvent={(event) => {
-          console.log("이벤트 클릭:", event);
-          // TODO: 수정 모달 열기
-        }}
-        // 커스텀 이벤트 렌더링 (강사/강의실 표시)
+        onSelectEvent={handleSelectEvent}
         components={{
           event: ({ event }) => (
             <div className="text-[10px] leading-tight">
@@ -48,7 +55,6 @@ export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
             </div>
           ),
         }}
-        // 이벤트 스타일
         eventPropGetter={() => ({
           style: {
             backgroundColor: "#e2e8f0",
@@ -59,6 +65,7 @@ export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
           },
         })}
       />
+      <ConfirmDialog />
     </div>
   );
 }

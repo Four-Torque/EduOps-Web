@@ -1,6 +1,8 @@
-export type UserStatus = "paid" | "unpaid";
+export type TransactionType = "INCOME" | "EXPENSE";
 
-export type RevenueCategory = "수강료" | "교재" | "특강" | "실습비" | "기타";
+export type RevenueStatus = "PAID" | "UNPAID" | "REFUNDED" | "PENDING" | "COMPLETED";
+
+export type RevenueCategory = "수강료" | "교재" | "급여" | "비품" | "기타";
 
 export interface RevenueItem {
   id: string;
@@ -9,12 +11,15 @@ export interface RevenueItem {
   itemSub: string;
   studentName: string;
   amount: number;
-  status: UserStatus;
+  status: RevenueStatus;
   category: RevenueCategory;
+  type: TransactionType;
 }
 
 export interface RevenueStats {
   totalRevenue: number;
+  totalExpense: number;
+  netProfit: number;
   unpaidAmount: number;
   unpaidCount: number;
   newEnrollments: number;
@@ -24,8 +29,9 @@ export interface RevenueStats {
 
 export interface MonthlyRevenue {
   month: string;
-  current: number;
-  previous: number;
+  current?: number;
+  previous?: number;
+  amount?: number;
 }
 
 export type BillingStatus = "완료" | "미완료" | "대기" | "연체";
@@ -40,11 +46,6 @@ export interface BillingTransaction {
   amount: number;
   date: string;
   status: BillingStatus;
-}
-
-export interface MonthlyRevenue {
-  month: string;
-  amount: number;
 }
 
 export interface BillingStats {

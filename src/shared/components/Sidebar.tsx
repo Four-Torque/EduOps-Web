@@ -21,6 +21,7 @@ import {
   Crown,
   UserCog,
   GraduationCap,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { useUIStore } from "@/shared/store";
@@ -54,6 +55,7 @@ const NAV_ICONS: Record<NavId, React.ElementType> = {
   "student-attendance": ClipboardCheck,
   "class-files": FolderOpen,
   grade: BookOpen,
+  syllabus: FileText,
 };
 
 export function Sidebar({ navItems }: SidebarProps) {

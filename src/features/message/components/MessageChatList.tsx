@@ -2,7 +2,7 @@
 
 import { Search, SquarePen } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
-import type { ChatRoom } from "@/types/message/message.types";
+import type { ChatRoom } from "@/features/message/type";
 
 interface MessageChatListProps {
   chatRooms?: ChatRoom[];

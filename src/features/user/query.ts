@@ -188,15 +188,19 @@ export function useDeleteTeacher() {
   });
 }
 
-export function useFindUsers(params: {
-  page?: string;
-  limit?: string;
-  search?: string;
-  isApproved?: boolean;
-}) {
+export function useFindUsers(
+  params: {
+    page?: string;
+    limit?: string;
+    search?: string;
+    isApproved?: boolean;
+  },
+  options?: any,
+) {
   const query = useQuery({
     queryKey: ["users", params],
     queryFn: () => findUsers(params),
+    ...options,
   });
   return query;
 }

@@ -1,9 +1,16 @@
 "use client";
 
+import { useScheduleStore } from "../store";
+
 export function ScheduleHeader() {
+  const { onCreateOpen } = useScheduleStore();
+
   return (
     <div className="flex items-center justify-between mb-4">
-      <button className="text-[11.5px] font-medium text-white bg-slate-800 px-3 py-1.5 rounded hover:bg-slate-700 transition-colors">
+      <button
+        onClick={onCreateOpen}
+        className="text-[11.5px] font-medium text-white bg-slate-800 px-3 py-1.5 rounded hover:bg-slate-700 transition-colors"
+      >
         + 추가
       </button>
     </div>

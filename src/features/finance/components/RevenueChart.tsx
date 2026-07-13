@@ -5,8 +5,10 @@ interface RevenueChartProps {
 }
 
 export function RevenueChart({ data }: RevenueChartProps) {
-  const maxVal = Math.max(...data.flatMap((d) => [d.current, d.previous]));
-
+  const maxVal = Math.max(
+    ...data.flatMap((d) => [d.current ?? 0, d.previous ?? 0]),
+    1,
+  );
   return (
     <div className="flex-1">
       {/* 헤더 */}
@@ -29,14 +31,18 @@ export function RevenueChart({ data }: RevenueChartProps) {
       {/* 바 차트 */}
       <div className="flex items-end gap-2.5 h-[120px]">
         {data.map((d) => (
-          <div key={d.month} className="flex-1 flex items-end gap-[3px]">
+          <div key={d.month} className="flex-1 flex items-end gap-[3px] h-full">
             <div
               className="flex-1 rounded-t-sm bg-[#f5e6a3] min-h-1"
-              style={{ height: `${(d.previous / maxVal) * 100}%` }}
+              style={{
+                height: `${((d.previous ?? 0) / maxVal) * 100}%`,
+              }}
             />
             <div
               className="flex-1 rounded-t-sm bg-[#1e3a5f] min-h-1"
-              style={{ height: `${(d.current / maxVal) * 100}%` }}
+              style={{
+                height: `${((d.current ?? 0) / maxVal) * 100}%`,
+              }}
             />
           </div>
         ))}

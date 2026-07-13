@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Calendar, Download } from "lucide-react";
+import { Search, Calendar } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import {
   Select,
@@ -9,56 +9,89 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { Button } from "@/shared/components/ui/button";
+import {
+  INCOME_STATUS_OPTIONS,
+  EXPENSE_STATUS_OPTIONS,
+  ALL_STATUS_OPTIONS,
+} from "../constants";
+import ExcelExportButton from "./ExcelExportButton";
+import { useFinanceStore } from "../store";
+import { RevenueStatus } from "../type";
 
 interface RevenueFilterBarProps {
   search: string;
   status: string;
+  type: "all" | "INCOME" | "EXPENSE";
   dateRange: string;
-  onSearchChange: (v: string) => void;
-  onStatusChange: (v: string) => void;
   onDateRangeChange: (dateRange: string) => void;
-  onExcelExport: () => void;
 }
-
-const STATUS_OPTIONS = [
-  { label: "전체", value: "all" },
-  { label: "납부완료", value: "paid" },
-  { label: "미납", value: "unpaid" },
-];
 
 export function RevenueFilterBar({
   search,
   status,
+  type,
   dateRange,
-  onSearchChange,
-  onStatusChange,
   onDateRangeChange,
-  onExcelExport,
 }: RevenueFilterBarProps) {
+  const { setSearch, setStatus, setType } = useFinanceStore();
+  const statusOptions =
+    type === "INCOME"
+      ? INCOME_STATUS_OPTIONS
+      : type === "EXPENSE"
+        ? EXPENSE_STATUS_OPTIONS
+        : ALL_STATUS_OPTIONS;
+
   return (
     <div className="flex items-center gap-2.5 mb-1.5">
-      {/* 검색 — Input은 leftIcon prop 없으므로 wrapper로 처리 */}
       <div className="relative flex-1">
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400 pointer-events-none" />
         <Input
           className="pl-7 text-[12.5px]"
-          placeholder="학생명 또는 항목 검색..."
+          placeholder="학생명/사원명 또는 항목 검색..."
           value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* 납부 상태 — Radix Select 방식 */}
       <span className="text-[12px] text-slate-500 whitespace-nowrap">
-        납부:
+        구분:
       </span>
-      <Select value={status} onValueChange={onStatusChange}>
+      <Select
+        value={type}
+        onValueChange={(v) => {
+          setType(v as "all" | "INCOME" | "EXPENSE");
+        }}
+      >
+        <SelectTrigger className="h-9 text-[12.5px] w-24" size="default">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[12.5px]">
+            전체
+          </SelectItem>
+          <SelectItem value="INCOME" className="text-[12.5px]">
+            수입
+          </SelectItem>
+          <SelectItem value="EXPENSE" className="text-[12.5px]">
+            지출
+          </SelectItem>
+        </SelectContent>
+      </Select>
+
+      <span className="text-[12px] text-slate-500 whitespace-nowrap">
+        상태:
+      </span>
+      <Select
+        value={status}
+        onValueChange={(v) => {
+          setStatus(v as "all" | RevenueStatus);
+        }}
+      >
         <SelectTrigger className="h-9 text-[12.5px]" size="default">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {STATUS_OPTIONS.map((opt) => (
+          {statusOptions.map((opt) => (
             <SelectItem
               key={opt.value}
               value={opt.value}
@@ -70,7 +103,6 @@ export function RevenueFilterBar({
         </SelectContent>
       </Select>
 
-      {/* 기간 */}
       <span className="text-[12px] text-slate-500 whitespace-nowrap">
         기간:
       </span>
@@ -82,11 +114,7 @@ export function RevenueFilterBar({
         {dateRange}
       </div>
 
-      {/* 엑셀 */}
-      <Button variant="primary" size="sm" onClick={onExcelExport}>
-        <Download className="w-3.5 h-3.5" />
-        엑셀
-      </Button>
+      <ExcelExportButton />
     </div>
   );
 }

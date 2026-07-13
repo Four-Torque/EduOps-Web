@@ -31,6 +31,8 @@ interface TableProps {
   createButtonLabel?: string;
   onEditStatus?: (itemId: string, status: string) => void;
   statusReadonly?: boolean;
+  onPageChange?: (page: number) => void;
+  currentPage?: number;
 }
 
 export function Table({
@@ -43,11 +45,14 @@ export function Table({
   onCreate,
   deleteButtonLabel = "선택 삭제",
   createButtonLabel = "생성",
+  onPageChange,
+  currentPage,
 }: TableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
+  const urlPage = searchParams.get("page") || "1";
+  const activePage = currentPage !== undefined ? currentPage : Number(urlPage);
 
   const items = data?.data ?? [];
   const totalItems = data?.total ?? 0;
@@ -118,7 +123,7 @@ export function Table({
           <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
             {totalItems > 0 && (
-              <Pagination currentPage={Number(page)} totalPages={totalPages} />
+              <Pagination currentPage={activePage} totalPages={totalPages} onPageChange={onPageChange} />
             )}
           </div>
         )}

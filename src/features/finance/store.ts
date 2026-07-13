@@ -2,11 +2,12 @@
 
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { BillingTabFilter, UserStatus } from "@/features/finance/type";
+import type { BillingTabFilter, RevenueStatus, TransactionType } from "@/features/finance/type";
 
 interface FinanceFilter {
   search: string;
-  status: UserStatus | "all";
+  status: RevenueStatus | "all";
+  type: TransactionType | "all";
   dateRange: string;
   page: number;
 }
@@ -14,7 +15,8 @@ interface FinanceFilter {
 interface FinanceStore {
   filter: FinanceFilter;
   setSearch: (search: string) => void;
-  setStatus: (status: UserStatus | "all") => void;
+  setStatus: (status: RevenueStatus | "all") => void;
+  setType: (type: TransactionType | "all") => void;
   setDateRange: (dateRange: string) => void;
   setPage: (page: number) => void;
   resetFilter: () => void;
@@ -23,7 +25,8 @@ interface FinanceStore {
 const DEFAULT_FILTER: FinanceFilter = {
   search: "",
   status: "all",
-  dateRange: "2023.10.01 - 10.31",
+  type: "all",
+  dateRange: "전체 기간",
   page: 1,
 };
 
@@ -37,6 +40,9 @@ export const useFinanceStore = create<FinanceStore>()(
 
       setStatus: (status) =>
         set((s) => ({ filter: { ...s.filter, status, page: 1 } })),
+
+      setType: (type) =>
+        set((s) => ({ filter: { ...s.filter, type, page: 1 } })),
 
       setDateRange: (dateRange) =>
         set((s) => ({ filter: { ...s.filter, dateRange, page: 1 } })),

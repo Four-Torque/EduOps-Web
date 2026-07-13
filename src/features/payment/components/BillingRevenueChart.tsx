@@ -1,9 +1,9 @@
 import { MonthlyRevenue } from "@/features/finance/type";
-import { MOCK_MONTHLY_REVENUE } from "@/shared/constants/director/finance.mock";
+import { MOCK_MONTHLY_REVENUE } from "@/shared/constants/manager/billing.constants";
 
 export function BillingRevenueChart() {
   const data = MOCK_MONTHLY_REVENUE;
-  const maxVal = Math.max(...data.map((d) => d.amount), 1);
+  const maxVal = Math.max(...data.map((d) => d.amount ?? 0), 1);
 
   return (
     <div className="flex-1 border border-slate-200 rounded p-5 bg-white">
@@ -24,7 +24,7 @@ export function BillingRevenueChart() {
           <div
             key={d.month}
             className="flex-1 rounded-t-sm bg-slate-800 min-h-[2px] transition-all"
-            style={{ height: `${(d.amount / maxVal) * 100}%` }}
+            style={{ height: `${((d.amount ?? 0) / maxVal) * 100}%` }}
           />
         ))}
       </div>
