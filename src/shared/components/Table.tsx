@@ -147,7 +147,7 @@ function TableActions({
 }) {
   if (!onDelete && !onCreate) return null;
   return (
-    <div className="w-full flex justify-between items-center mb-2">
+    <div className="w-full flex justify-between items-center mb-4">
       <div>
         {onDelete && (
           <button
@@ -252,7 +252,7 @@ function TableBody({
         <tr>
           <td
             colSpan={totalColSpan}
-            className="px-3.5 py-8 text-center text-[12px] text-slate-400"
+            className="px-3.5 py-3 text-center text-[12px] text-slate-400"
           >
             데이터가 존재하지 않습니다.
           </td>

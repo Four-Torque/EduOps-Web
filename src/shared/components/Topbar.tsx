@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -7,13 +8,26 @@ import { useUIStore } from "@/shared/store";
 
 interface TopbarProps {
   homePath: string;
+  homeLabel: string;
 }
 
-export default function Topbar({ homePath }: TopbarProps) {
+export default function Topbar({ homePath, homeLabel }: TopbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const tabs = useUIStore((s) => s.tabs);
+  const addTab = useUIStore((s) => s.addTab);
   const removeTab = useUIStore((s) => s.removeTab);
+
+  // 탭을 모두 닫은 뒤 홈으로 이동했거나(로그인 직후 포함), 탭 없이 홈 경로에
+  // 진입한 모든 경우에 홈 탭이 없으면 자동으로 만들어 topbar에 표시한다.
+  useEffect(() => {
+    const isHome = pathname === homePath || pathname.startsWith(homePath + "/");
+    if (!isHome) return;
+    const hasHomeTab = tabs.some((t) => t.href === homePath);
+    if (!hasHomeTab) {
+      addTab({ label: homeLabel, href: homePath });
+    }
+  }, [pathname, homePath, homeLabel, tabs, addTab]);
 
   function handleClose(href: string) {
     removeTab(href);

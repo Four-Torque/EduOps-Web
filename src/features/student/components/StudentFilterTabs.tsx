@@ -9,7 +9,7 @@ export function StudentFilterTabs() {
   const { tab, setTab } = useStudentStore();
 
   return (
-    <div className="flex gap-1 px-4 pt-3 border-b border-slate-200">
+    <div className="flex gap-2 border-b border-slate-200">
       {TABS.map((t) => (
         <button
           key={t}

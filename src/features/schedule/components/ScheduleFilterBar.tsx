@@ -28,7 +28,7 @@ export function ScheduleFilterBar() {
   } = useScheduleStore();
 
   return (
-    <div className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-2.5 mb-4 bg-white">
+    <div className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-2 mb-4 bg-white">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1.5 text-slate-500">
           <SlidersHorizontal className="w-3.5 h-3.5" />

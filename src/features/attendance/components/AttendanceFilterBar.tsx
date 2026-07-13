@@ -66,10 +66,10 @@ export function AttendanceFilterBar({ onExport }: AttendanceFilterBarProps) {
   const weeks = useMemo(() => getWeeksOfMonth(filter.month), [filter.month]);
 
   return (
-    <div className="flex items-center gap-3 mb-6">
+    <div className="flex items-center gap-3 mb-4">
       <div className="flex items-center gap-2">
         <span className="text-[12px] text-slate-500 whitespace-nowrap">
-          월별 선택:
+          월별:
         </span>
         <Select value={filter.month} onValueChange={setMonth}>
           <SelectTrigger className="w-[140px] text-[12.5px]" size="default">
@@ -88,7 +88,7 @@ export function AttendanceFilterBar({ onExport }: AttendanceFilterBarProps) {
       {weeks.length > 0 && (
         <div className="flex items-center gap-2">
           <span className="text-[12px] text-slate-500 whitespace-nowrap">
-            주차 선택:
+            주차:
           </span>
           <Select value={filter.weekStart} onValueChange={setWeekStart}>
             <SelectTrigger className="w-[180px] text-[12.5px]" size="default">

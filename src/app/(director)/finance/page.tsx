@@ -63,7 +63,7 @@ export default function FinancePage() {
         onDateRangeChange={setDateRange}
       />
 
-      <div className="mb-[18px]">
+      <div className="mb-[18px] mt-[18px]">
         <Table
           columns={columns}
           data={paymentsData}

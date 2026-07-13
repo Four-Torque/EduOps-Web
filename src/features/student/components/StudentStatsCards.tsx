@@ -33,7 +33,7 @@ export function StudentStatsCards() {
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-3 gap-4">
       {cards.map((card) => (
         <div key={card.label} className="border border-slate-200 rounded p-5 bg-white flex items-start justify-between">
           <div>

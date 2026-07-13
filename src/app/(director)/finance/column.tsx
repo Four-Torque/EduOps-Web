@@ -43,7 +43,7 @@ export function getColumns(
       key: "itemTitle",
       label: "항목",
       render: (item: RevenueItem) => (
-        <div className="text-left">
+        <div className="text-center">
           <p className="text-[12.5px] font-medium text-slate-900 leading-tight">
             {item.itemTitle}
           </p>
@@ -55,7 +55,7 @@ export function getColumns(
       key: "studentName",
       label: "대상자",
       render: (item: RevenueItem) => (
-        <div className="text-left text-[12.5px] text-slate-700">
+        <div className="text-center text-[12.5px] text-slate-700">
           {item.studentName}
         </div>
       ),
@@ -64,7 +64,7 @@ export function getColumns(
       key: "amount",
       label: "금액",
       render: (item: RevenueItem) => (
-        <div className="text-right text-[12.5px] font-medium text-slate-800">
+        <div className="text-center text-[12.5px] font-medium text-slate-800">
           {item.amount.toLocaleString("ko-KR")}원
         </div>
       ),

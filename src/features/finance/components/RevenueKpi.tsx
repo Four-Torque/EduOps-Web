@@ -21,9 +21,6 @@ export function RevenueKpi({ stats }: RevenueKpiProps) {
           <span className="text-[20px] font-bold text-slate-900">
             {formatKRW(stats.totalRevenue)}
           </span>
-          <span className="text-[9.5px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-sm">
-            수입 항목
-          </span>
         </div>
       </div>
 
@@ -34,9 +31,6 @@ export function RevenueKpi({ stats }: RevenueKpiProps) {
         <div className="flex items-baseline gap-1.5">
           <span className="text-[20px] font-bold text-rose-600">
             {formatKRW(stats.totalExpense)}
-          </span>
-          <span className="text-[9.5px] font-semibold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded-sm">
-            지출 항목
           </span>
         </div>
       </div>

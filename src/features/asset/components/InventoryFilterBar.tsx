@@ -36,7 +36,7 @@ export function InventoryFilterBar() {
   }, [debouncedSearch]);
 
   return (
-    <div className="px-4 py-3 mb-6 border border-slate-200 rounded bg-white flex justify-between items-center">
+    <div className="px-4 py-3 mb-4 border border-slate-200 rounded bg-white flex justify-between items-center">
       <Input
         placeholder="품목명으로 검색"
         className="w-75"

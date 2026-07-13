@@ -42,7 +42,7 @@ export function RevenueFilterBar({
         : ALL_STATUS_OPTIONS;
 
   return (
-    <div className="flex items-center gap-2.5 mb-1.5">
+    <div className="flex items-center gap-2.5">
       <div className="relative flex-1">
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400 pointer-events-none" />
         <Input

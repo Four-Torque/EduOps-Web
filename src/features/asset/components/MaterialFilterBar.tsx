@@ -20,7 +20,7 @@ export function MaterialFilterBar({
   onStatusFilterChange,
 }: MaterialFilterBarProps) {
   return (
-    <div className="px-4 py-3 mb-6 border border-slate-200 rounded bg-white">
+    <div className="px-4 py-3 mb-4 border border-slate-200 rounded bg-white">
       <Select
         value={statusFilter}
         onValueChange={(value) =>
