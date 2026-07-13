@@ -30,11 +30,24 @@ export function useCreateScheduleBulk() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createScheduleBulk,
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
+      queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
   });
 }
+
+// export const useCreateBulkSchedule = () => {
+//   const queryClient = useQueryClient();
+//   return useMutation({
+//     mutationFn: (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => createBulkSchedule(payload),
+//     onSuccess: (_, variables) => {
+//       queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
+//       queryClient.invalidateQueries({ queryKey: ["classes"] });
+//     },
+//   });
+// };
 
 // export function useDeleteSchedule() {
 //   const queryClient = useQueryClient();
@@ -60,16 +73,7 @@ export function useAllClasses() {
 }
 
 
-export const useCreateBulkSchedule = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => createBulkSchedule(payload),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
-    },
-  });
-};
+
 
 export const useClassSchedules = (classId: string) => {
   return useQuery({

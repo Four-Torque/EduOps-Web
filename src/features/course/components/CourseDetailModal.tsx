@@ -9,7 +9,7 @@ import { ClassInfo } from "@/features/class/type";
 import { useUpdateClass } from "@/features/class/query";
 import { useTeachers } from "@/features/user/query";
 import { useStudents } from "@/features/student/query";
-import { useCreateBulkSchedule, useDeleteSchedule } from "@/features/schedule/query";
+import { useCreateScheduleBulk, useDeleteSchedule } from "@/features/schedule/query";
 import { useCreateEnrollment, useClassEnrollments, useDeleteEnrollment } from "@/features/enrollment/query";
 import { toast } from "react-hot-toast";
 import { Plus, Trash2, Calendar, User, Clock, MapPin, Phone } from "lucide-react";
@@ -62,7 +62,7 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
   const [endTime, setEndTime] = useState("15:30");
   const [room, setRoom] = useState("101호");
   
-  const createScheduleMutation = useCreateBulkSchedule();
+  const createScheduleMutation = useCreateScheduleBulk();
   const deleteScheduleMutation = useDeleteSchedule();
   const handleAddSchedule = () => {
     createScheduleMutation.mutate(
