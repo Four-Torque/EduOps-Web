@@ -8,6 +8,7 @@ import { SyllabusDetailModal } from "./SyllabusDetailModal";
 interface SyllabusListTableProps {
   syllabuses: ClassSyllabusItem[];
   isLoading?: boolean;
+  isManager?: boolean;
 }
 
 const getStatusBadgeStyle = (status: string) => {
@@ -22,7 +23,7 @@ const getStatusText = (status: string) => {
   return "대기 중";
 };
 
-export function SyllabusListTable({ syllabuses, isLoading }: SyllabusListTableProps) {
+export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: SyllabusListTableProps) {
   const [selectedItem, setSelectedItem] = useState<ClassSyllabusItem | null>(null);
 
   const columns: ColumnProps[] = [
@@ -118,6 +119,7 @@ export function SyllabusListTable({ syllabuses, isLoading }: SyllabusListTablePr
       <SyllabusDetailModal 
         item={selectedItem} 
         onClose={() => setSelectedItem(null)} 
+        isManager={isManager}
       />
     </>
   );

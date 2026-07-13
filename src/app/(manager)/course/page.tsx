@@ -1,6 +1,5 @@
-// src/app/(manager)/course/page.tsx
-import { CourseGrid } from "@/features/class/components/CourseGrid";
+import { CourseManagerDashboard } from "@/features/course/components/CourseManagerDashboard";
 
-export default function CoursePage() {
-  return <CourseGrid />;
+export default function CourseManagerPage() {
+  return <CourseManagerDashboard />;
 }

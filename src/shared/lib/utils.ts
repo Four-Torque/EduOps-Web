@@ -64,12 +64,16 @@ export function toCalendarEvents(
   items: ScheduleItem[],
   baseDate: Date = new Date(),
 ): CalendarEvent[] {
-  const sunday = new Date(baseDate);
-  sunday.setDate(baseDate.getDate() - baseDate.getDay()); // 이번 주 일요일(0)
+  // 이번 주 월요일을 기준으로 계산 (월요일=0, 일요일=6)
+  const monday = new Date(baseDate);
+  const currentDay = baseDate.getDay();
+  const diffToMonday = currentDay === 0 ? 6 : currentDay - 1;
+  monday.setDate(baseDate.getDate() - diffToMonday);
 
   return items.map((item) => {
-    const date = new Date(sunday);
-    date.setDate(sunday.getDate() + item.dayOfWeek);
+    const date = new Date(monday);
+    // item.dayOfWeek: 0(월) ~ 6(일). 월요일(monday)에서 dayOfWeek일 더하기
+    date.setDate(monday.getDate() + item.dayOfWeek);
     const ymd = format(date, "yyyy-MM-dd", { locale: ko });
     return {
       id: item.id,

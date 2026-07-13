@@ -8,6 +8,8 @@ export const studentQueryKeys = {
   stats: () => ["students", "stats"]     as const,
 };
 
+import apiClient from "@/shared/lib/axios";
+
 export function useStudents(params: {
   page: string;
   limit: string;
@@ -17,29 +19,27 @@ export function useStudents(params: {
   return useQuery({
     queryKey: studentQueryKeys.list(params),
     queryFn: async () => {
-      let filtered = [...MOCK_STUDENTS];
+      let status: string | undefined;
+      if (params.tab === "학생") status = "ENROLLED";
+      else if (params.tab === "졸업생 / 비활동 회원") status = "EXPELLED";
 
-      // 탭별 필터링
-      if (params.tab === "학생")
-        filtered = filtered.filter((s) => s.status === "active");
-      else (params.tab === "졸업생 / 비활동 회원")
-        filtered = filtered.filter((s) => s.status === "inactive");
-      // "전체"는 필터링 없이 전체 반환
-
-      // 검색 필터링
-      if (params.search)
-        filtered = filtered.filter(
-          (s) => s.name.includes(params.search)
-        );
-
-      const page  = Number(params.page)  || 1;
+      const page = Number(params.page) || 1;
       const limit = Number(params.limit) || 10;
-      const data  = filtered.slice((page - 1) * limit, page * limit);
 
+      const response = await apiClient.get("/student", {
+        params: {
+          status,
+          name: params.search || undefined,
+          page,
+          limit,
+        },
+      });
+
+      const body = response.data.body || response.data;
       return {
-        data,
-        total:      filtered.length,
-        totalPages: Math.ceil(filtered.length / limit) || 1,
+        data: body.data || [],
+        total: body.total || 0,
+        totalPages: Math.ceil((body.total || 0) / limit) || 1,
       };
     },
   });
