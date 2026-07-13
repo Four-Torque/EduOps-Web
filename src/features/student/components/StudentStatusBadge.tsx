@@ -1,8 +1,8 @@
 import type { StudentStatus } from "../type";
 
 const STATUS_LABEL: Record<string, string> = {
-  active:   "Active",
-  inactive: "Inactive",
+  active:   "활동 중",
+  inactive: "비활동",
 };
 
 const STATUS_STYLE: Record<string, string> = {

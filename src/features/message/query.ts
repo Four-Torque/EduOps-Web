@@ -3,8 +3,8 @@ import {
   fetchDirectorChatRooms,
   fetchDirectorChatRoom,
   sendDirectorMessage,
-} from "@/services/director/message.service";
-import type { SendMessageRequest } from "@/types/director/message.types";
+} from "./api";
+import type { SendMessageRequest } from "./type";
 
 export const directorMessageQueryKeys = {
   all:  ()               => ["director-messages"]                    as const,

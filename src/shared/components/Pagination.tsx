@@ -5,9 +5,10 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
+  onPageChange?: (page: number) => void;
 }
 
-export function Pagination({ currentPage, totalPages }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -16,17 +17,21 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  function onPageChange(page: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", page.toString());
-    router.push(`${pathname}?${params.toString()}`);
+  function handlePageChange(page: number) {
+    if (onPageChange) {
+      onPageChange(page);
+    } else {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", page.toString());
+      router.push(`${pathname}?${params.toString()}`);
+    }
   }
 
   return (
     <div className="flex items-center gap-1">
       <PaginationButton
         label="‹"
-        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
       />
       {pages.map((page) => (
@@ -34,12 +39,12 @@ export function Pagination({ currentPage, totalPages }: PaginationProps) {
           key={page}
           label={String(page)}
           active={page === currentPage}
-          onClick={() => onPageChange(page)}
+          onClick={() => handlePageChange(page)}
         />
       ))}
       <PaginationButton
         label="›"
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
       />
     </div>

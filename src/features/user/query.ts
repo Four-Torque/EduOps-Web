@@ -1,3 +1,4 @@
+import apiClient from "@/shared/lib/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchTeachers,
@@ -6,6 +7,11 @@ import {
   updateTeacher,
   updateTeacherSalary,
   payTeacherSalary,
+  findUsers,
+  approveUser,
+  createUser,
+  updateUser,
+  deactivateUsers,
 } from "./api";
 import type {
   TeacherListItem,
@@ -13,6 +19,9 @@ import type {
   UpdateTeacherInput,
   SalaryStatus,
 } from "./type";
+import toast from "react-hot-toast";
+import z from "zod/v3";
+import { UserFormSchema } from "./schema";
 
 export const teacherQueryKeys = {
   all: () => ["manager", "teacher"] as const,
@@ -30,7 +39,11 @@ export function useTeachers() {
 // 목록 화면 전용: 검색/페이지 계산까지 끝낸 { data, total, totalPages } 형태로 반환한다.
 // /user API가 이름 검색을 지원하지 않아 서버에서 받은 전체 목록을 클라이언트에서 필터링·슬라이싱한다.
 // (같은 queryKey를 쓰므로 useTeachers()와 캐시를 공유한다)
-export function useTeacherList(params: { page: string; limit: string; search: string }) {
+export function useTeacherList(params: {
+  page: string;
+  limit: string;
+  search: string;
+}) {
   return useQuery({
     queryKey: teacherQueryKeys.list(),
     queryFn: fetchTeachers,
@@ -63,16 +76,24 @@ export function useUpdateTeacher() {
     // 낙관적 업데이트: 서버 응답 전에 캐시를 먼저 바꿔 UI를 즉시 반영
     onMutate: async ({ id, data }) => {
       await queryClient.cancelQueries({ queryKey: teacherQueryKeys.list() });
-      await queryClient.cancelQueries({ queryKey: teacherQueryKeys.detail(id) });
+      await queryClient.cancelQueries({
+        queryKey: teacherQueryKeys.detail(id),
+      });
 
-      const prevList = queryClient.getQueryData<TeacherListItem[]>(teacherQueryKeys.list());
-      const prevDetail = queryClient.getQueryData<TeacherDetail>(teacherQueryKeys.detail(id));
-
-      queryClient.setQueryData<TeacherListItem[]>(teacherQueryKeys.list(), (old) =>
-        old?.map((t) => (t.id === id ? { ...t, ...data } : t)),
+      const prevList = queryClient.getQueryData<TeacherListItem[]>(
+        teacherQueryKeys.list(),
       );
-      queryClient.setQueryData<TeacherDetail>(teacherQueryKeys.detail(id), (old) =>
-        old ? { ...old, ...data } : old,
+      const prevDetail = queryClient.getQueryData<TeacherDetail>(
+        teacherQueryKeys.detail(id),
+      );
+
+      queryClient.setQueryData<TeacherListItem[]>(
+        teacherQueryKeys.list(),
+        (old) => old?.map((t) => (t.id === id ? { ...t, ...data } : t)),
+      );
+      queryClient.setQueryData<TeacherDetail>(
+        teacherQueryKeys.detail(id),
+        (old) => (old ? { ...old, ...data } : old),
       );
 
       return { prevList, prevDetail, id };
@@ -84,7 +105,10 @@ export function useUpdateTeacher() {
         queryClient.setQueryData(teacherQueryKeys.list(), context.prevList);
       }
       if (context?.prevDetail) {
-        queryClient.setQueryData(teacherQueryKeys.detail(context.id), context.prevDetail);
+        queryClient.setQueryData(
+          teacherQueryKeys.detail(context.id),
+          context.prevDetail,
+        );
       }
     },
 
@@ -140,10 +164,13 @@ export function useDeleteTeacher() {
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: teacherQueryKeys.list() });
 
-      const prevList = queryClient.getQueryData<TeacherListItem[]>(teacherQueryKeys.list());
+      const prevList = queryClient.getQueryData<TeacherListItem[]>(
+        teacherQueryKeys.list(),
+      );
 
-      queryClient.setQueryData<TeacherListItem[]>(teacherQueryKeys.list(), (old) =>
-        old?.filter((t) => t.id !== id),
+      queryClient.setQueryData<TeacherListItem[]>(
+        teacherQueryKeys.list(),
+        (old) => old?.filter((t) => t.id !== id),
       );
 
       return { prevList };
@@ -161,85 +188,101 @@ export function useDeleteTeacher() {
   });
 }
 
-// import { useDirectorUserStore } from "./store";
-// import { UserApprovalStatus, DirectorUserListResponse } from "./type";
+export function useFindUsers(
+  params: {
+    page?: string;
+    limit?: string;
+    search?: string;
+    isApproved?: boolean;
+  },
+  options?: any,
+) {
+  const query = useQuery({
+    queryKey: ["users", params],
+    queryFn: () => findUsers(params),
+    ...options,
+  });
+  return query;
+}
 
-// export const directorUserQueryKeys = {
-//   all: () => ["director-users"] as const,
-//   list: (tab: string, page: number) =>
-//     ["director-users", "list", tab, page] as const,
-// };
+export function useApproveUser() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (id: string) => approveUser(id),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
 
-// export function useDirectorUsers() {
-//   const { tab, page } = useDirectorUserStore();
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: createUser,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
 
-//   return useQuery({
-//     queryKey: directorUserQueryKeys.list(tab, page),
-//     queryFn: () => fetchDirectorUsers(tab, page),
-//     placeholderData: (prev) => prev,
-//   });
-// }
+export function useUpdateUser(id: string) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: z.infer<typeof UserFormSchema>) =>
+      updateUser(id, values),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user", { id }] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
 
-// export function useUpdateDirectorUserStatus() {
-//   const queryClient = useQueryClient();
+export function useDeactivateUsers() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: deactivateUsers,
+    onSuccess: (data) => {
+      toast.success("선택한 사용자가 비활성화되었습니다.");
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
 
-//   return useMutation({
-//     mutationFn: ({
-//       userId,
-//       status,
-//     }: {
-//       userId: number;
-//       status: UserApprovalStatus;
-//     }) => updateDirectorUserStatus(userId, status),
-
-//     onMutate: async ({ userId, status }) => {
-//       await queryClient.cancelQueries({
-//         queryKey: directorUserQueryKeys.all(),
-//       });
-
-//       const previousData = queryClient.getQueriesData<DirectorUserListResponse>(
-//         {
-//           queryKey: directorUserQueryKeys.all(),
-//         },
-//       );
-
-//       queryClient.setQueriesData(
-//         { queryKey: directorUserQueryKeys.all() },
-//         (old: DirectorUserListResponse | undefined) => {
-//           if (!old?.items) return old;
-//           return {
-//             ...old,
-//             items: old.items.map((u) =>
-//               u.id === userId ? { ...u, status } : u,
-//             ),
-//           };
-//         },
-//       );
-
-//       return { previousData };
-//     },
-
-//     onError: (_error, _variables, context) => {
-//       context?.previousData.forEach(([key, data]) => {
-//         queryClient.setQueryData(key, data);
-//       });
-//     },
-
-//     onSettled: () => {
-//       queryClient.invalidateQueries({ queryKey: directorUserQueryKeys.all() });
-//     },
-//   });
-// }
-
-// export function useDeleteDirectorUsers() {
-//   const queryClient = useQueryClient();
-//   const clearSelection = useDirectorUserStore((state) => state.clearSelection);
-
-//   return useMutation({
-//     mutationFn: deleteDirectorUsers,
-//     onSuccess: () => {
-//       clearSelection();
-//       queryClient.invalidateQueries({ queryKey: directorUserQueryKeys.all() });
-//     },
-//   });
-// }
+export function useUserDetail(id: string) {
+  const query = useQuery({
+    queryKey: ["user", { id }],
+    queryFn: async () => {
+      const response = await apiClient.get(`/user/${id}`);
+      return response.data.body;
+    },
+    enabled: !!id,
+  });
+  return query;
+}

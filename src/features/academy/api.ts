@@ -3,7 +3,7 @@ import type { AcademyBasicInfo, AcademyInfoResponse } from "./type";
 
 export async function fetchAcademyInfo(): Promise<AcademyInfoResponse> {
   const { data } = await apiClient.get("/academy/info");
-  return data;
+  return data.body;
 }
 
 export async function updateAcademyBasicInfo(

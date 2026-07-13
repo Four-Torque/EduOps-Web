@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { X, Search } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
-import type { MessageContact } from "@/types/message/message.types";
+import type { MessageContact } from "@/features/message/type";
 
 interface ContactGroup {
   label: string;

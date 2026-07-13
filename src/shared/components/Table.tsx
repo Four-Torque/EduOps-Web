@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useState, MouseEvent } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { StatusBadge } from "./StatusBadge";
 import { Pagination } from "./Pagination";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
-import { TableStatusPopover } from "./TableStatusPopover";
 
 interface PopoverState {
   itemId: string;
@@ -18,10 +16,7 @@ export interface ColumnProps {
   label: string;
   type?: "text" | "number" | "money" | "date";
   className?: string;
-  render?: (
-    item: any,
-    helpers: { openPopover: (id: string, e: React.MouseEvent) => void },
-  ) => React.ReactNode;
+  render?: (item: any) => React.ReactNode;
 }
 
 interface TableProps {
@@ -36,6 +31,8 @@ interface TableProps {
   createButtonLabel?: string;
   onEditStatus?: (itemId: string, status: string) => void;
   statusReadonly?: boolean;
+  onPageChange?: (page: number) => void;
+  currentPage?: number;
 }
 
 export function Table({
@@ -48,14 +45,14 @@ export function Table({
   onCreate,
   deleteButtonLabel = "선택 삭제",
   createButtonLabel = "생성",
-  onEditStatus,
-  statusReadonly = false,
+  onPageChange,
+  currentPage,
 }: TableProps) {
-  const [popover, setPopover] = useState<PopoverState | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
+  const urlPage = searchParams.get("page") || "1";
+  const activePage = currentPage !== undefined ? currentPage : Number(urlPage);
 
   const items = data?.data ?? [];
   const totalItems = data?.total ?? 0;
@@ -68,20 +65,6 @@ export function Table({
   useEffect(() => {
     setSelectedIds([]);
   }, [items?.length]);
-
-  function openPopover(id: string, e: MouseEvent) {
-    if (statusReadonly) return;
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    setPopover((prev) => (prev?.itemId === id ? null : { itemId: id, rect }));
-  }
-
-  function handleStatusSelect(status: string) {
-    if (!popover) return;
-    if (onEditStatus) {
-      onEditStatus(popover.itemId, status);
-    }
-    setPopover(null);
-  }
 
   function toggleSelect(id: string) {
     setSelectedIds((prev) =>
@@ -131,10 +114,8 @@ export function Table({
             showCheckbox={showCheckbox}
             rowKey={rowKey}
             selectedIds={selectedIds}
-            statusReadonly={statusReadonly}
             totalColSpan={totalColSpan}
             onToggleSelect={toggleSelect}
-            onOpenPopover={openPopover}
           />
         </table>
 
@@ -142,19 +123,11 @@ export function Table({
           <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
             {totalItems > 0 && (
-              <Pagination currentPage={Number(page)} totalPages={totalPages} />
+              <Pagination currentPage={activePage} totalPages={totalPages} onPageChange={onPageChange} />
             )}
           </div>
         )}
       </div>
-
-      {onEditStatus && popover && (
-        <TableStatusPopover
-          anchorRect={popover.rect}
-          onSelect={handleStatusSelect}
-          onClose={() => setPopover(null)}
-        />
-      )}
     </div>
   );
 }
@@ -246,10 +219,8 @@ function TableBody({
   showCheckbox,
   rowKey,
   selectedIds,
-  statusReadonly,
   totalColSpan,
   onToggleSelect,
-  onOpenPopover,
 }: {
   items: any[];
   columns: ColumnProps[];
@@ -257,10 +228,8 @@ function TableBody({
   showCheckbox: boolean;
   rowKey: string;
   selectedIds: string[];
-  statusReadonly: boolean;
   totalColSpan: number;
   onToggleSelect: (id: string) => void;
-  onOpenPopover: (id: string, e: React.MouseEvent) => void;
 }) {
   if (isLoading) {
     return (
@@ -292,19 +261,8 @@ function TableBody({
     );
   }
 
-  function renderCellValue(item: any, col: ColumnProps, rowId: string) {
-    if (col.render) return col.render(item, { openPopover: onOpenPopover });
-    if (col.key === "status") {
-      return (
-        <StatusBadge
-          status={item.status}
-          readonly={statusReadonly}
-          onClick={(e) => {
-            if (item.status === "PENDING") onOpenPopover(rowId, e);
-          }}
-        />
-      );
-    }
+  function renderCellValue(item: any, col: ColumnProps) {
+    if (col.render) return col.render(item);
 
     const rawValue = item[col.key];
     if (rawValue !== undefined && rawValue !== null && rawValue !== "") {
@@ -343,7 +301,7 @@ function TableBody({
                 key={col.key}
                 className="px-3.5 py-2.5 text-[12.5px] text-center text-slate-600"
               >
-                {renderCellValue(item, col, rowId)}
+                {renderCellValue(item, col)}
               </td>
             ))}
           </tr>

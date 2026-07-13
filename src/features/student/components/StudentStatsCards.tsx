@@ -9,7 +9,7 @@ export function StudentStatsCards() {
     {
       label: "총 학생 수",
       value: stats.totalStudents.toLocaleString(),
-      sub: `↗ +${stats.totalStudentsGrowthRate}% vs last year`,
+      sub: `↗ 전년 대비 +${stats.totalStudentsGrowthRate}%`,
       subClass: "text-emerald-600",
       icon: Users,
       iconClass: "bg-slate-100 text-slate-500",
@@ -17,7 +17,7 @@ export function StudentStatsCards() {
     {
       label: "신규 등록",
       value: stats.newRegistrations.toString(),
-      sub: "This Month",
+      sub: "이번 달 기준",
       subClass: "text-slate-400",
       icon: UserPlus,
       iconClass: "bg-slate-100 text-slate-500",
@@ -25,7 +25,7 @@ export function StudentStatsCards() {
     {
       label: "대기중인 상담",
       value: stats.waitingConsultations.toString(),
-      sub: "Require immediate action",
+      sub: "즉각적인 상담 조치 필요",
       subClass: "text-slate-400",
       icon: MessageCircle,
       iconClass: "bg-red-50 text-red-400",

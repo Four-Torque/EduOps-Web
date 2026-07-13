@@ -2,9 +2,9 @@
 
 import { useRegisterVerifyMail } from "@/features/auth/query";
 import { notFound, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function RegisterVerifyPage() {
+function RegisterVerifyPageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const { mutate: verify } = useRegisterVerifyMail();
@@ -23,4 +23,12 @@ export default function RegisterVerifyPage() {
   if (isError) return notFound();
 
   return null;
+}
+
+export default function RegisterVerifyPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterVerifyPageContent />
+    </Suspense>
+  );
 }

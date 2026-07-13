@@ -6,6 +6,8 @@ import type {
 
 export const MOCK_REVENUE_STATS: RevenueStats = {
   totalRevenue: 28400000,
+  totalExpense: 12110000,
+  netProfit: 16290000,
   unpaidAmount: 3200000,
   unpaidCount: 7,
   newEnrollments: 18,
@@ -21,8 +23,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "수강료 (10월분)",
     studentName: "김지훈",
     amount: 350000,
-    status: "paid",
+    status: "PAID",
     category: "수강료",
+    type: "INCOME",
   },
   {
     id: "2",
@@ -31,8 +34,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "수강료 (10월분)",
     studentName: "최원우",
     amount: 380000,
-    status: "paid",
+    status: "PAID",
     category: "수강료",
+    type: "INCOME",
   },
   {
     id: "3",
@@ -41,8 +45,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "실험 실습비",
     studentName: "민수현",
     amount: 120000,
-    status: "paid",
-    category: "실습비",
+    status: "PAID",
+    category: "수강료",
+    type: "INCOME",
   },
   {
     id: "4",
@@ -51,8 +56,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "청규 교재",
     studentName: "윤지민",
     amount: 85000,
-    status: "paid",
+    status: "PAID",
     category: "교재",
+    type: "INCOME",
   },
   {
     id: "5",
@@ -61,8 +67,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "특강 수강료",
     studentName: "심현수",
     amount: 550000,
-    status: "unpaid",
-    category: "특강",
+    status: "UNPAID",
+    category: "수강료",
+    type: "INCOME",
   },
   {
     id: "6",
@@ -71,8 +78,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "수강료 (10월분)",
     studentName: "박서준",
     amount: 320000,
-    status: "paid",
+    status: "PAID",
     category: "수강료",
+    type: "INCOME",
   },
   {
     id: "7",
@@ -81,8 +89,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "특강 수강료",
     studentName: "이지은",
     amount: 180000,
-    status: "unpaid",
-    category: "특강",
+    status: "UNPAID",
+    category: "수강료",
+    type: "INCOME",
   },
   {
     id: "8",
@@ -91,8 +100,9 @@ export const MOCK_REVENUE_ITEMS: RevenueItem[] = [
     itemSub: "교재비",
     studentName: "정민준",
     amount: 65000,
-    status: "paid",
+    status: "PAID",
     category: "교재",
+    type: "INCOME",
   },
 ];
 

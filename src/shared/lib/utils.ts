@@ -1,6 +1,6 @@
 import { CalendarEvent, ScheduleItem } from "@/features/schedule/type";
 import { clsx, type ClassValue } from "clsx";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { ko } from "date-fns/locale";
 import { twMerge } from "tailwind-merge";
 
@@ -78,4 +78,11 @@ export function toCalendarEvents(
       end: `${ymd} ${item.endTime}`,
     };
   });
+}
+
+export function formatDate(date: Date | string | null | undefined) {
+  if (!date) return "";
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (!isValid(d)) return "";
+  return format(d, "yyyy-MM-dd", { locale: ko });
 }

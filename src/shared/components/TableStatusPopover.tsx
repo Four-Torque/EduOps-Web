@@ -1,11 +1,11 @@
 "use client";
 
-import { MaterialPaymentStatus } from "@/types/manager/material.types";
+import { ApplicationStatus } from "@/features/asset/type";
 import { useEffect, useRef } from "react";
 
 interface PopoverAction {
   label: string;
-  status: MaterialPaymentStatus;
+  status: ApplicationStatus;
   className: string;
 }
 
@@ -24,7 +24,7 @@ const POPOVER_ACTIONS: PopoverAction[] = [
 
 interface TableStatusPopoverProps {
   anchorRect: DOMRect;
-  onSelect: (status: MaterialPaymentStatus) => void;
+  onSelect: (status: ApplicationStatus) => void;
   onClose: () => void;
 }
 
@@ -57,7 +57,7 @@ export function TableStatusPopover({
         <button
           key={action.status}
           onClick={() => {
-            onSelect(action.status as MaterialPaymentStatus);
+            onSelect(action.status as ApplicationStatus);
             onClose();
           }}
           className={`cursor-pointer text-[11.5px] font-medium px-3 py-1.5 rounded transition-colors ${action.className}`}

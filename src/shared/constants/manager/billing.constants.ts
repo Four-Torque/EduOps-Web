@@ -3,7 +3,7 @@ import type {
   BillingStats,
   MonthlyRevenue,
   BillingTabFilter,
-} from "@/types/manager/billing.types";
+} from "@/features/finance/type";
 
 export const BILLING_PAGE_SIZE = 6;
 

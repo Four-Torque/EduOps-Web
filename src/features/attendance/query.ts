@@ -3,9 +3,11 @@ import {
   fetchClassAttendances, 
   createStudentAttendance, 
   updateStudentAttendance,
+  fetchAttendance,
 } from "./api";
-import { ClassStudentAttendance } from "./type";
+import { ClassStudentAttendance, AttendanceFilter } from "./type";
 import { fetchTeacherClasses } from "../class/api";
+import apiClient from "@/shared/lib/axios";
 
 // 수업 목록 조회 훅
 export function useTeacherClasses(teacherId: string) {
@@ -83,6 +85,39 @@ export function useSaveAttendance() {
       if (context?.queryKey) {
         queryClient.invalidateQueries({ queryKey: context.queryKey });
       }
+    },
+  });
+}
+
+export function useAttendance(filter: AttendanceFilter) {
+  return useQuery({
+    queryKey: ["staff-attendance", "weekly", filter],
+    queryFn: () => fetchAttendance(filter),
+  });
+}
+
+export function useStaffCheckIn() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.post("/staff-attendance/check-in", { userId });
+      return response.data.body ?? response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff-attendance"] });
+    },
+  });
+}
+
+export function useStaffCheckOut() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await apiClient.post("/staff-attendance/check-out", { userId });
+      return response.data.body ?? response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["staff-attendance"] });
     },
   });
 }

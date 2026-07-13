@@ -1,33 +1,23 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { MOCK_ACADEMY_INFO } from "@/shared/constants/manager/academy-info.constants";
+import { fetchAcademyInfo, updateAcademyBasicInfo } from "./api";
 import type { AcademyBasicInfo } from "./type";
 
 export const academyQueryKeys = {
-  all:  () => ["academy-info"]           as const,
+  all: () => ["academy-info"] as const,
   info: () => ["academy-info", "detail"] as const,
 };
 
 export function useAcademyInfo() {
   return useQuery({
     queryKey: academyQueryKeys.info(),
-    queryFn:  async () => MOCK_ACADEMY_INFO,
+    queryFn: fetchAcademyInfo,
   });
 }
 
 export function useUpdateAcademyBasicInfo() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (info: AcademyBasicInfo) => info, // TODO: API 연동
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: academyQueryKeys.all() });
-    },
-  });
-}
-
-export function useDeleteAcademyBranch() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: number) => id, // TODO: API 연동
+    mutationFn: (info: AcademyBasicInfo) => updateAcademyBasicInfo(info),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: academyQueryKeys.all() });
     },

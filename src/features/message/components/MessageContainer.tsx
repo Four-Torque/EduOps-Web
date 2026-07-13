@@ -3,7 +3,7 @@
 import { MessageChatList }     from "./MessageChatList";
 import { MessageChatRoom }     from "./MessageChatRoom";
 import { MessageContactModal } from "./MessageContactModal";
-import type { ChatRoom, MessageContact } from "@/types/message/message.types";
+import type { ChatRoom, MessageContact } from "@/features/message/type";
 
 interface ContactGroup {
   label: string;

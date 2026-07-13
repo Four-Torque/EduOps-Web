@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
-import Logo from "./Logo";
+import Logo from "../Logo";
 import { Separator } from "@/shared/components/ui/separator";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -14,11 +14,11 @@ import FormInput from "@/shared/components/FormInput";
 import { ChevronLeftIcon, LockIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
-import { ResetPasswordFormSchema } from "@/validations/auth.valid";
+import { ResetPasswordFormSchema } from "@/features/auth/schema";
 import Link from "next/link";
-import SubmitButton from "../../../shared/components/SubmitButton";
-import PasswordIndicator from "./PasswordIndicator";
-import { useResetPassword } from "@/hooks/auth/useAuth";
+import SubmitButton from "@/shared/components/SubmitButton";
+import PasswordIndicator from "../PasswordIndicator";
+import { useResetPassword } from "@/features/auth/query";
 
 interface ResetPasswordFormProps {
   token?: string;

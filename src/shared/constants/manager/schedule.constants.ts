@@ -1,13 +1,21 @@
 export const SCHEDULE_ROOM_OPTIONS = [
   { value: "all", label: "강의장: All" },
+  { value: "101호", label: "101호" },
+  { value: "102호", label: "102호" },
+  { value: "203호", label: "203호" },
 ] as const;
 
 export const SCHEDULE_INSTRUCTOR_OPTIONS = [
   { value: "all", label: "강사: All" },
+  { value: "김춘식", label: "김춘식" },
+  { value: "김길동", label: "김길동" },
+  { value: "교사-미나", label: "교사-미나" },
 ] as const;
 
 export const SCHEDULE_SUBJECT_OPTIONS = [
-  { value: "math", label: "Subject: 수학" },
+  { value: "all", label: "과목: All" },
+  { value: "math", label: "수학" },
+  { value: "english", label: "영어" },
 ] as const;
 
 // 기준 주(2023-10-16 월요일)로 목 데이터 생성

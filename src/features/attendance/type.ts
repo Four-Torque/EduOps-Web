@@ -4,6 +4,7 @@ export type DepartmentType = "강사" | "관리자" | "전체";
 export interface AttendanceDay {
   day: "월" | "화" | "수" | "목" | "금";
   status: AttendanceStatus;
+  checkedOut?: boolean;
 }
 
 export interface AttendanceEmployee {
@@ -33,6 +34,7 @@ export interface AttendanceFilter {
   department: DepartmentType;
   search: string;
   page: number;
+  weekStart?: string;
 }
 
 // =============================================================================== //
