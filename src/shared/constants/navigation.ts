@@ -99,7 +99,7 @@ export const MANAGER_NAV: NavItem[] = [
   {
     id: "billing",
     label: "결제",
-    children: [{ label: "결제 관리", href: "/billing" }],
+    children: [{ label: "원생 결제 관리", href: "/billing" }],
   },
   {
     id: "manager-message",

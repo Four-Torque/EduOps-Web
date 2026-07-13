@@ -58,7 +58,17 @@ export default function Topbar({ homePath, homeLabel }: TopbarProps) {
       {tabs.length === 0 ? (
         <div className="h-10" />
       ) : (
-        <div className="flex items-end gap-1 overflow-x-auto">
+        <div
+          className={cn(
+            "flex items-end gap-1 overflow-x-auto pb-1",
+            "[scrollbar-width:thin] [scrollbar-color:#e2e8f0_transparent]",
+            "[&::-webkit-scrollbar]:h-1.5",
+            "[&::-webkit-scrollbar-track]:bg-transparent",
+            "[&::-webkit-scrollbar-thumb]:rounded-full",
+            "[&::-webkit-scrollbar-thumb]:bg-slate-200",
+            "hover:[&::-webkit-scrollbar-thumb]:bg-slate-300",
+          )}
+        >
           {tabs.map((tab) => {
             const isActive =
               pathname === tab.href || pathname.startsWith(tab.href);
