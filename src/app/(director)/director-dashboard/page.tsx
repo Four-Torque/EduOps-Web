@@ -25,6 +25,18 @@ import {
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Users, MessageSquare, CreditCard, FileText } from "lucide-react";
 import DashboardCountCard from "@/shared/components/dashboard/DashboardCountCard";
+import {
+  useDashboardStaffCount,
+  useDashboardStudentStats,
+  useDashboardClassCount,
+  useDashboardRecentAssets,
+  useDashboardPendingUsers,
+  useDashboardRecentMessages,
+  useDashboardMonthlyTrends,
+  useDashboardRecentPayments,
+} from "@/features/dashboard/query";
+import { formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 
 const chartData = [
   { month: "1월", income: 4000, expense: 2400 },
@@ -47,22 +59,35 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function Dashboard() {
+  const { data: staffCount = 0 } = useDashboardStaffCount();
+  const { data: studentCount = 0 } = useDashboardStudentStats();
+  const { data: classCount = 0 } = useDashboardClassCount();
+  const { data: recentAssets = [] } = useDashboardRecentAssets();
+  const { data: pendingUsers = [] } = useDashboardPendingUsers();
+  const { data: recentMessages = [] } = useDashboardRecentMessages();
+  const { data: monthlyTrends = [] } = useDashboardMonthlyTrends();
+  const { data: recentPayments = [] } = useDashboardRecentPayments();
+
+  const now = new Date();
+  const startMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+  const chartDateRangeText = `${startMonth.getMonth() + 1}월 - ${now.getMonth() + 1}월 ${now.getFullYear()}`;
+
   return (
-    <div className="p-8 max-w-[1600px] mx-auto space-y-8">
-      <div className="grid gap-4 md:grid-cols-3">
-        <DashboardCountCard title="총 직원 수" count={12} />
-        <DashboardCountCard title="총 학생 수" count={148} />
-        <DashboardCountCard title="개설 강좌 수" count={24} />
+    <div className="p-8 max-w-[1600px] mx-auto space-y-8 flex flex-col gap-4">
+      <div className="grid gap-4 md:grid-cols-3 m-0">
+        <DashboardCountCard title="총 직원 수" count={staffCount} />
+        <DashboardCountCard title="총 학생 수" count={studentCount} />
+        <DashboardCountCard title="개설 강좌 수" count={classCount} />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="auto-rows-[300px] grid gap-4 md:grid-cols-3 m-0">
         <Card>
           <CardHeader>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <FileText className="h-4 w-4" /> 최근 10개 자재 / 결재
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px] overflow-y-auto">
+          <CardContent className="h-full overflow-y-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -71,14 +96,16 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <TableRow key={i}>
+                {recentAssets.length === 0 ? (
+                  <TableRow><TableCell colSpan={2} className="text-center text-sm text-slate-500 py-8">내역이 없습니다.</TableCell></TableRow>
+                ) : recentAssets.map((asset: any, i: number) => (
+                  <TableRow key={asset.id || i}>
                     <TableCell className="font-medium text-sm">
-                      A강의실 교재 구입 외 {i}건
+                      {asset.title || asset.name || `자재/결재 신청 ${i + 1}`}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Badge variant={i % 2 === 0 ? "default" : "outline"}>
-                        {i % 2 === 0 ? "결재완료" : "대기중"}
+                      <Badge variant={asset.status === "APPROVED" ? "default" : "outline"}>
+                        {asset.status === "APPROVED" ? "결재완료" : "대기중"}
                       </Badge>
                     </TableCell>
                   </TableRow>
@@ -94,7 +121,7 @@ export default function Dashboard() {
               <Users className="h-4 w-4" /> 사용자 승인 대기 목록
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px] overflow-y-auto">
+          <CardContent className="h-full overflow-y-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -104,12 +131,14 @@ export default function Dashboard() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <TableRow key={i}>
+                {pendingUsers.length === 0 ? (
+                  <TableRow><TableCell colSpan={3} className="text-center text-sm text-slate-500 py-8">대기 중인 사용자가 없습니다.</TableCell></TableRow>
+                ) : pendingUsers.map((user: any, i: number) => (
+                  <TableRow key={user.id || i}>
                     <TableCell className="font-medium text-sm">
-                      홍길동 {i + 1}
+                      {user.name}
                     </TableCell>
-                    <TableCell className="text-sm">신입생</TableCell>
+                    <TableCell className="text-sm">{user.role === 'TEACHER' ? '선생님' : user.role === 'STAFF' ? '직원' : '사용자'}</TableCell>
                     <TableCell className="text-right">
                       <Badge variant="destructive">승인대기</Badge>
                     </TableCell>
@@ -126,20 +155,24 @@ export default function Dashboard() {
               <MessageSquare className="h-4 w-4" /> 최근 5개 쪽지
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[300px] space-y-4 overflow-y-auto">
-            {Array.from({ length: 5 }).map((_, i) => (
+          <CardContent className="h-full space-y-4 overflow-y-auto">
+            {recentMessages.length === 0 ? (
+              <p className="text-center text-sm text-slate-500 py-8">새로운 쪽지가 없습니다.</p>
+            ) : recentMessages.map((conv: any, i: number) => (
               <div
-                key={i}
+                key={conv.otherUser?.id || i}
                 className="flex flex-col space-y-1 p-2 rounded-md hover:bg-slate-50 border border-slate-100"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold">
-                    학부모 상담 요청
+                    {conv.otherUser?.name || "알 수 없음"}
                   </span>
-                  <span className="text-xs text-muted-foreground">14:32</span>
+                  <span className="text-xs text-muted-foreground">
+                    {conv.lastMessageUpdatedAt ? formatDistanceToNow(new Date(conv.lastMessageUpdatedAt), { addSuffix: true, locale: ko }) : ""}
+                  </span>
                 </div>
                 <p className="text-xs text-slate-500 line-clamp-1">
-                  셔틀버스 노선 관련하여 문의 드립니다...
+                  {conv.lastMessageContent || "내용 없음"}
                 </p>
               </div>
             ))}
@@ -147,22 +180,22 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card className="col-span-2 flex flex-col justify-between">
+      <div className="auto-rows-[330px] grid gap-4 md:grid-cols-3 m-0">
+        <Card className="col-span-2 flex flex-col h-full">
           <CardHeader>
             <CardTitle className="text-base font-semibold">
               수입/지출 그래프
             </CardTitle>
-            <CardDescription>1월 - 6월 2026</CardDescription>
+            <CardDescription>{chartDateRangeText}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 min-h-0 pb-4">
             <ChartContainer
               config={chartConfig}
-              className="max-h-[300px] w-full"
+              className="h-full w-full"
             >
               <LineChart
                 accessibilityLayer
-                data={chartData}
+                data={monthlyTrends.length > 0 ? monthlyTrends : chartData}
                 margin={{
                   left: 12,
                   right: 12,
@@ -188,14 +221,14 @@ export default function Dashboard() {
                   content={<ChartTooltipContent />}
                 />
                 <Line
-                  dataKey="income"
+                  dataKey="current"
                   type="monotone"
                   stroke="var(--color-income)"
                   strokeWidth={2}
                   dot={false}
                 />
                 <Line
-                  dataKey="expense"
+                  dataKey="previous"
                   type="monotone"
                   stroke="var(--color-expense)"
                   strokeWidth={2}
@@ -212,26 +245,33 @@ export default function Dashboard() {
               <CreditCard className="h-4 w-4" /> 최근 결제 내역
             </CardTitle>
           </CardHeader>
-          <CardContent className="h-[380px] overflow-y-auto">
-            <Table>
+          <CardContent className="overflow-y-auto">
+            <Table className="table-fixed w-full">
               <TableHeader>
-                <TableRow>
-                  <TableHead>학생명</TableHead>
-                  <TableHead>금액</TableHead>
-                  <TableHead className="text-right">일시</TableHead>
+                <TableRow className="text-xs">
+                  <TableHead className="w-[35%]">결제명</TableHead>
+                  <TableHead className="w-[40%]">금액</TableHead>
+                  <TableHead className="w-[25%] text-right">일시</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="font-medium text-sm">
-                      김지우
+                {recentPayments.length === 0 ? (
+                  <TableRow><TableCell colSpan={3} className="text-center text-sm text-slate-500 py-8">결제 내역이 없습니다.</TableCell></TableRow>
+                ) : recentPayments.map((payment: any, i: number) => (
+                  <TableRow key={payment.id || i}>
+                    <TableCell className="font-medium text-xs truncate max-w-0" title={payment.itemTitle || "알 수 없음"}>
+                      {payment.itemTitle || "알 수 없음"}
                     </TableCell>
-                    <TableCell className="text-sm font-semibold text-blue-600">
-                      350,000원
+                    <TableCell 
+                      className={`text-sm font-semibold truncate max-w-0 ${
+                        payment.type === 'EXPENSE' ? 'text-red-500' : 'text-blue-600'
+                      }`}
+                    >
+                      {payment.type === 'EXPENSE' ? '-' : '+'}
+                      {payment.amount?.toLocaleString() || 0}원
                     </TableCell>
-                    <TableCell className="text-right text-xs text-muted-foreground">
-                      방금 전
+                    <TableCell className="text-right text-[9px] text-muted-foreground truncate max-w-0">
+                      {payment.date ? formatDistanceToNow(new Date(payment.date), { addSuffix: true, locale: ko }) : ""}
                     </TableCell>
                   </TableRow>
                 ))}
