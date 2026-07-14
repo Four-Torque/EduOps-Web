@@ -1,71 +1,91 @@
-import { MOCK_CHAT_ROOMS } from "@/shared/constants/director/message.constants";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { ChatRoom, MessageContact, ChatMessage } from "./type";
+import type { MessageContact, ChatRoom, ChatMessage } from "./type";
 
-interface MessageUIState {
-  chatRooms: ChatRoom[];
-  activeChatRoomId: number | null;
+// ─── Contact 검색 Store ───────────────────────────────────────────────────────
+
+interface MessageContactUIState {
   searchQuery: string;
-  isNewMessageModalOpen: boolean;
-  inputText: string;
-
-  setActiveChatRoom: (id: number) => void;
   setSearchQuery: (query: string) => void;
-  openNewMessageModal: () => void;
-  closeNewMessageModal: () => void;
+}
+
+export const useMessageContactStore = create<MessageContactUIState>()(
+  devtools(
+    (set) => ({
+      searchQuery: "",
+      setSearchQuery: (searchQuery) =>
+        set({ searchQuery }, false, "message-contact/set-search-query"),
+    }),
+    { name: "MessageContactStore" },
+  ),
+);
+
+// ─── Chat Store ───────────────────────────────────────────────────────────────
+
+interface MessageChatUIState {
+  chatRooms: ChatRoom[];
+  activeChatRoomId: string | null;
+  inputText: string;
+  isContactModalOpen: boolean;
+
+  setActiveChatRoom: (id: string) => void;
   setInputText: (text: string) => void;
-  sendMessage: (content: string) => void;
-  deleteChatRoom: (id: number) => void;
+  setChatRooms: (rooms: ChatRoom[]) => void;
+  setMessages: (contactId: string, messages: ChatMessage[]) => void;
+  openContactModal: () => void;
+  closeContactModal: () => void;
+  sendMessage: (content: string, senderId: string, senderRole: MessageContact["role"]) => void;
+  deleteChatRoom: (id: string) => void;
   createChatRoom: (contact: MessageContact) => void;
 }
 
-export const useMessageStore = create<MessageUIState>()(
+export const useMessageChatStore = create<MessageChatUIState>()(
   devtools(
     (set, get) => ({
-      chatRooms: MOCK_CHAT_ROOMS,
-      activeChatRoomId: MOCK_CHAT_ROOMS[0].id,
-      searchQuery: "",
-      isNewMessageModalOpen: false,
+      chatRooms: [],
+      activeChatRoomId: null,
       inputText: "",
+      isContactModalOpen: false,
 
       setActiveChatRoom: (id) =>
-        set({ activeChatRoomId: id }, false, "message/set-active-chat-room"),
-
-      setSearchQuery: (searchQuery) =>
-        set({ searchQuery }, false, "message/set-search-query"),
-
-      openNewMessageModal: () =>
-        set(
-          { isNewMessageModalOpen: true },
-          false,
-          "message/open-new-message-modal",
-        ),
-
-      closeNewMessageModal: () =>
-        set(
-          { isNewMessageModalOpen: false },
-          false,
-          "message/close-new-message-modal",
-        ),
+        set({ activeChatRoomId: id }, false, "message-chat/set-active-room"),
 
       setInputText: (inputText) =>
-        set({ inputText }, false, "message/set-input-text"),
+        set({ inputText }, false, "message-chat/set-input-text"),
 
-      sendMessage: (content) => {
+      setChatRooms: (chatRooms) =>
+        set({ chatRooms }, false, "message-chat/set-chat-rooms"),
+
+      setMessages: (contactId, messages) =>
+        set(
+          (state) => ({
+            chatRooms: state.chatRooms.map((room) =>
+              room.contact.id === contactId
+                ? { ...room, messages }
+                : room,
+            ),
+          }),
+          false,
+          "message-chat/set-messages",
+        ),
+
+      openContactModal: () =>
+        set({ isContactModalOpen: true }, false, "message-chat/open-contact-modal"),
+
+      closeContactModal: () =>
+        set({ isContactModalOpen: false }, false, "message-chat/close-contact-modal"),
+
+      sendMessage: (content, senderId, senderRole) => {
         const { activeChatRoomId, chatRooms } = get();
         if (!activeChatRoomId || !content.trim()) return;
 
         const newMessage: ChatMessage = {
-          id: Date.now(),
-          senderId: 0,
-          senderRole: "manager",
-          content: content.trim(),
-          sentAt: new Date().toLocaleTimeString("ko-KR", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          isMine: true,
+          id:         String(Date.now()),
+          senderId,
+          senderRole,
+          content:    content.trim(),
+          sentAt:     new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+          isMine:     true,
         };
 
         set(
@@ -75,31 +95,29 @@ export const useMessageStore = create<MessageUIState>()(
               room.id === activeChatRoomId
                 ? {
                     ...room,
-                    messages: [...room.messages, newMessage],
-                    lastMessage: content.trim(),
+                    messages:      [...room.messages, newMessage],
+                    lastMessage:   content.trim(),
                     lastMessageAt: newMessage.sentAt,
                   }
                 : room,
             ),
           },
           false,
-          "message/send-message",
+          "message-chat/send-message",
         );
       },
 
       deleteChatRoom: (id) => {
         const { chatRooms, activeChatRoomId } = get();
-        const remaining = chatRooms.filter((room) => room.id !== id);
+        const remaining = chatRooms.filter((r) => r.id !== id);
         set(
           {
             chatRooms: remaining,
             activeChatRoomId:
-              activeChatRoomId === id
-                ? (remaining[0]?.id ?? null)
-                : activeChatRoomId,
+              activeChatRoomId === id ? (remaining[0]?.id ?? null) : activeChatRoomId,
           },
           false,
-          "message/delete-chat-room",
+          "message-chat/delete-chat-room",
         );
       },
 
@@ -107,32 +125,30 @@ export const useMessageStore = create<MessageUIState>()(
         const { chatRooms } = get();
         const existing = chatRooms.find((r) => r.contact.id === contact.id);
         if (existing) {
-          set(
-            { activeChatRoomId: existing.id, isNewMessageModalOpen: false },
-            false,
-            "message/set-active-existing",
-          );
+          set({ activeChatRoomId: existing.id, isContactModalOpen: false }, false, "message-chat/set-existing-room");
           return;
         }
+
         const newRoom: ChatRoom = {
-          id: Date.now(),
+          id:            String(Date.now()),
           contact,
-          lastMessage: "",
+          lastMessage:   "",
           lastMessageAt: "",
-          unreadCount: 0,
-          messages: [],
+          unreadCount:   0,
+          messages:      [],
         };
+
         set(
           {
-            chatRooms: [newRoom, ...chatRooms],
-            activeChatRoomId: newRoom.id,
-            isNewMessageModalOpen: false,
+            chatRooms:          [newRoom, ...chatRooms],
+            activeChatRoomId:   newRoom.id,
+            isContactModalOpen: false,
           },
           false,
-          "message/create-chat-room",
+          "message-chat/create-chat-room",
         );
       },
     }),
-    { name: "ManagerMessageStore" },
+    { name: "MessageChatStore" },
   ),
 );

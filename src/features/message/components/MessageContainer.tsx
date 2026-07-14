@@ -11,20 +11,15 @@ interface ContactGroup {
 }
 
 interface MessageContainerProps {
-  // 대화 목록
   chatRooms?: ChatRoom[];
-  activeChatRoomId: number | null;
+  activeChatRoomId: string | null;
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  onSelectRoom: (id: number) => void;
-
-  // 채팅방
+  onSelectRoom: (id: string) => void;
   inputText: string;
   onInputChange: (text: string) => void;
   onSend: () => void;
   onDeleteRoom: () => void;
-
-  // 새 메시지 모달
   isContactModalOpen: boolean;
   contactGroups: ContactGroup[];
   onOpenContactModal: () => void;
@@ -71,7 +66,6 @@ export function MessageContainer({
 
       {isContactModalOpen && (
         <MessageContactModal
-          groups={contactGroups}
           onSelect={onSelectContact}
           onClose={onCloseContactModal}
         />

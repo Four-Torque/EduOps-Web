@@ -1,5 +1,5 @@
-import { DirectorMessageSection } from "@/features/message/components/DirectorMessageSection";
+import { MessageSection } from "@/features/message/components/MessageSection";
 
-export default function DirectorMessagePage() {
-  return <DirectorMessageSection />;
+export default function MessagePage() {
+  return <MessageSection />;
 }

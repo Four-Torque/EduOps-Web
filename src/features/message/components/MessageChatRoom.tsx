@@ -7,8 +7,8 @@ import type { ChatRoom, ChatMessage } from "@/features/message/type";
 
 const ROLE_LABEL: Record<string, string> = {
   director: "원장",
-  manager: "관리자",
-  teacher: "강사",
+  manager:  "관리자",
+  teacher:  "강사",
 };
 
 interface MessageChatRoomProps {
@@ -27,15 +27,13 @@ export function MessageChatRoom({
   onDelete,
 }: MessageChatRoomProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef   = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // 새 메시지 시 스크롤 하단
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeRoom?.messages.length]);
 
-  // 외부 클릭 시 메뉴 닫기
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -75,16 +73,11 @@ export function MessageChatRoom({
             {activeRoom.contact.avatarInitial}
           </div>
           <div>
-            <p className="text-[13px] font-semibold text-slate-800">
-              {activeRoom.contact.name}
-            </p>
-            <p className="text-[11px] text-slate-400">
-              {ROLE_LABEL[activeRoom.contact.role]}
-            </p>
+            <p className="text-[13px] font-semibold text-slate-800">{activeRoom.contact.name}</p>
+            <p className="text-[11px] text-slate-400">{ROLE_LABEL[activeRoom.contact.role]}</p>
           </div>
         </div>
 
-        {/* ⋮ 메뉴 */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -148,9 +141,7 @@ export function MessageChatRoom({
             </button>
           </div>
         </div>
-        <p className="text-[10px] text-slate-400 mt-1.5 px-1">
-          Enter로 전송 · Shift+Enter 줄바꿈
-        </p>
+        <p className="text-[10px] text-slate-400 mt-1.5 px-1">Enter로 전송 · Shift+Enter 줄바꿈</p>
       </div>
     </div>
   );
