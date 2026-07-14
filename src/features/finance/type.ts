@@ -7,6 +7,7 @@ export type RevenueCategory = "수강료" | "교재" | "급여" | "비품" | "�
 export interface RevenueItem {
   id: string;
   date: string;
+  dueDate?: string;
   itemTitle: string;
   itemSub: string;
   studentName: string;
@@ -36,6 +37,8 @@ export interface MonthlyRevenue {
 
 export type BillingStatus = "완료" | "미완료" | "대기" | "연체";
 export type BillingTabFilter = "all" | BillingStatus;
+
+export type BillingCategoryFilter = "all";
 
 export interface BillingTransaction {
   id: string;

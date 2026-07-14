@@ -85,8 +85,8 @@ export const MANAGER_NAV: NavItem[] = [
   },
   {
     id: "staff-attendance",
-    label: "근태",
-    children: [{ label: "직원 근태 관리", href: "/attendance" }],
+    label: "근태 관리",
+    children: [{ label: "직원 근태", href: "/attendance" }],
   },
   {
     id: "material-management",
@@ -98,8 +98,8 @@ export const MANAGER_NAV: NavItem[] = [
   },
   {
     id: "billing",
-    label: "결제",
-    children: [{ label: "원생 결제 관리", href: "/billing" }],
+    label: "결제 목록",
+    children: [{ label: "원생 결제 내역", href: "/billing" }],
   },
   {
     id: "manager-message",

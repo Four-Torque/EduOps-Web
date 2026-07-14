@@ -3,6 +3,7 @@ import type {
   BillingStats,
   MonthlyRevenue,
   BillingTabFilter,
+  BillingCategoryFilter,
 } from "@/features/finance/type";
 
 export const BILLING_PAGE_SIZE = 6;
@@ -12,6 +13,10 @@ export const BILLING_TABS: { label: string; value: BillingTabFilter }[] = [
   { label: "완료",   value: "완료"  },
   { label: "미완료", value: "미완료" },
   { label: "연체",   value: "연체"  },
+];
+
+export const BILLING_CATEGORY_OPTIONS: { label: string; value: BillingCategoryFilter }[] = [
+  { label: "전체", value: "all" },
 ];
 
 export const BILLING_STATUS_STYLE: Record<string, string> = {

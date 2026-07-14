@@ -2,7 +2,12 @@
 
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
-import type { BillingTabFilter, RevenueStatus, TransactionType } from "@/features/finance/type";
+import type {
+  BillingTabFilter,
+  BillingCategoryFilter,
+  RevenueStatus,
+  TransactionType,
+} from "@/features/finance/type";
 
 interface FinanceFilter {
   search: string;
@@ -57,9 +62,11 @@ export const useFinanceStore = create<FinanceStore>()(
 
 interface BillingUIState {
   tab: BillingTabFilter;
+  categoryFilter: BillingCategoryFilter;
   page: number;
 
   setTab: (tab: BillingTabFilter) => void;
+  setCategoryFilter: (categoryFilter: BillingCategoryFilter) => void;
   setPage: (page: number) => void;
 }
 
@@ -67,9 +74,13 @@ export const useBillingStore = create<BillingUIState>()(
   devtools(
     (set) => ({
       tab: "all",
+      categoryFilter: "all",
       page: 1,
 
       setTab: (tab) => set({ tab, page: 1 }, false, "billing/set-tab"),
+
+      setCategoryFilter: (categoryFilter) =>
+        set({ categoryFilter, page: 1 }, false, "billing/set-category-filter"),
 
       setPage: (page) => set({ page }, false, "billing/set-page"),
     }),
