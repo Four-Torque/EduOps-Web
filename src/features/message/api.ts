@@ -28,3 +28,7 @@ export async function sendManagerMessage(
 
   await new Promise((res) => setTimeout(res, 200));
 }
+
+export const fetchDirectorChatRooms = fetchManagerChatRooms;
+export const fetchDirectorChatRoom = fetchManagerChatRoom;
+export const sendDirectorMessage = sendManagerMessage;

@@ -16,9 +16,9 @@ export function UserFilterTabs({ active, onChange }: UserFilterTabsProps) {
           key={tab.value}
           onClick={() => onChange(tab.value)}
           className={[
-            "px-5 py-2.5 text-[12.5px] font-medium transition-colors",
+            "px-5 py-2.5 text-[12.5px] font-medium transition-colors rounded-t-md cursor-pointer",
             active === tab.value
-              ? "bg-slate-800 text-white"
+              ? "bg-primary text-white"
               : "bg-white text-slate-500 hover:bg-slate-50",
           ].join(" ")}
         >

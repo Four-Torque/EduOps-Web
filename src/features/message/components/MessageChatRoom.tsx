@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Send, Paperclip, MoreVertical, Trash2 } from "lucide-react";
 import { MessageBubble } from "./MessageBubble";
-import type { ChatRoom, ChatMessage } from "@/types/message/message.types";
+import type { ChatRoom, ChatMessage } from "@/features/message/type";
 
 const ROLE_LABEL: Record<string, string> = {
   director: "원장",

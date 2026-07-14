@@ -19,7 +19,7 @@ export function TeacherFilterBar() {
   }, [debouncedSearch]);
 
   return (
-    <div className="px-4 py-3 mb-6 border border-slate-200 rounded bg-white">
+    <div className="px-2 py-3 mb-4 border border-slate-200 rounded bg-white">
       <Input
         placeholder="강사 이름으로 검색"
         className="w-75"

@@ -1,6 +1,6 @@
 // 역할별 로그인 후 첫 진입 페이지 (탭을 모두 닫았을 때 돌아갈 홈이기도 함)
 export const ROLE_HOME = {
-  DIRECTOR: "/user-list",
+  DIRECTOR: "/director-dashboard",
   MANAGER: "/school-info",
   TEACHER: "/class",
 } as const;
@@ -99,7 +99,7 @@ export const MANAGER_NAV: NavItem[] = [
   {
     id: "billing",
     label: "결제",
-    children: [{ label: "결제 관리", href: "/billing" }],
+    children: [{ label: "원생 결제 관리", href: "/billing" }],
   },
   {
     id: "manager-message",

@@ -2,10 +2,10 @@ import {
   REQUEST_STATUS_LABEL,
   REQUEST_STATUS_STYLE,
 } from "@/shared/constants/manager/material.constants";
-import { MaterialPaymentStatus } from "@/types/manager/material.types";
+import { ApplicationStatus } from "@/features/asset/type";
 
 interface TableStatusBadgeProps {
-  status: MaterialPaymentStatus;
+  status: ApplicationStatus;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   readonly?: boolean;
 }

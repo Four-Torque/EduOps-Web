@@ -40,9 +40,6 @@ export default function DirectorBillingPage() {
 
   return (
     <>
-      <h1 className="text-[18px] font-bold text-slate-900 mb-4">
-        자재 결제 관리
-      </h1>
       <MaterialFilterBar
         statusFilter={statusFilter}
         onStatusFilterChange={(status) => {

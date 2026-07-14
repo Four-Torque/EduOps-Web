@@ -7,9 +7,17 @@ interface AcademyOverviewPanelProps {
 
 export function AcademyOverviewPanel({ overview }: AcademyOverviewPanelProps) {
   const items = [
-    { icon: Users,         label: "총 학생 수",   value: overview.totalStudents.toLocaleString() },
-    { icon: GraduationCap, label: "총 임직원 수", value: overview.totalEnrolled.toLocaleString() },
-    { icon: BarChart3,     label: "사용량",       value: `${overview.usageRate}%`               },
+    {
+      icon: Users,
+      label: "총 학생 수",
+      value: overview.totalStudents.toLocaleString(),
+    },
+    {
+      icon: GraduationCap,
+      label: "총 임직원 수",
+      value: overview.totalEnrolled.toLocaleString(),
+    },
+    { icon: BarChart3, label: "재원생 비율", value: `${overview.usageRate}%` },
   ];
 
   return (
@@ -22,7 +30,9 @@ export function AcademyOverviewPanel({ overview }: AcademyOverviewPanelProps) {
               <item.icon className="w-3.5 h-3.5" />
               <span className="text-[12px]">{item.label}</span>
             </div>
-            <span className="text-[13px] font-semibold text-slate-800">{item.value}</span>
+            <span className="text-[13px] font-semibold text-slate-800">
+              {item.value}
+            </span>
           </div>
         ))}
       </div>

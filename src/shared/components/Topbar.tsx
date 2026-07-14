@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
@@ -7,13 +8,26 @@ import { useUIStore } from "@/shared/store";
 
 interface TopbarProps {
   homePath: string;
+  homeLabel: string;
 }
 
-export default function Topbar({ homePath }: TopbarProps) {
+export default function Topbar({ homePath, homeLabel }: TopbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const tabs = useUIStore((s) => s.tabs);
+  const addTab = useUIStore((s) => s.addTab);
   const removeTab = useUIStore((s) => s.removeTab);
+
+  // 탭을 모두 닫은 뒤 홈으로 이동했거나(로그인 직후 포함), 탭 없이 홈 경로에
+  // 진입한 모든 경우에 홈 탭이 없으면 자동으로 만들어 topbar에 표시한다.
+  useEffect(() => {
+    const isHome = pathname === homePath || pathname.startsWith(homePath + "/");
+    if (!isHome) return;
+    const hasHomeTab = tabs.some((t) => t.href === homePath);
+    if (!hasHomeTab) {
+      addTab({ label: homeLabel, href: homePath });
+    }
+  }, [pathname, homePath, homeLabel, tabs, addTab]);
 
   function handleClose(href: string) {
     removeTab(href);
@@ -44,7 +58,17 @@ export default function Topbar({ homePath }: TopbarProps) {
       {tabs.length === 0 ? (
         <div className="h-10" />
       ) : (
-        <div className="flex items-end gap-1 overflow-x-auto">
+        <div
+          className={cn(
+            "flex items-end gap-1 overflow-x-auto pb-1",
+            "[scrollbar-width:thin] [scrollbar-color:#e2e8f0_transparent]",
+            "[&::-webkit-scrollbar]:h-1.5",
+            "[&::-webkit-scrollbar-track]:bg-transparent",
+            "[&::-webkit-scrollbar-thumb]:rounded-full",
+            "[&::-webkit-scrollbar-thumb]:bg-slate-200",
+            "hover:[&::-webkit-scrollbar-thumb]:bg-slate-300",
+          )}
+        >
           {tabs.map((tab) => {
             const isActive =
               pathname === tab.href || pathname.startsWith(tab.href);

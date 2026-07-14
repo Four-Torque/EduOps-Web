@@ -6,7 +6,7 @@ interface AttendanceDotProps {
 
 const DOT_STYLE: Record<AttendanceStatus, string> = {
   present: "bg-slate-800",
-  late: "bg-red-500",
+  late: "bg-amber-500",
   absent: "bg-red-500",
 };
 

@@ -1,71 +1,81 @@
 "use client";
 
-import { QuickActions } from "@/features/finance/components/QuickActions";
+import { useMemo } from "react";
+
 import { RevenueChart } from "@/features/finance/components/RevenueChart";
 import { RevenueFilterBar } from "@/features/finance/components/RevenueFilterBar";
 import { RevenueKpi } from "@/features/finance/components/RevenueKpi";
-import { RevenueTable } from "@/features/finance/components/RevenueTable";
+import { Table } from "@/shared/components/Table";
+import { getColumns } from "./column";
+
 import { useFinanceStore } from "@/features/finance/store";
 import {
-  MOCK_REVENUE_ITEMS,
-  MOCK_REVENUE_STATS,
-  MOCK_MONTHLY_REVENUE,
-} from "@/shared/constants/director/finance.mock";
-import { useMemo } from "react";
+  usePayments,
+  useUpdatePayment,
+  usePaymentStats,
+  usePaymentMonthlyTrends,
+} from "@/features/finance/query";
 
 const PAGE_SIZE = 5;
 
 export default function FinancePage() {
-  const { filter, setSearch, setStatus, setDateRange, setPage } =
-    useFinanceStore();
+  const { filter, setDateRange, setPage } = useFinanceStore();
 
-  const filtered = useMemo(() => {
-    return MOCK_REVENUE_ITEMS.filter((item) => {
-      const matchSearch =
-        filter.search === "" ||
-        item.studentName.includes(filter.search) ||
-        item.itemTitle.toLowerCase().includes(filter.search.toLowerCase());
+  const { data: paymentsData } = usePayments({
+    search: filter.search || undefined,
+    paymentType: filter.status === "all" ? undefined : (filter.status as any),
+    type: filter.type,
+    page: filter.page,
+    limit: PAGE_SIZE,
+  });
 
-      const matchStatus =
-        filter.status === "all" || item.status === filter.status;
+  const { data: statsData } = usePaymentStats();
+  const { data: trendsData } = usePaymentMonthlyTrends();
+  const { mutate: updatePaymentStatus } = useUpdatePayment();
 
-      return matchSearch && matchStatus;
-    });
-  }, [filter.search, filter.status]);
+  const columns = useMemo(() => {
+    return getColumns((id, status) =>
+      updatePaymentStatus({ id, paymentType: status }),
+    );
+  }, [updatePaymentStatus]);
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-
-  const paginated = filtered.slice(
-    (filter.page - 1) * PAGE_SIZE,
-    filter.page * PAGE_SIZE,
-  );
+  const stats = statsData ?? {
+    totalRevenue: 0,
+    totalExpense: 0,
+    netProfit: 0,
+    unpaidAmount: 0,
+    unpaidCount: 0,
+    newEnrollments: 0,
+    refundCount: 0,
+    refundAmount: 0,
+  };
+  const monthlyRevenueData = trendsData ?? [];
 
   return (
     <div>
-      <RevenueKpi stats={MOCK_REVENUE_STATS} />
+      <RevenueKpi stats={stats} />
 
       <RevenueFilterBar
         search={filter.search}
         status={filter.status}
+        type={filter.type}
         dateRange={filter.dateRange}
-        onSearchChange={setSearch}
-        onStatusChange={(v) => setStatus(v as typeof filter.status)}
         onDateRangeChange={setDateRange}
-        onExcelExport={() => alert("엑셀 다운로드")}
       />
 
-      <RevenueTable
-        items={paginated}
-        page={filter.page}
-        totalPages={totalPages}
-        totalItems={filtered.length}
-        pageSize={PAGE_SIZE}
-        onPageChange={setPage}
-      />
+      <div className="mb-[18px] mt-[18px]">
+        <Table
+          columns={columns}
+          data={paymentsData}
+          showCheckbox={false}
+          rowKey="id"
+          onPageChange={setPage}
+          currentPage={filter.page}
+        />
+      </div>
 
       <div className="flex gap-5">
-        <RevenueChart data={MOCK_MONTHLY_REVENUE} />
-        <QuickActions achievementRate={82} />
+        <RevenueChart data={monthlyRevenueData} />
       </div>
     </div>
   );

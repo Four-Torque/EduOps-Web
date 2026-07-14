@@ -27,7 +27,6 @@ export default function InventoryPage() {
 
   return (
     <>
-      <h1 className="text-[18px] font-bold text-slate-900 mb-4">자재 목록</h1>
       <InventoryFilterBar />
       <Table
         columns={columns}

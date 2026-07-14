@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
-import Logo from "./Logo";
+import Logo from "../Logo";
 import { Separator } from "@/shared/components/ui/separator";
 import { Button } from "@/shared/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
@@ -9,14 +9,14 @@ import {
   Field,
   FieldError,
   FieldLabel,
-} from "../../../shared/components/ui/field";
+} from "@/shared/components/ui/field";
 import FormInput from "@/shared/components/FormInput";
 import { ChevronLeftIcon, MailIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod/v3";
 import Link from "next/link";
-import { useSendResetPasswordMail } from "../query";
-import { EmailFormSchema } from "../schema";
+import { useSendResetPasswordMail } from "@/features/auth/query";
+import { EmailFormSchema } from "@/features/auth/schema";
 
 export default function EmailForm() {
   const { mutate: sendResetPasswordMail } = useSendResetPasswordMail();

@@ -28,7 +28,6 @@ export function AcademyBasicInfoForm({ basicInfo }: AcademyBasicInfoFormProps) {
 
   return (
     <div>
-      <h2 className="text-[15px] font-bold text-slate-900 mb-4">기본 정보</h2>
       <form onSubmit={handleSubmit} className="border border-slate-200 rounded p-5">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <AcademyInputField

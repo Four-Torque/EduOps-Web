@@ -42,7 +42,7 @@ export function AttendanceStatsCards({ stats }: AttendanceStatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-4 gap-4 mb-4">
       {cards.map((card) => (
         <div
           key={card.label}

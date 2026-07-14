@@ -23,14 +23,14 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod/v3";
-import { RegisterFormSchema } from "@/validations/auth.valid";
+import { RegisterFormSchema } from "@/features/auth/schema";
 import FormInput from "@/shared/components/FormInput";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { Separator } from "@/shared/components/ui/separator";
 import Link from "next/link";
-import { useRegister } from "@/hooks/auth/useAuth";
-import SubmitButton from "../../../shared/components/SubmitButton";
-import PasswordIndicator from "./PasswordIndicator";
+import { useRegister } from "@/features/auth/query";
+import SubmitButton from "@/shared/components/SubmitButton";
+import PasswordIndicator from "../PasswordIndicator";
 import { formatPhoneNumber } from "@/shared/lib/utils";
 
 export default function RegisterForm() {

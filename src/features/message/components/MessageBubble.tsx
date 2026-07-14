@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@/types/message/message.types";
+import type { ChatMessage } from "@/features/message/type";
 
 interface MessageBubbleProps {
   message: ChatMessage;

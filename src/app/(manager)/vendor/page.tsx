@@ -47,7 +47,6 @@ export default function VendorPage() {
 
   return (
     <>
-      <h1 className="text-[18px] font-bold text-slate-900 mb-4">구매처 관리</h1>
       <VendorFilterBar />
       <Table
         columns={columns}
