@@ -1,5 +1,6 @@
-import { TeacherMessageSection } from "@/features/message/components/TeacherMessageSection";
 
-export default function TeacherMessagePage() {
-  return <TeacherMessageSection />;
+import { MessageSection } from "@/features/message/components/MessageSection";
+
+export default function MessagePage() {
+  return <MessageSection />;
 }

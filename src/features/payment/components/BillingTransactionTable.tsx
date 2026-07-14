@@ -145,26 +145,30 @@ export function BillingTransactionTable() {
     useBillingStore();
   const { mutate: updatePaymentStatus } = useUpdatePayment();
 
+  // 미완료/연체는 납부기한 경과 여부로 클라이언트에서 한 번 더 나눠야 해서,
+  // 페이지네이션 없이 해당 paymentType 전체를 가져온 뒤 직접 건수를 세고 자른다.
+  // (서버가 준 total/totalPages를 그대로 쓰면 미완료+연체 합친 개수가 나와서 틀어진다)
   const { data, isLoading } = usePayments({
     type: "INCOME",
     paymentType: toPaymentTypeFilter(tab),
-    page,
-    limit: BILLING_PAGE_SIZE,
+    page: 1,
+    limit: 1000,
   });
 
-  // "미완료"/"연체"는 서버에서 UNPAID까지만 걸러주므로, 납부기한 경과 여부로
-  // 한 번 더 나눈다. "전체"는 REFUNDED를 제외한 완료/미완료/연체만 남긴다.
-  const filteredData = data
-    ? {
-        ...data,
-        data: data.data.filter((item: RevenueItem) => {
-          if (tab === "완료") return item.status === "PAID";
-          if (tab === "미완료") return item.status === "UNPAID" && !isOverdue(item);
-          if (tab === "연체") return item.status === "UNPAID" && isOverdue(item);
-          return item.status === "PAID" || item.status === "UNPAID"; // "all"
-        }),
-      }
-    : { data: [], total: 0, totalPages: 1 };
+  const filteredItems = (data?.data ?? []).filter((item: RevenueItem) => {
+    if (tab === "완료") return item.status === "PAID";
+    if (tab === "미완료") return item.status === "UNPAID" && !isOverdue(item);
+    if (tab === "연체") return item.status === "UNPAID" && isOverdue(item);
+    return item.status === "PAID" || item.status === "UNPAID"; // "all" (REFUNDED 제외)
+  });
+
+  const total = filteredItems.length;
+  const totalPages = Math.max(1, Math.ceil(total / BILLING_PAGE_SIZE));
+  const filteredData = {
+    data: filteredItems.slice((page - 1) * BILLING_PAGE_SIZE, page * BILLING_PAGE_SIZE),
+    total,
+    totalPages,
+  };
 
   const columns = getColumns((id, status) =>
     updatePaymentStatus({ id, paymentType: status }),
