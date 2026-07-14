@@ -1,5 +1,6 @@
-import { ManagerMessageSection } from "@/features/message/components/ManagerMessageSection";
 
-export default function ManagerMessagePage() {
-  return <ManagerMessageSection />;
+import { MessageSection } from "@/features/message/components/MessageSection";
+
+export default function MessagePage() {
+  return <MessageSection />;
 }

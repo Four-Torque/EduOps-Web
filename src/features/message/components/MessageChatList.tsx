@@ -6,10 +6,10 @@ import type { ChatRoom } from "@/features/message/type";
 
 interface MessageChatListProps {
   chatRooms?: ChatRoom[];
-  activeChatRoomId: number | null;
+  activeChatRoomId: string | null;
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  onSelectRoom: (id: number) => void;
+  onSelectRoom: (id: string) => void;
   onNewMessage: () => void;
 }
 

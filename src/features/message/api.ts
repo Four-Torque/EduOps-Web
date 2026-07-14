@@ -1,34 +1,54 @@
-import type { ChatRoom, SendMessageRequest } from "@/features/message/type";
+import apiClient from "@/shared/lib/axios";
+import type { MessageContact, MessageContactGroup } from "./type";
 
-// TODO: import apiClient from "@/lib/axios";
+export async function fetchGroupedContacts(
+  name?: string,
+): Promise<MessageContactGroup[]> {
+  const response = await apiClient.get("/user/grouped-by-role", {
+    params: { name: name || undefined },
+  });
 
-const MOCK_CHAT_ROOMS: ChatRoom[] = [];
+  const body = response.data.body;
 
-export async function fetchManagerChatRooms(): Promise<ChatRoom[]> {
-  // TODO: return apiClient.get<ChatRoom[]>("/manager/messages/rooms").then((r) => r.data);
+  const ROLE_LABEL: Record<string, string> = {
+    director: "원장",
+    teacher:  "강사",
+    manager:  "관리자",
+  };
 
-  await new Promise((res) => setTimeout(res, 300));
-  return MOCK_CHAT_ROOMS;
+  return Object.entries(body)
+    .filter(([_, users]) => Array.isArray(users) && (users as any[]).length > 0)
+    .map(([role, users]) => ({
+      label: ROLE_LABEL[role] ?? role,
+      contacts: (users as any[]).map((u): MessageContact => ({
+        id:            String(u.id),
+        name:          u.name,
+        role:          role as MessageContact["role"],
+        department:    u.department ?? undefined,
+        avatarInitial: u.name ? u.name.slice(0, 1) : "",
+      })),
+    }));
 }
 
-export async function fetchManagerChatRoom(roomId: number): Promise<ChatRoom> {
-  // TODO: return apiClient.get<ChatRoom>(`/manager/messages/rooms/${roomId}`).then((r) => r.data);
-
-  await new Promise((res) => setTimeout(res, 200));
-  const room = MOCK_CHAT_ROOMS.find((r) => r.id === roomId);
-  if (!room) throw new Error("채팅방을 찾을 수 없습니다.");
-  return room;
+export async function fetchConversations(): Promise<any> {
+  const response = await apiClient.get("/message/conversations");
+  return response.data.body;
 }
 
-export async function sendManagerMessage(
-  roomId: number,
-  data: SendMessageRequest,
+export async function fetchConversation(
+  userId: string,
+  page: number = 1,
+  limit: number = 20,
+): Promise<any> {
+  const response = await apiClient.get(`/message/conversation/${userId}`, {
+    params: { page, limit },
+  });
+  return response.data.body;
+}
+
+export async function sendMessage(
+  receiverId: string,
+  content: string,
 ): Promise<void> {
-  // TODO: return apiClient.post(`/manager/messages/rooms/${roomId}`, data);
-
-  await new Promise((res) => setTimeout(res, 200));
+  await apiClient.post("/message", { receiverId, content });
 }
-
-export const fetchDirectorChatRooms = fetchManagerChatRooms;
-export const fetchDirectorChatRoom = fetchManagerChatRoom;
-export const sendDirectorMessage = sendManagerMessage;

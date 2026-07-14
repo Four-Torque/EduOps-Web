@@ -1,16 +1,21 @@
 export type MessageSenderRole = "director" | "teacher" | "manager";
 
 export interface MessageContact {
-  id: number;
+  id: string;
   name: string;
   role: MessageSenderRole;
   department?: string;
   avatarInitial: string;
 }
 
+export interface MessageContactGroup {
+  label: string;
+  contacts: MessageContact[];
+}
+
 export interface ChatMessage {
-  id: number;
-  senderId: number;
+  id: string;
+  senderId: string;
   senderRole: MessageSenderRole;
   content: string;
   sentAt: string;
@@ -18,7 +23,7 @@ export interface ChatMessage {
 }
 
 export interface ChatRoom {
-  id: number;
+  id: string;
   contact: MessageContact;
   lastMessage: string;
   lastMessageAt: string;
@@ -26,7 +31,8 @@ export interface ChatRoom {
   messages: ChatMessage[];
 }
 
-export interface SendMessageRequest {
-  receiverId: number;
-  content: string;
+export interface ConversationResponse {
+  data: ChatMessage[];
+  total: number;
+  totalPages: number;
 }
