@@ -1,9 +1,29 @@
+import { CategoryLabel } from "./type";
+
 export const STATUS_LABELS: Record<string, string> = {
   PAID: "납부완료",
   UNPAID: "미납",
   REFUNDED: "환불",
   COMPLETED: "지급완료",
   PENDING: "대기",
+};
+
+export const CATEGORY_LABELS: Record<string, CategoryLabel> = {
+  ASSET: {
+    name: "자재",
+    color: "#4CAF50",
+    icon: "🛠️",
+  },
+  ENROLLMENT_FEE: {
+    name: "수강료",
+    color: "#2196F3",
+    icon: "💰",
+  },
+  SALARY: {
+    name: "급여",
+    color: "#FF9800",
+    icon: "💵",
+  },
 };
 
 export const INCOME_STATUS_OPTIONS = [

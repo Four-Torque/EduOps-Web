@@ -1,89 +1,88 @@
-"use client";
-
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
-import type {
-  BillingTabFilter,
-  BillingCategoryFilter,
-  RevenueStatus,
-  TransactionType,
-} from "@/features/finance/type";
+import { subMonths, addMonths, addYears, subYears } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
-interface FinanceFilter {
-  search: string;
-  status: RevenueStatus | "all";
-  type: TransactionType | "all";
-  dateRange: string;
-  page: number;
+interface FinanceState {
+  currentDate: Date;
+  startDate: string;
+  endDate: string;
+  todayActual: Date;
+  setCurrentDate: (date: Date) => void;
+  setStartDate: (date: Date, type: "MONTHLY" | "YEARLY") => void;
+  setEndDate: (date: Date, type: "MONTHLY" | "YEARLY") => void;
+  handlePrev: (type: "MONTHLY" | "YEARLY") => void;
+  handleNext: (type: "MONTHLY" | "YEARLY") => void;
+  jumpToToday: (type: "MONTHLY" | "YEARLY") => void;
 }
 
-interface FinanceStore {
-  filter: FinanceFilter;
-  setSearch: (search: string) => void;
-  setStatus: (status: RevenueStatus | "all") => void;
-  setType: (type: TransactionType | "all") => void;
-  setDateRange: (dateRange: string) => void;
-  setPage: (page: number) => void;
-  resetFilter: () => void;
+export const useFinanceStore = create<FinanceState>((set, get) => {
+  const today = toZonedTime(new Date(), "Asia/Seoul");
+
+  return {
+    currentDate: today,
+    todayActual: today,
+    startDate: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`,
+    endDate: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()}`,
+
+    setCurrentDate: (currentDate) => set({ currentDate }),
+    setStartDate: (currentDate: Date, type: "MONTHLY" | "YEARLY") =>
+      set({
+        startDate:
+          type === "MONTHLY"
+            ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-01`
+            : `${currentDate.getFullYear()}-01-01`,
+      }),
+    setEndDate: (currentDate: Date, type: "MONTHLY" | "YEARLY") =>
+      set({
+        endDate:
+          type === "MONTHLY"
+            ? `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate()}`
+            : `${currentDate.getFullYear()}-12-31`,
+      }),
+
+    handlePrev: (type: "MONTHLY" | "YEARLY") => {
+      const { currentDate, setStartDate, setEndDate } = get();
+      const newDate =
+        type === "YEARLY"
+          ? subYears(currentDate, 1)
+          : subMonths(currentDate, 1);
+      set({ currentDate: newDate });
+      setStartDate(newDate, type);
+      setEndDate(newDate, type);
+    },
+
+    handleNext: (type: "MONTHLY" | "YEARLY") => {
+      const { currentDate, setStartDate, setEndDate } = get();
+
+      const newDate =
+        type === "YEARLY"
+          ? addYears(currentDate, 1)
+          : addMonths(currentDate, 1);
+
+      set({ currentDate: newDate });
+      setStartDate(newDate, type);
+      setEndDate(newDate, type);
+    },
+
+    jumpToToday: (type: "MONTHLY" | "YEARLY") => {
+      const { todayActual, setStartDate, setEndDate } = get();
+      set({ currentDate: todayActual });
+      setStartDate(todayActual, type);
+      setEndDate(todayActual, type);
+    },
+  };
+});
+
+interface FilterState {
+  showExpense: boolean;
+  showIncome: boolean;
+  toggleExpense: () => void;
+  toggleIncome: () => void;
 }
 
-const DEFAULT_FILTER: FinanceFilter = {
-  search: "",
-  status: "all",
-  type: "all",
-  dateRange: "전체 기간",
-  page: 1,
-};
-
-export const useFinanceStore = create<FinanceStore>()(
-  persist(
-    (set) => ({
-      filter: DEFAULT_FILTER,
-
-      setSearch: (search) =>
-        set((s) => ({ filter: { ...s.filter, search, page: 1 } })),
-
-      setStatus: (status) =>
-        set((s) => ({ filter: { ...s.filter, status, page: 1 } })),
-
-      setType: (type) =>
-        set((s) => ({ filter: { ...s.filter, type, page: 1 } })),
-
-      setDateRange: (dateRange) =>
-        set((s) => ({ filter: { ...s.filter, dateRange, page: 1 } })),
-
-      setPage: (page) => set((s) => ({ filter: { ...s.filter, page } })),
-
-      resetFilter: () => set({ filter: DEFAULT_FILTER }),
-    }),
-    { name: "eduops-finance" },
-  ),
-);
-
-interface BillingUIState {
-  tab: BillingTabFilter;
-  categoryFilter: BillingCategoryFilter;
-  page: number;
-
-  setTab: (tab: BillingTabFilter) => void;
-  setCategoryFilter: (categoryFilter: BillingCategoryFilter) => void;
-  setPage: (page: number) => void;
-}
-
-export const useBillingStore = create<BillingUIState>()(
-  devtools(
-    (set) => ({
-      tab: "all",
-      categoryFilter: "all",
-      page: 1,
-
-      setTab: (tab) => set({ tab, page: 1 }, false, "billing/set-tab"),
-
-      setCategoryFilter: (categoryFilter) =>
-        set({ categoryFilter, page: 1 }, false, "billing/set-category-filter"),
-
-      setPage: (page) => set({ page }, false, "billing/set-page"),
-    }),
-    { name: "BillingStore" },
-  ),
-);
+export const useFilterStore = create<FilterState>((set) => ({
+  showExpense: true,
+  showIncome: true,
+  toggleExpense: () => set((state) => ({ showExpense: !state.showExpense })),
+  toggleIncome: () => set((state) => ({ showIncome: !state.showIncome })),
+}));

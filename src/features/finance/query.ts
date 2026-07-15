@@ -1,60 +1,50 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
-  fetchPayments,
-  updatePayment,
-  fetchPaymentStats,
-  fetchPaymentMonthlyTrends,
+  getAssetChart,
+  getFinanceByPeriod,
+  getPaymentChart,
+  getSalaryChart,
 } from "./api";
 
-export const financeQueryKeys = {
-  all: () => ["payments"] as const,
-  lists: () => ["payments", "list"] as const,
-  list: (filters: any) => ["payments", "list", filters] as const,
-  stats: () => ["payments", "stats"] as const,
-  trends: () => ["payments", "trends"] as const,
-};
-
-export function usePayments(filters?: {
-  studentId?: string;
-  classId?: string;
-  paymentType?: "PAID" | "UNPAID" | "REFUNDED";
-  search?: string;
-  type?: "all" | "INCOME" | "EXPENSE";
-  page?: number;
-  limit?: number;
+export function useGetFinanceByPeriod(params: {
+  startDate: string;
+  endDate: string;
 }) {
-  return useQuery({
-    queryKey: financeQueryKeys.list(filters || {}),
-    queryFn: () => fetchPayments(filters),
+  const query = useQuery({
+    queryKey: ["finance", "period", params],
+    queryFn: () => getFinanceByPeriod(params),
   });
+  return query;
 }
 
-export function useUpdatePayment() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      id,
-      paymentType,
-    }: {
-      id: string;
-      paymentType: "PAID" | "UNPAID" | "REFUNDED";
-    }) => updatePayment(id, paymentType),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeQueryKeys.all() });
-    },
+export function useGetFinanceMonthlyDetail(params: {
+  startDate: string;
+  endDate: string;
+}) {
+  const query = useQuery({
+    queryKey: ["finance", "detail", "monthly", params],
+    queryFn: () =>
+      Promise.all([
+        getPaymentChart(params),
+        getSalaryChart(params),
+        getAssetChart(params),
+      ]),
   });
+  return query;
 }
 
-export function usePaymentStats() {
-  return useQuery({
-    queryKey: financeQueryKeys.stats(),
-    queryFn: fetchPaymentStats,
+export function useGetFinanceYearlyDetail(params: {
+  startDate: string;
+  endDate: string;
+}) {
+  const query = useQuery({
+    queryKey: ["finance", "detail", "yearly", params],
+    queryFn: () =>
+      Promise.all([
+        getPaymentChart(params),
+        getSalaryChart(params),
+        getAssetChart(params),
+      ]),
   });
-}
-
-export function usePaymentMonthlyTrends() {
-  return useQuery({
-    queryKey: financeQueryKeys.trends(),
-    queryFn: fetchPaymentMonthlyTrends,
-  });
+  return query;
 }

@@ -55,8 +55,16 @@ export const DIRECTOR_NAV: NavItem[] = [
   {
     id: "sales",
     label: "매출 관리",
-    children: [{ label: "매출 현황", href: "/finance" },
-      { label: "그래프", href: "/finance-graph" },
+    children: [
+      { label: "매출 현황", href: "/finance" },
+      {
+        label: "월간 매출 현황",
+        href: "/finance/monthly",
+      },
+      {
+        label: "년간 매출 현황",
+        href: "/finance/yearly",
+      },
     ],
   },
   {
