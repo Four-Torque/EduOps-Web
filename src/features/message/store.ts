@@ -1,154 +1,95 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import type { MessageContact, ChatRoom, ChatMessage } from "./type";
+import type { Message, MessageContact } from "./type";
 
-// ─── Contact 검색 Store ───────────────────────────────────────────────────────
+type ModalMode = "view" | "reply" | "compose" | null;
 
-interface MessageContactUIState {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-}
+interface MessageUIState {
+  // 모달
+  modalMode: ModalMode;
+  selectedMessage: Message | null;
+  composeTarget: MessageContact | null;
 
-export const useMessageContactStore = create<MessageContactUIState>()(
-  devtools(
-    (set) => ({
-      searchQuery: "",
-      setSearchQuery: (searchQuery) =>
-        set({ searchQuery }, false, "message-contact/set-search-query"),
-    }),
-    { name: "MessageContactStore" },
-  ),
-);
-
-// ─── Chat Store ───────────────────────────────────────────────────────────────
-
-interface MessageChatUIState {
-  chatRooms: ChatRoom[];
-  activeChatRoomId: string | null;
-  inputText: string;
+  // 연락처 선택 모달
   isContactModalOpen: boolean;
+  searchQuery: string;
 
-  setActiveChatRoom: (id: string) => void;
-  setInputText: (text: string) => void;
-  setChatRooms: (rooms: ChatRoom[]) => void;
-  setMessages: (contactId: string, messages: ChatMessage[]) => void;
+  openViewModal: (message: Message) => void;
+  openReplyModal: () => void;
+  openComposeModal: (target?: MessageContact) => void;
+  closeModal: () => void;
+
   openContactModal: () => void;
   closeContactModal: () => void;
-  sendMessage: (content: string, senderId: string, senderRole: MessageContact["role"]) => void;
-  deleteChatRoom: (id: string) => void;
-  createChatRoom: (contact: MessageContact) => void;
+  setSearchQuery: (query: string) => void;
+  reset: () => void;
 }
 
-export const useMessageChatStore = create<MessageChatUIState>()(
+export const useMessageStore = create<MessageUIState>()(
   devtools(
     (set, get) => ({
-      chatRooms: [],
-      activeChatRoomId: null,
-      inputText: "",
+      modalMode:          null,
+      selectedMessage:    null,
+      composeTarget:      null,
       isContactModalOpen: false,
+      searchQuery:        "",
 
-      setActiveChatRoom: (id) =>
-        set({ activeChatRoomId: id }, false, "message-chat/set-active-room"),
+      // 보기 모달
+      openViewModal: (message) =>
+        set({ modalMode: "view", selectedMessage: message }, false, "message/open-view"),
 
-      setInputText: (inputText) =>
-        set({ inputText }, false, "message-chat/set-input-text"),
-
-      setChatRooms: (chatRooms) =>
-        set({ chatRooms }, false, "message-chat/set-chat-rooms"),
-
-      setMessages: (contactId, messages) =>
+      // 보기 → 답장으로 전환
+      openReplyModal: () =>
         set(
           (state) => ({
-            chatRooms: state.chatRooms.map((room) =>
-              room.contact.id === contactId
-                ? { ...room, messages }
-                : room,
-            ),
+            modalMode:     "reply",
+            composeTarget: state.selectedMessage?.sender ?? null,
           }),
           false,
-          "message-chat/set-messages",
+          "message/open-reply",
         ),
 
-      openContactModal: () =>
-        set({ isContactModalOpen: true }, false, "message-chat/open-contact-modal"),
-
-      closeContactModal: () =>
-        set({ isContactModalOpen: false }, false, "message-chat/close-contact-modal"),
-
-      sendMessage: (content, senderId, senderRole) => {
-        const { activeChatRoomId, chatRooms } = get();
-        if (!activeChatRoomId || !content.trim()) return;
-
-        const newMessage: ChatMessage = {
-          id:         String(Date.now()),
-          senderId,
-          senderRole,
-          content:    content.trim(),
-          sentAt:     new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
-          isMine:     true,
-        };
-
+      // 새 쪽지 작성
+      openComposeModal: (target) =>
         set(
           {
-            inputText: "",
-            chatRooms: chatRooms.map((room) =>
-              room.id === activeChatRoomId
-                ? {
-                    ...room,
-                    messages:      [...room.messages, newMessage],
-                    lastMessage:   content.trim(),
-                    lastMessageAt: newMessage.sentAt,
-                  }
-                : room,
-            ),
-          },
-          false,
-          "message-chat/send-message",
-        );
-      },
-
-      deleteChatRoom: (id) => {
-        const { chatRooms, activeChatRoomId } = get();
-        const remaining = chatRooms.filter((r) => r.id !== id);
-        set(
-          {
-            chatRooms: remaining,
-            activeChatRoomId:
-              activeChatRoomId === id ? (remaining[0]?.id ?? null) : activeChatRoomId,
-          },
-          false,
-          "message-chat/delete-chat-room",
-        );
-      },
-
-      createChatRoom: (contact) => {
-        const { chatRooms } = get();
-        const existing = chatRooms.find((r) => r.contact.id === contact.id);
-        if (existing) {
-          set({ activeChatRoomId: existing.id, isContactModalOpen: false }, false, "message-chat/set-existing-room");
-          return;
-        }
-
-        const newRoom: ChatRoom = {
-          id:            String(Date.now()),
-          contact,
-          lastMessage:   "",
-          lastMessageAt: "",
-          unreadCount:   0,
-          messages:      [],
-        };
-
-        set(
-          {
-            chatRooms:          [newRoom, ...chatRooms],
-            activeChatRoomId:   newRoom.id,
+            modalMode:          "compose",
+            composeTarget:      target ?? null,
             isContactModalOpen: false,
           },
           false,
-          "message-chat/create-chat-room",
-        );
-      },
+          "message/open-compose",
+        ),
+
+      closeModal: () =>
+        set(
+          { modalMode: null, selectedMessage: null, composeTarget: null },
+          false,
+          "message/close",
+        ),
+
+      openContactModal: () =>
+        set({ isContactModalOpen: true }, false, "message/open-contact-modal"),
+
+      closeContactModal: () =>
+        set({ isContactModalOpen: false, searchQuery: "" }, false, "message/close-contact-modal"),
+
+      setSearchQuery: (searchQuery) =>
+        set({ searchQuery }, false, "message/set-search-query"),
+
+      reset: () =>
+        set(
+          {
+            modalMode:          null,
+            selectedMessage:    null,
+            composeTarget:      null,
+            isContactModalOpen: false,
+            searchQuery:        "",
+          },
+          false,
+          "message/reset",
+        ),
     }),
-    { name: "MessageChatStore" },
+    { name: "MessageStore" },
   ),
 );

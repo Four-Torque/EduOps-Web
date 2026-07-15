@@ -7,9 +7,7 @@ export async function findAssetApplications(params: {
   limit: string;
   status?: string;
 }) {
-  const response = await apiClient.get("asset-application", {
-    params,
-  });
+  const response = await apiClient.get("asset-application", { params });
   return response.data.body;
 }
 
@@ -20,9 +18,7 @@ export async function findAssets(params: {
   categoryId?: string;
   vendorId?: string;
 }) {
-  const response = await apiClient.get("asset", {
-    params,
-  });
+  const response = await apiClient.get("asset", { params });
   return response.data.body;
 }
 

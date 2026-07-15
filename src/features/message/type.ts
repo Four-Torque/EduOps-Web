@@ -13,26 +13,11 @@ export interface MessageContactGroup {
   contacts: MessageContact[];
 }
 
-export interface ChatMessage {
+export interface Message {
   id: string;
-  senderId: string;
-  senderRole: MessageSenderRole;
+  sender: MessageContact;
+  receiver: MessageContact;
   content: string;
   sentAt: string;
-  isMine: boolean;
-}
-
-export interface ChatRoom {
-  id: string;
-  contact: MessageContact;
-  lastMessage: string;
-  lastMessageAt: string;
-  unreadCount: number;
-  messages: ChatMessage[];
-}
-
-export interface ConversationResponse {
-  data: ChatMessage[];
-  total: number;
-  totalPages: number;
+  isRead: boolean;
 }

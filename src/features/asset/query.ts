@@ -46,9 +46,7 @@ export function useCreateAssetApplication() {
       queryClient.invalidateQueries({ queryKey: ["asset-applications"] });
     },
     onError: (error) => {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      if (error instanceof Error) toast.error(error.message);
     },
   });
   return mutation;
@@ -71,7 +69,6 @@ export function useEditAssetApplicationStatus() {
         "asset-applications",
         { id: newValues.id },
       ]);
-
       const previousList = queryClient.getQueryData(["asset-applications"]);
 
       queryClient.setQueryData(
@@ -90,10 +87,7 @@ export function useEditAssetApplicationStatus() {
     },
 
     onError: (err, newValues, context) => {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      }
-
+      if (err instanceof Error) toast.error(err.message);
       if (context?.previousDetail) {
         queryClient.setQueryData(
           ["asset-applications", { id: newValues.id }],
@@ -109,7 +103,7 @@ export function useEditAssetApplicationStatus() {
       toast.success(data.message);
     },
 
-    onSettled: (data, error, values) => {
+    onSettled: (_data, _error, values) => {
       queryClient.invalidateQueries({
         queryKey: ["asset-applications", { id: values.id }],
       });
@@ -131,9 +125,7 @@ export function useDeleteAssetApplications() {
       queryClient.invalidateQueries({ queryKey: ["asset-applications"] });
     },
     onError: (error) => {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      if (error instanceof Error) toast.error(error.message);
     },
   });
   return mutation;

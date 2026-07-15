@@ -1,9 +1,7 @@
 import apiClient from "@/shared/lib/axios";
 import type { MessageContact, MessageContactGroup } from "./type";
 
-export async function fetchGroupedContacts(
-  name?: string,
-): Promise<MessageContactGroup[]> {
+export async function fetchGroupedContacts(name?: string): Promise<MessageContactGroup[]> {
   const response = await apiClient.get("/user/grouped-by-role", {
     params: { name: name || undefined },
   });
@@ -30,25 +28,20 @@ export async function fetchGroupedContacts(
     }));
 }
 
-export async function fetchConversations(): Promise<any> {
-  const response = await apiClient.get("/message/conversations");
-  return response.data.body;
+export async function fetchSentMessages(): Promise<any[]> {
+  // TODO: API 연동
+  // const response = await apiClient.get("/message/sent");
+  // return response.data.body;
+  return [];
 }
 
-export async function fetchConversation(
-  userId: string,
-  page: number = 1,
-  limit: number = 20,
-): Promise<any> {
-  const response = await apiClient.get(`/message/conversation/${userId}`, {
-    params: { page, limit },
-  });
-  return response.data.body;
+export async function fetchReceivedMessages(): Promise<any[]> {
+  // TODO: API 연동
+  // const response = await apiClient.get("/message/received");
+  // return response.data.body;
+  return [];
 }
 
-export async function sendMessage(
-  receiverId: string,
-  content: string,
-): Promise<void> {
+export async function sendMessage(receiverId: string, content: string): Promise<void> {
   await apiClient.post("/message", { receiverId, content });
 }

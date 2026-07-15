@@ -1,3 +1,5 @@
-export default function DirectorMessageReceivedPage() {
-  return <div>받은 쪽지</div>;
+import { ReceivedMessageSection } from "@/features/message/components/ReceivedMessageSection";
+
+export default function ReceivedMessagePage() {
+  return <ReceivedMessageSection />;
 }

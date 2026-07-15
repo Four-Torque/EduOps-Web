@@ -1,6 +1,5 @@
-
-import { MessageSection } from "@/features/message/components/MessageSection";
+import { SentMessageSection } from "@/features/message/components/SentMessageSection";
 
 export default function MessagePage() {
-  return <MessageSection />;
+  return <SentMessageSection />;
 }
