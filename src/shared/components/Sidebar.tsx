@@ -21,7 +21,6 @@ import {
   Crown,
   UserCog,
   GraduationCap,
-  FileText,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { useUIStore } from "@/shared/store";
@@ -215,7 +214,7 @@ export function Sidebar({ navItems }: SidebarProps) {
                   {isOpen && textVisible && (
                     <ul className="mt-0.5 ml-2 space-y-0.5">
                       {item.children.map((child) => {
-                        const isActive = pathname.startsWith(child.href);
+                        const isActive = pathname === child.href;
                         return (
                           <li key={child.href}>
                             <Link

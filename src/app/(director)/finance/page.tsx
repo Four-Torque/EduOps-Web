@@ -1,82 +1,37 @@
 "use client";
 
-import { useMemo } from "react";
-
-import { RevenueChart } from "@/features/finance/components/RevenueChart";
-import { RevenueFilterBar } from "@/features/finance/components/RevenueFilterBar";
-import { RevenueKpi } from "@/features/finance/components/RevenueKpi";
-import { Table } from "@/shared/components/Table";
-import { getColumns } from "./column";
-
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { IncomeExpenseFilter } from "@/features/finance/components/IncomeExpenseFilter";
+import { FinancesDateChart } from "@/features/finance/components/FinancesDateChart";
 import { useFinanceStore } from "@/features/finance/store";
-import {
-  usePayments,
-  useUpdatePayment,
-  usePaymentStats,
-  usePaymentMonthlyTrends,
-} from "@/features/finance/query";
-
-const PAGE_SIZE = 5;
+import FinancesDateList from "@/features/finance/components/FinancesDateList";
+import { useGetFinanceByPeriod } from "@/features/finance/query";
+import Navigation from "@/features/finance/components/Navigation";
 
 export default function FinancePage() {
-  const { filter, setDateRange, setPage } = useFinanceStore();
-
-  const { data: paymentsData } = usePayments({
-    search: filter.search || undefined,
-    paymentType: filter.status === "all" ? undefined : (filter.status as any),
-    type: filter.type,
-    page: filter.page,
-    limit: PAGE_SIZE,
-  });
-
-  const { data: statsData } = usePaymentStats();
-  const { data: trendsData } = usePaymentMonthlyTrends();
-  const { mutate: updatePaymentStatus } = useUpdatePayment();
-
-  const columns = useMemo(() => {
-    return getColumns((id, status) =>
-      updatePaymentStatus({ id, paymentType: status }),
-    );
-  }, [updatePaymentStatus]);
-
-  const stats = statsData ?? {
-    totalRevenue: 0,
-    totalExpense: 0,
-    netProfit: 0,
-    unpaidAmount: 0,
-    unpaidCount: 0,
-    newEnrollments: 0,
-    refundCount: 0,
-    refundAmount: 0,
-  };
-  const monthlyRevenueData = trendsData ?? [];
+  const { startDate, endDate } = useFinanceStore();
+  const { data, isLoading } = useGetFinanceByPeriod({ startDate, endDate });
+  if (isLoading) return null;
 
   return (
-    <div>
-      <RevenueKpi stats={stats} />
-
-      <RevenueFilterBar
-        search={filter.search}
-        status={filter.status}
-        type={filter.type}
-        dateRange={filter.dateRange}
-        onDateRangeChange={setDateRange}
-      />
-
-      <div className="mb-[18px] mt-[18px]">
-        <Table
-          columns={columns}
-          data={paymentsData}
-          showCheckbox={false}
-          rowKey="id"
-          onPageChange={setPage}
-          currentPage={filter.page}
-        />
-      </div>
-
-      <div className="flex gap-5">
-        <RevenueChart data={monthlyRevenueData} />
-      </div>
+    <div className="space-y-4">
+      <Navigation type="MONTHLY" />
+      <Card className="w-full">
+        <CardContent className="w-full flex md:justify-end items-center">
+          <div className="flex-1">
+            <IncomeExpenseFilter finances={data} />
+          </div>
+          <div className="flex-4">
+            <FinancesDateChart
+              finances={data}
+              startDate={startDate}
+              endDate={endDate}
+              viewMode="DAY"
+            />
+          </div>
+        </CardContent>
+      </Card>
+      <FinancesDateList finances={data} />
     </div>
   );
 }
