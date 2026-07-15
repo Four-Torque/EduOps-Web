@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { ExamFilterBar } from "./ExamFilterBar";
 import { ExamListTable } from "./ExamListTable";
 import { ExamScoreModal } from "./ExamScoreModal";
-import { CreateExamModal } from "./CreateExamModal";
 import { EditExamModal } from "./EditExamModal";
 import { ExamItem } from "../type";
 import { fetchExams } from "../api";
@@ -16,7 +15,6 @@ export function ExamDashboard() {
   
   const [selectedExam, setSelectedExam] = useState<ExamItem | null>(null);
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { data: exams = [], isLoading } = useQuery({
@@ -41,17 +39,7 @@ export function ExamDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div />
-        <button 
-          onClick={() => setIsCreateModalOpen(true)}
-          className="bg-slate-900 text-white px-4 py-2 flex items-center gap-2 rounded-md font-medium text-sm hover:bg-slate-800 transition-colors"
-        >
-          <span className="text-lg leading-none">+</span> 새 테스트 등록
-        </button>
-      </div>
-
-      <ExamFilterBar 
+      <ExamFilterBar
         classId={classId}
         setClassId={setClassId}
         period={period}
@@ -72,12 +60,7 @@ export function ExamDashboard() {
         exam={selectedExam}
       />
 
-      <CreateExamModal 
-        open={isCreateModalOpen}
-        onOpenChange={setIsCreateModalOpen}
-      />
-
-      <EditExamModal 
+      <EditExamModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         exam={selectedExam}

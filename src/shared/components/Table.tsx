@@ -99,7 +99,7 @@ export function Table({
         createButtonLabel={createButtonLabel}
       />
 
-      <div className="border border-slate-200 rounded overflow-x-auto">
+      <div className="rounded overflow-x-auto border border-slate-100">
         <table className="w-full border-collapse">
           <TableHeader
             columns={columns}
@@ -120,7 +120,7 @@ export function Table({
         </table>
 
         {!isLoading && (
-          <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-slate-100">
+          <div className="flex items-center justify-between px-3.5 py-2.5 ">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
             {totalItems > 0 && (
               <Pagination currentPage={activePage} totalPages={totalPages} onPageChange={onPageChange} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PlusCircle } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { CardModal } from "@/shared/components/CardModal";
 import { Input } from "@/shared/components/ui/input";
@@ -17,16 +18,12 @@ import { toast } from "react-hot-toast";
 import { fetchTeacherClasses } from "@/features/class/api";
 import { useSession } from "@/shared/hooks/useSession";
 
-interface CreateExamModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function CreateExamModal({ open, onOpenChange }: CreateExamModalProps) {
+export function CreateExamModal() {
   const queryClient = useQueryClient();
   const { data: user } = useSession();
   const teacherId = user?.id || "";
 
+  const [open, setOpen] = useState(false);
   const [classId, setClassId] = useState("");
   const [name, setName] = useState("");
   const [examDate, setExamDate] = useState("");
@@ -52,7 +49,7 @@ export function CreateExamModal({ open, onOpenChange }: CreateExamModalProps) {
       setClassId("");
       setName("");
       setExamDate("");
-      onOpenChange(false);
+      setOpen(false);
     },
     onError: () => {
       toast.error("테스트 등록에 실패했습니다.");
@@ -76,57 +73,64 @@ export function CreateExamModal({ open, onOpenChange }: CreateExamModalProps) {
   };
 
   return (
-    <CardModal 
-      open={open} 
-      onOpenChange={onOpenChange}
-      title="새 테스트 등록"
-      description="새로운 테스트 일정을 등록합니다."
-      size="sm"
-      footer={
-        <>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={createMutation.isPending}>취소</Button>
-          <Button onClick={handleCreate} disabled={createMutation.isPending}>
-            {createMutation.isPending ? "등록 중..." : "등록하기"}
-          </Button>
-        </>
-      }
-    >
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700">대상 반</label>
-          <Select value={classId} onValueChange={setClassId} disabled={isClassesLoading}>
-            <SelectTrigger>
-              <SelectValue placeholder={isClassesLoading ? "불러오는 중..." : "반 선택"} />
-            </SelectTrigger>
-            <SelectContent>
-              {classes.map((cls: any) => (
-                <SelectItem key={cls.id} value={cls.id}>
-                  {cls.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+    <>
+      <Button className="gap-2" onClick={() => setOpen(true)}>
+        <PlusCircle className="size-4" />
+        새 테스트 등록
+      </Button>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700">테스트 이름</label>
-          <Input 
-            placeholder="예) 6월 모의고사"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={20}
-          />
-        </div>
+      <CardModal
+        open={open}
+        onOpenChange={setOpen}
+        title="새 테스트 등록"
+        description="새로운 테스트 일정을 등록합니다."
+        size="sm"
+        footer={
+          <>
+            <Button variant="outline" onClick={() => setOpen(false)} disabled={createMutation.isPending}>취소</Button>
+            <Button onClick={handleCreate} disabled={createMutation.isPending}>
+              {createMutation.isPending ? "등록 중..." : "등록하기"}
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-slate-700">대상 반</label>
+            <Select value={classId} onValueChange={setClassId} disabled={isClassesLoading}>
+              <SelectTrigger>
+                <SelectValue placeholder={isClassesLoading ? "불러오는 중..." : "반 선택"} />
+              </SelectTrigger>
+              <SelectContent>
+                {classes.map((cls: any) => (
+                  <SelectItem key={cls.id} value={cls.id}>
+                    {cls.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-700">시험일</label>
-          <Input 
-            type="date"
-            value={examDate}
-            onChange={(e) => setExamDate(e.target.value)}
-          />
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-slate-700">테스트 이름</label>
+            <Input
+              placeholder="예) 6월 모의고사"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={20}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-slate-700">시험일</label>
+            <Input
+              type="date"
+              value={examDate}
+              onChange={(e) => setExamDate(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
-    </CardModal>
+      </CardModal>
+    </>
   );
 }

@@ -10,6 +10,7 @@ import {
   resetPasswordVerifyMail,
   sendResetPasswordMail,
 } from "./api";
+import { clearStoredTabs } from "@/shared/hooks/useTabs";
 
 export function useRegister() {
   const router = useRouter();
@@ -61,6 +62,7 @@ export function useLogout() {
   const mutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      clearStoredTabs();
       router.push("/login");
     },
   });

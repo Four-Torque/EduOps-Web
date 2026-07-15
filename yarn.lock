@@ -559,18 +559,6 @@
   resolved "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@preact/signals-core@^1.14.3":
-  version "1.14.3"
-  resolved "https://registry.npmjs.org/@preact/signals-core/-/signals-core-1.14.3.tgz"
-  integrity sha512-m0K3vnbSLC5rHs2ZVfeAMvBtT1zIyq4mxx5OlNncSgMj5Iz6W5Rn3kPrDxAC+iIKmiVe0lSl6U37t5ZkEWoVAw==
-
-"@preact/signals@^2.0.2":
-  version "2.9.2"
-  resolved "https://registry.npmjs.org/@preact/signals/-/signals-2.9.2.tgz"
-  integrity sha512-DvFPISNMSh3vPqRwPa1tAVAHl85aDq4pTyNu1bTGfrKr64F3EOCHjdUl9aUdohKBf1v9PRGLYuGFcJpfztkdoQ==
-  dependencies:
-    "@preact/signals-core" "^1.14.3"
-
 "@radix-ui/number@1.1.2":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@radix-ui/number/-/number-1.1.2.tgz"
@@ -1255,21 +1243,6 @@
   version "1.1.0"
   resolved "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz"
   integrity sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==
-
-"@schedule-x/calendar@^2.25.0", "@schedule-x/calendar@^2.36.0":
-  version "2.36.0"
-  resolved "https://registry.npmjs.org/@schedule-x/calendar/-/calendar-2.36.0.tgz"
-  integrity sha512-UqPMoxjok3SFNvgx1+PY5Whmoig+gU7sjy80z68A9QQ1FjIt1Q3ODPZKdA3G0spDss9lDtKilpO393vWpXJyfg==
-
-"@schedule-x/react@^2.36.0":
-  version "2.36.0"
-  resolved "https://registry.npmjs.org/@schedule-x/react/-/react-2.36.0.tgz"
-  integrity sha512-MZAs67Krn1zmxmmlM1iWUdypmYAiOkIV7Z4wi9PJKWjt4Dtbx8K8Q4kW38aWmfDCImPbfBUGDp3LaP9u53zCzg==
-
-"@schedule-x/theme-default@^2.36.0":
-  version "2.36.0"
-  resolved "https://registry.npmjs.org/@schedule-x/theme-default/-/theme-default-2.36.0.tgz"
-  integrity sha512-jkN9/srYS54dO2h12iCvNMMrLEiod6BAoUc47KbOgGE66zyUU+kmQwUOYQ3A2LrKyIWjwtCp3Ewdd4h/HHvG9A==
 
 "@sec-ant/readable-stream@^0.4.1":
   version "0.4.1"
@@ -4525,11 +4498,6 @@ powershell-utils@^0.1.0:
   resolved "https://registry.npmjs.org/powershell-utils/-/powershell-utils-0.1.0.tgz"
   integrity sha512-dM0jVuXJPsDN6DvRpea484tCUaMiXWjuCn++HGTqUWzGDjv5tZkEZldAJ/UMlqRYGFrD/etByo4/xOuC/snX2A==
 
-preact@^10.19.2, "preact@>= 10.25.0 || >=11.0.0-0":
-  version "10.29.3"
-  resolved "https://registry.npmjs.org/preact/-/preact-10.29.3.tgz"
-  integrity sha512-D9NL1GAnJZhc3RndVs4gDdxEeU9TcHgywMrhhOsnpdlvFjdbx0gAsLUnH6JEhlJH5giL7Tx5biWPUSEXE/HPzw==
-
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
@@ -4701,7 +4669,7 @@ react-day-picker@^10.0.1:
     "@date-fns/tz" "^1.4.1"
     date-fns "^4.1.0"
 
-"react-dom@^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-dom@^16.14.0 || ^17 || ^18 || ^19", "react-dom@^16.7.0 || ^17 || ^18 || ^19", "react-dom@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react-dom@>=16, react-dom@>=16.3.0, react-dom@>=16.8.0, react-dom@19.2.4:
+"react-dom@^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react-dom@^16.14.0 || ^17 || ^18 || ^19", "react-dom@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react-dom@>=16, react-dom@>=16.3.0, react-dom@>=16.8.0, react-dom@19.2.4:
   version "19.2.4"
   resolved "https://registry.npmjs.org/react-dom/-/react-dom-19.2.4.tgz"
   integrity sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==
@@ -4780,7 +4748,7 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-"react@^16.14.0 || ^17 || ^18 || ^19", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.7.0 || ^17 || ^18 || ^19", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.9.0 || ^17.0.0 || ^18 || ^19", "react@^18 || ^19", "react@^18.0 || ^19", "react@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react@^19.2.4, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0", react@>=15.0.0, react@>=16, react@>=16.3.0, react@>=16.8.0, react@>=18.0.0, react@19.2.4:
+"react@^16.14.0 || ^17 || ^18 || ^19", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.9.0 || ^17.0.0 || ^18 || ^19", "react@^18 || ^19", "react@^18.0 || ^19", "react@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react@^19.2.4, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0", react@>=15.0.0, react@>=16, react@>=16.3.0, react@>=16.8.0, react@>=18.0.0, react@19.2.4:
   version "19.2.4"
   resolved "https://registry.npmjs.org/react/-/react-19.2.4.tgz"
   integrity sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==

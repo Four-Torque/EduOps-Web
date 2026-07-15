@@ -106,7 +106,7 @@ export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: 
 
   return (
     <>
-      <div className="mt-4 bg-white rounded-xl shadow-sm overflow-hidden border">
+      <div className="mt-4 bg-white rounded-xl overflow-hidden border">
         <Table
           columns={columns}
           data={{ data: syllabuses, total: syllabuses.length, totalPages: 1 }}

@@ -1,4 +1,4 @@
-import { BillingStatus } from "@/features/finance/type";
+import { BillingStatus } from "@/features/payment/type";
 import { BILLING_STATUS_STYLE } from "@/shared/constants/manager/billing.constants";
 
 interface BillingStatusBadgeProps {

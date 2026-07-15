@@ -35,7 +35,7 @@ export function FileFilterBar({ teacherId, classId, setClassId, fileName, setFil
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
         <Input
           placeholder="파일명 검색..."
-          className="pl-9 w-full"
+          className="pl-9 w-full shadow-none"
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
         />

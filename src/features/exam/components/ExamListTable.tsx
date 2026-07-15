@@ -87,7 +87,7 @@ export function ExamListTable({ exams, isLoading, onExamClick, onManageClick }: 
   ];
 
   return (
-    <div className="mt-4 bg-white rounded-xl shadow-sm overflow-hidden border">
+    <div className="mt-4 bg-white rounded-xl overflow-hidden border">
       <Table
         columns={columns}
         data={{ data: exams, total: exams.length, totalPages: 1 }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { BillingTabFilter } from "@/features/finance/type";
+import { BillingTabFilter } from "@/features/payment/type";
 import { BILLING_TABS } from "@/shared/constants/manager/billing.constants";
 
 interface BillingFilterTabsProps {

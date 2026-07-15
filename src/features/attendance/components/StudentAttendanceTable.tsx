@@ -6,12 +6,13 @@ import { Button } from "@/shared/components/ui/button";
 
 interface AttendanceTableProps {
   students: StudentAttendance[];
+  scheduleTime: string;
   onStatusChange: (id: string, status: StudentAttendanceStatus) => void;
 }
 
-export default function AttendanceTable({ students, onStatusChange }: AttendanceTableProps) {
+export default function AttendanceTable({ students, scheduleTime, onStatusChange }: AttendanceTableProps) {
   return (
-    <Card className="flex flex-col shadow-sm overflow-hidden bg-white p-0">
+    <Card className="flex flex-col overflow-hidden bg-white p-0">
       <div className="flex items-center justify-between p-3 px-5 border-b bg-gray-50/50">
         <div className="flex items-center gap-5">
           <h2 className="text-base font-bold text-gray-800">출결 리스트</h2>
@@ -23,20 +24,21 @@ export default function AttendanceTable({ students, onStatusChange }: Attendance
         </div>
       </div>
 
-      <div className="px-2 pb-2">
+      <div className="px-2">
         <Table>
           <TableHeader className="bg-transparent">
             <TableRow className="hover:bg-transparent border-b border-gray-100">
               <TableHead className="w-[10%] text-center h-10 text-xs font-semibold text-gray-500">번호</TableHead>
-              <TableHead className="w-[20%] text-center text-xs font-semibold text-gray-500">성명</TableHead>
-              <TableHead className="w-[30%] text-center text-xs font-semibold text-gray-500">연락처</TableHead>
-              <TableHead className="w-[40%] text-center text-xs font-semibold text-gray-500">출결 상태</TableHead>
+              <TableHead className="w-[15%] text-center text-xs font-semibold text-gray-500">성명</TableHead>
+              <TableHead className="w-[20%] text-center text-xs font-semibold text-gray-500">연락처</TableHead>
+              <TableHead className="w-[20%] text-center text-xs font-semibold text-gray-500">출석 시간</TableHead>
+              <TableHead className="w-[35%] text-center text-xs font-semibold text-gray-500">출결 상태</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {students.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-sm text-gray-500">
+                <TableCell colSpan={5} className="h-24 text-center text-sm text-gray-500">
                   학생 목록이 없습니다.
                 </TableCell>
               </TableRow>
@@ -46,6 +48,7 @@ export default function AttendanceTable({ students, onStatusChange }: Attendance
                   <TableCell className="text-center text-sm text-gray-400 font-medium h-12">{index + 1}</TableCell>
                   <TableCell className="text-center text-sm font-semibold text-gray-700">{student.name}</TableCell>
                   <TableCell className="text-center text-sm text-gray-500">{student.phone}</TableCell>
+                  <TableCell className="text-center text-sm text-gray-500">{scheduleTime}</TableCell>
                   <TableCell>
                     <div className="flex items-center justify-center gap-1.5">
                       <Button

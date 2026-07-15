@@ -1,4 +1,4 @@
-import { MonthlyRevenue } from "@/features/finance/type";
+import { MonthlyRevenue } from "@/features/payment/type";
 import { MOCK_MONTHLY_REVENUE } from "@/shared/constants/manager/billing.constants";
 
 export function BillingRevenueChart() {

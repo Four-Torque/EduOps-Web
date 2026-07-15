@@ -54,11 +54,7 @@ function toScheduleEvents(
   return classes.flatMap((cls) =>
     (cls.schedules ?? []).flatMap((schedule) =>
       days
-        .filter((day) => {
-          const jsDay = getDay(day); // 0 (Sun) ~ 6 (Sat)
-          const mappedDay = jsDay === 0 ? 6 : jsDay - 1; // 0 (Mon) ~ 6 (Sun)
-          return mappedDay === schedule.dayOfWeek;
-        })
+        .filter((day) => getDay(day) === schedule.dayOfWeek) // dayOfWeek: 0(일)~6(토), JS Date.getDay()와 동일 기준
         .map((day) => ({
           id: `${schedule.id}-${day.toISOString()}`,
           title: cls.name,

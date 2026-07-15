@@ -4,7 +4,7 @@ import type {
   MonthlyRevenue,
   BillingTabFilter,
   BillingCategoryFilter,
-} from "@/features/finance/type";
+} from "@/features/payment/type";
 
 export const BILLING_PAGE_SIZE = 6;
 

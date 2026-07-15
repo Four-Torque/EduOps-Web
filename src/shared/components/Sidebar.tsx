@@ -25,10 +25,12 @@ import {
 import { cn } from "@/shared/lib/utils";
 import { useUIStore } from "@/shared/store";
 import { useSession } from "@/shared/hooks/useSession";
+import type { Tab } from "@/shared/hooks/useTabs";
 import type { NavItem, NavId } from "@/shared/constants/navigation";
 
 interface SidebarProps {
   navItems: NavItem[];
+  addTab: (tab: Tab) => void;
 }
 
 // 역할 → 뱃지/아바타 아이콘
@@ -58,11 +60,10 @@ const NAV_ICONS: Record<NavId, React.ElementType> = {
   "teacher-message": MessageSquare,
 };
 
-export function Sidebar({ navItems }: SidebarProps) {
+export function Sidebar({ navItems, addTab }: SidebarProps) {
   const pathname = usePathname();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
-  const addTab = useUIStore((s) => s.addTab);
   const { data: user } = useSession();
   const RoleIcon = ROLE_ICONS[user?.role ?? "TEACHER"] ?? GraduationCap;
   const [openId, setOpenId] = useState<NavId | null>(null);

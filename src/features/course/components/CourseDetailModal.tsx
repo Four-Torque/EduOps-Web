@@ -238,7 +238,7 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1.5 pl-2">
                           <span className="font-semibold text-slate-700">
-                            {["월", "화", "수", "목", "금", "토", "일"][s.dayOfWeek]}요일
+                            {["일", "월", "화", "수", "목", "금", "토"][s.dayOfWeek]}요일
                           </span>
                           <span className="flex items-center gap-1.5 text-slate-500 text-xs">
                             <Clock size={12} /> {s.startTime} - {s.endTime}
@@ -275,13 +275,13 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
                 <div className="flex flex-col gap-1.5">
                   <Label className="text-xs text-slate-600 font-medium">요일</Label>
                   <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm focus-visible:ring-emerald-500 focus-visible:border-emerald-500" value={dayOfWeek} onChange={e => setDayOfWeek(e.target.value)}>
-                    <option value="0">월요일</option>
-                    <option value="1">화요일</option>
-                    <option value="2">수요일</option>
-                    <option value="3">목요일</option>
-                    <option value="4">금요일</option>
-                    <option value="5">토요일</option>
-                    <option value="6">일요일</option>
+                    <option value="0">일요일</option>
+                    <option value="1">월요일</option>
+                    <option value="2">화요일</option>
+                    <option value="3">수요일</option>
+                    <option value="4">목요일</option>
+                    <option value="5">금요일</option>
+                    <option value="6">토요일</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">

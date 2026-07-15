@@ -1,7 +1,10 @@
+"use client";
+
 import { NavItem } from "../constants/navigation";
 import { Sidebar } from "./Sidebar";
 import Header from "./Header";
 import Topbar from "./Topbar";
+import { useTabs } from "../hooks/useTabs";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -25,13 +28,20 @@ export default function AppShell({
   homePath,
 }: AppShellProps) {
   const homeLabel = findHomeLabel(navItems, homePath);
+  const { tabs, addTab, removeTab } = useTabs();
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar navItems={navItems} />
+      <Sidebar navItems={navItems} addTab={addTab} />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
-        <Topbar homePath={homePath} homeLabel={homeLabel} />
+        <Topbar
+          homePath={homePath}
+          homeLabel={homeLabel}
+          tabs={tabs}
+          addTab={addTab}
+          removeTab={removeTab}
+        />
         <main className="flex-1 overflow-auto p-6 bg-white">{children}</main>
       </div>
     </div>

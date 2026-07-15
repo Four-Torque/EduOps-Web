@@ -3,13 +3,14 @@
 import { Table, type ColumnProps } from "@/shared/components/Table";
 import { BillingFilterTabs } from "./BillingFilterTabs";
 import { BillingStatusBadge } from "./BillingStatusBadge";
-import { useBillingStore } from "@/features/finance/store";
-import { usePayments, useUpdatePayment } from "@/features/finance/query";
+import { useBillingStore } from "@/features/payment/store";
+import { usePayments, useUpdatePayment } from "@/features/payment/query";
 import {
+  BillingCategoryFilter,
   BillingStatus,
   BillingTabFilter,
-  RevenueItem,
-} from "@/features/finance/type";
+  PaymentItem,
+} from "@/features/payment/type";
 import {
   BILLING_CATEGORY_OPTIONS,
   BILLING_PAGE_SIZE,
@@ -39,14 +40,14 @@ function toPaymentTypeFilter(tab: BillingTabFilter): "PAID" | "UNPAID" | undefin
 }
 
 // 미납(UNPAID) 상태이면서 납부기한이 지났으면 연체로 본다.
-function isOverdue(item: RevenueItem): boolean {
-  if (item.status !== "UNPAID" || !item.dueDate) return false;
+function isOverdue(item: PaymentItem): boolean {
+  if (item.paymentType !== "UNPAID" || !item.dueDate) return false;
   return new Date(item.dueDate).getTime() < Date.now();
 }
 
-function toBillingStatus(item: RevenueItem): BillingStatus {
-  if (item.status === "PAID") return "완료";
-  if (item.status === "UNPAID") return isOverdue(item) ? "연체" : "미완료";
+function toBillingStatus(item: PaymentItem): BillingStatus {
+  if (item.paymentType === "PAID") return "완료";
+  if (item.paymentType === "UNPAID") return isOverdue(item) ? "연체" : "미완료";
   return "대기";
 }
 
@@ -57,28 +58,28 @@ function getColumns(
     {
       key: "date",
       label: "날짜",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <div className="text-center text-[12px] text-slate-400">
-          {formatDate(item.date)}
+          {formatDate(item.paymentDate ?? item.createdAt)}
         </div>
       ),
     },
     {
-      key: "itemTitle",
+      key: "title",
       label: "상세내용",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <div className="text-center">
           <p className="text-[12.5px] font-medium text-slate-900 leading-tight">
-            {item.itemTitle}
+            {item.title}
           </p>
-          <p className="text-[10.5px] text-slate-400 mt-0.5">{item.itemSub}</p>
+          <p className="text-[10.5px] text-slate-400 mt-0.5">{item.className || "일반 청구"}</p>
         </div>
       ),
     },
     {
       key: "studentName",
       label: "학생",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <p className="text-[12.5px] font-medium text-slate-900 text-center">
           {item.studentName}
         </p>
@@ -87,7 +88,7 @@ function getColumns(
     {
       key: "amount",
       label: "금액",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <div className="text-center text-[12.5px] font-medium text-slate-800">
           {item.amount.toLocaleString("ko-KR")}원
         </div>
@@ -96,7 +97,7 @@ function getColumns(
     {
       key: "status",
       label: "상태",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <div className="text-center">
           <BillingStatusBadge status={toBillingStatus(item)} />
         </div>
@@ -105,7 +106,7 @@ function getColumns(
     {
       key: "actions",
       label: "액션",
-      render: (item: RevenueItem) => (
+      render: (item: PaymentItem) => (
         <div className="text-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -149,17 +150,16 @@ export function BillingTransactionTable() {
   // 페이지네이션 없이 해당 paymentType 전체를 가져온 뒤 직접 건수를 세고 자른다.
   // (서버가 준 total/totalPages를 그대로 쓰면 미완료+연체 합친 개수가 나와서 틀어진다)
   const { data, isLoading } = usePayments({
-    type: "INCOME",
     paymentType: toPaymentTypeFilter(tab),
     page: 1,
     limit: 1000,
   });
 
-  const filteredItems = (data?.data ?? []).filter((item: RevenueItem) => {
-    if (tab === "완료") return item.status === "PAID";
-    if (tab === "미완료") return item.status === "UNPAID" && !isOverdue(item);
-    if (tab === "연체") return item.status === "UNPAID" && isOverdue(item);
-    return item.status === "PAID" || item.status === "UNPAID"; // "all" (REFUNDED 제외)
+  const filteredItems = (data?.data ?? []).filter((item: PaymentItem) => {
+    if (tab === "완료") return item.paymentType === "PAID";
+    if (tab === "미완료") return item.paymentType === "UNPAID" && !isOverdue(item);
+    if (tab === "연체") return item.paymentType === "UNPAID" && isOverdue(item);
+    return item.paymentType === "PAID" || item.paymentType === "UNPAID"; // "all" (REFUNDED 제외)
   });
 
   const total = filteredItems.length;
@@ -181,6 +181,7 @@ export function BillingTransactionTable() {
         <div className="flex items-center gap-2.5">
           <Select
             value={categoryFilter}
+            onValueChange={(v) => setCategoryFilter(v as BillingCategoryFilter)}
           >
             <SelectTrigger className="w-28 text-[12.5px]" size="default">
               <SelectValue />

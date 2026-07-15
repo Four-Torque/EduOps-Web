@@ -38,7 +38,7 @@ export function ExamFilterBar({
   const classes = classData?.data || [];
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-between items-center w-full bg-white p-4 rounded-xl border">
+    <div className="flex flex-col sm:flex-row gap-4 justify-between items-center w-full bg-white p-3 rounded-xl border">
       <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center shrink-0 w-full sm:w-auto">
         <Select value={classId} onValueChange={setClassId} disabled={isClassesLoading}>
           <SelectTrigger className="w-[150px]">

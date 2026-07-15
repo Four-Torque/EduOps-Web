@@ -131,7 +131,7 @@ export function FileListTable({ files, isLoading }: FileListTableProps) {
   const totalPages = Math.ceil(totalItems / 10) || 1;
 
   return (
-    <div className="mt-4 bg-white rounded-xl shadow-sm overflow-hidden border">
+    <div className="mt-4 bg-white rounded-xl overflow-hidden border">
       <Table
         columns={columns}
         data={{ data: files?.data || [], total: totalItems, totalPages }}
