@@ -9,12 +9,13 @@ interface MessageUIState {
   modalMode: ModalMode;
   selectedMessage: Message | null;
   composeTarget: MessageContact | null;
+  viewMode: "RECEIVED" | "SENT" | null;
 
   // 연락처 선택 모달
   isContactModalOpen: boolean;
   searchQuery: string;
 
-  openViewModal: (message: Message) => void;
+  openViewModal: (message: Message, viewMode: "RECEIVED" | "SENT") => void;
   openReplyModal: () => void;
   openComposeModal: (target?: MessageContact) => void;
   closeModal: () => void;
@@ -28,21 +29,25 @@ interface MessageUIState {
 export const useMessageStore = create<MessageUIState>()(
   devtools(
     (set, get) => ({
-      modalMode:          null,
-      selectedMessage:    null,
-      composeTarget:      null,
+      modalMode: null,
+      selectedMessage: null,
+      composeTarget: null,
       isContactModalOpen: false,
-      searchQuery:        "",
+      searchQuery: "",
 
       // 보기 모달
-      openViewModal: (message) =>
-        set({ modalMode: "view", selectedMessage: message }, false, "message/open-view"),
+      openViewModal: (message, viewMode) =>
+        set(
+          { modalMode: "view", selectedMessage: message, viewMode },
+          false,
+          "message/open-view",
+        ),
 
       // 보기 → 답장으로 전환
       openReplyModal: () =>
         set(
           (state) => ({
-            modalMode:     "reply",
+            modalMode: "reply",
             composeTarget: state.selectedMessage?.sender ?? null,
           }),
           false,
@@ -53,8 +58,8 @@ export const useMessageStore = create<MessageUIState>()(
       openComposeModal: (target) =>
         set(
           {
-            modalMode:          "compose",
-            composeTarget:      target ?? null,
+            modalMode: "compose",
+            composeTarget: target ?? null,
             isContactModalOpen: false,
           },
           false,
@@ -72,7 +77,11 @@ export const useMessageStore = create<MessageUIState>()(
         set({ isContactModalOpen: true }, false, "message/open-contact-modal"),
 
       closeContactModal: () =>
-        set({ isContactModalOpen: false, searchQuery: "" }, false, "message/close-contact-modal"),
+        set(
+          { isContactModalOpen: false, searchQuery: "" },
+          false,
+          "message/close-contact-modal",
+        ),
 
       setSearchQuery: (searchQuery) =>
         set({ searchQuery }, false, "message/set-search-query"),
@@ -80,11 +89,11 @@ export const useMessageStore = create<MessageUIState>()(
       reset: () =>
         set(
           {
-            modalMode:          null,
-            selectedMessage:    null,
-            composeTarget:      null,
+            modalMode: null,
+            selectedMessage: null,
+            composeTarget: null,
             isContactModalOpen: false,
-            searchQuery:        "",
+            searchQuery: "",
           },
           false,
           "message/reset",

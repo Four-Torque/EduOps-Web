@@ -6,9 +6,11 @@ export type User = {
   password?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  role: "DIRECTOR" | "TEACHER" | "MANAGER";
+  role: UserRole;
   status: "ACTIVE" | "INACTIVE" | "LEAVED";
 };
+
+export type UserRole = "DIRECTOR" | "TEACHER" | "MANAGER";
 
 export type UserApprovalStatus = "pending";
 export type UserRoleType = "선생님" | "관리자";
