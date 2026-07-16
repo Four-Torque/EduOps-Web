@@ -1,56 +1,90 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchGroupedContacts,
-  fetchSentMessages,
-  fetchReceivedMessages,
+  findReceivedMessages,
+  findSentMessages,
+  markMessageAsRead,
   sendMessage,
 } from "./api";
 import { useMessageStore } from "./store";
+import toast from "react-hot-toast";
 
 export const messageQueryKeys = {
-  all:      ()              => ["message"]                       as const,
-  contacts: (name?: string) => ["message", "contacts", name]    as const,
-  sent:     ()              => ["message", "sent"]               as const,
-  received: ()              => ["message", "received"]           as const,
+  all: () => ["messages"] as const,
+  contacts: (name?: string) => ["messages", "contacts", name] as const,
+  sent: (params?: { page?: number; limit?: number }, userId?: string) =>
+    ["messages", "sent", { ...params, userId }] as const,
+  received: (params?: { page?: number; limit?: number }, userId?: string) =>
+    ["messages", "received", { ...params, userId }] as const,
 };
 
 export function useGroupedContacts() {
   const { searchQuery } = useMessageStore();
   return useQuery({
     queryKey: messageQueryKeys.contacts(searchQuery),
-    queryFn:  () => fetchGroupedContacts(searchQuery || undefined),
-  });
-}
-
-export function useSentMessages() {
-  return useQuery({
-    queryKey: messageQueryKeys.sent(),
-    queryFn:  fetchSentMessages,
-  });
-}
-
-export function useReceivedMessages() {
-  return useQuery({
-    queryKey: messageQueryKeys.received(),
-    queryFn:  fetchReceivedMessages,
+    queryFn: () => fetchGroupedContacts(searchQuery || undefined),
   });
 }
 
 export function useSendMessage() {
   const queryClient = useQueryClient();
-  const { closeModal } = useMessageStore();
-
-  return useMutation({
-    mutationFn: ({ receiverId, content }: { receiverId: string; content: string }) =>
-      sendMessage(receiverId, content),
-    onSuccess: () => {
-      toast.success("쪽지가 전송되었습니다.");
+  const mutation = useMutation({
+    mutationFn: sendMessage,
+    onSuccess: (data) => {
+      toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: messageQueryKeys.sent() });
-      closeModal();
     },
     onError: (error) => {
-      if (error instanceof Error) toast.error(error.message);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     },
   });
+  return mutation;
+}
+
+export function useReceivedMessages(
+  params: {
+    page?: number;
+    limit?: number;
+  },
+  userId?: string,
+) {
+  const query = useQuery({
+    enabled: !!userId,
+    queryKey: messageQueryKeys.received(params, userId),
+    queryFn: () => findReceivedMessages(params),
+  });
+  return query;
+}
+
+export function useFindSentMessages(
+  params: {
+    page?: number;
+    limit?: number;
+  },
+  userId?: string,
+) {
+  const query = useQuery({
+    enabled: !!userId,
+    queryKey: messageQueryKeys.sent(params, userId),
+    queryFn: () => findSentMessages(params),
+  });
+  return query;
+}
+
+export function useMarkAsRead() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: markMessageAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: messageQueryKeys.received() });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
 }
