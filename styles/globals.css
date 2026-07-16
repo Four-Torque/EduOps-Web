@@ -177,3 +177,15 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+
+/* react-big-calendar 라이브러리 기본 CSS 오버라이드.
+   .rbc-events-container가 top/left/right/bottom:0 + margin-right:10px로 안쪽 여백이
+   오른쪽만 떠 있었는데, 네 방향 다 3px로 균일하게 맞춘다.
+   import 순서와 무관하게 확실히 이기도록 !important 사용. */
+.rbc-day-slot .rbc-events-container {
+  top: 3px !important;
+  right: 3px !important;
+  bottom: 3px !important;
+  left: 3px !important;
+  margin-right: 0 !important;
+}

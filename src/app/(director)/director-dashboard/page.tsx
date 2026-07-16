@@ -69,15 +69,10 @@ export default function Dashboard() {
   const { data: recentAssets = [] } = useDashboardRecentAssets();
   const { data: pendingUsers = [] } = useDashboardPendingUsers();
   const { data: recentMessages = [] } = useDashboardRecentMessages();
-  // const { data: monthlyTrends = [] } = useDashboardMonthlyTrends();
-  const {data, isLoading} = useGetFinanceByPeriod({startDate, endDate});
+  const {data} = useGetFinanceByPeriod({startDate, endDate});
   const { data: recentPayments = [] } = useDashboardRecentPayments();
 
   const now = new Date();
-  // const startMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-  // const chartDateRangeText = `${startMonth.getMonth() + 1}월 - ${now.getMonth() + 1}월 ${now.getFullYear()}`;
-
-
   return (
     <div className="p-8 max-w-[1600px] mx-auto space-y-8 flex flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-3 m-0">
@@ -132,7 +127,7 @@ export default function Dashboard() {
               <TableHeader>
                 <TableRow>
                   <TableHead>이름</TableHead>
-                  <TableHead>구분</TableHead>
+                  <TableHead className="text-center">구분</TableHead>
                   <TableHead className="text-right">상태</TableHead>
                 </TableRow>
               </TableHeader>
@@ -171,7 +166,7 @@ export default function Dashboard() {
               >
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold">
-                    {conv.receiver.name || "알 수 없음"}
+                    {conv.sender.name || "알 수 없음"}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {conv.createdAt ? formatDistanceToNow(new Date(conv.createdAt), { addSuffix: true, locale: ko }) : ""}

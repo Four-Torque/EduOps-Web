@@ -120,7 +120,7 @@ export function Table({
         </table>
 
         {!isLoading && (
-          <div className="flex items-center justify-between px-3.5 py-2.5 ">
+          <div className="flex items-center justify-between px-3.5 py-1 ">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
             {totalItems > 0 && (
               <Pagination currentPage={activePage} totalPages={totalPages} onPageChange={onPageChange} />
@@ -252,7 +252,7 @@ function TableBody({
         <tr>
           <td
             colSpan={totalColSpan}
-            className="px-3.5 py-3 text-center text-[12px] text-slate-400"
+            className="px-3.5 py-1 h-12 text-center text-[12px] text-slate-400"
           >
             데이터가 존재하지 않습니다.
           </td>

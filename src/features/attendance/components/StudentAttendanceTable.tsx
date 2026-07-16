@@ -38,7 +38,7 @@ export default function AttendanceTable({ students, scheduleTime, onStatusChange
           <TableBody>
             {students.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-sm text-gray-500">
+                <TableCell colSpan={5} className="h-12 text-center text-sm text-gray-500">
                   학생 목록이 없습니다.
                 </TableCell>
               </TableRow>

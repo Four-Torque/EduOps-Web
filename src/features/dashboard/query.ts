@@ -6,7 +6,6 @@ import {
   fetchDashboardRecentAssets,
   fetchDashboardPendingUsers,
   fetchDashboardRecentMessages,
-  fetchDashboardMonthlyTrends,
   fetchDashboardRecentPayments,
 } from "./api";
 
@@ -18,7 +17,6 @@ export const dashboardQueryKeys = {
   recentAssets: () => ["dashboard", "recentAssets"] as const,
   pendingUsers: () => ["dashboard", "pendingUsers"] as const,
   recentMessages: () => ["dashboard", "recentMessages"] as const,
-  monthlyTrends: () => ["dashboard", "monthlyTrends"] as const,
   recentPayments: () => ["dashboard", "recentPayments"] as const,
 };
 
@@ -63,13 +61,6 @@ export function useDashboardRecentMessages() {
     queryFn: fetchDashboardRecentMessages,
   });
 }
-
-// export function useDashboardMonthlyTrends() {
-//   return useQuery({
-//     queryKey: dashboardQueryKeys.monthlyTrends(),
-//     queryFn: fetchDashboardMonthlyTrends,
-//   });
-// }
 
 export function useDashboardRecentPayments() {
   return useQuery({
