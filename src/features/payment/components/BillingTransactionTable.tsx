@@ -186,7 +186,7 @@ export function BillingTransactionTable() {
             <SelectTrigger className="w-28 text-[12.5px]" size="default">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent position="popper">
               {BILLING_CATEGORY_OPTIONS.map((opt) => (
                 <SelectItem
                   key={opt.value}
