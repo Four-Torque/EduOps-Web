@@ -72,7 +72,10 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
 
   useEffect(() => {
     const matched = navItems.find((item) =>
-      item.children?.some((child) => pathname.startsWith(child.href)),
+      item.children?.some(
+        (child) =>
+          pathname === child.href || pathname.startsWith(child.href + "/"),
+      ),
     );
     if (matched) setOpenId(matched.id);
   }, [pathname, navItems]);
@@ -192,8 +195,10 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
             // 자식이 있는 부모 메뉴
             if (item.children) {
               const isOpen = openId === item.id;
-              const hasActiveChild = item.children.some((child) =>
-                pathname.startsWith(child.href),
+              const hasActiveChild = item.children.some(
+                (child) =>
+                  pathname === child.href ||
+                  pathname.startsWith(child.href + "/"),
               );
 
               return (

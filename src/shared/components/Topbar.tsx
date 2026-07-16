@@ -47,7 +47,7 @@ export default function Topbar({
     }
 
     // 지금 보고 있던 탭을 닫은 경우에만 이동. 바로 왼쪽 탭, 없으면 첫 탭으로
-    if (pathname === href || pathname.startsWith(href)) {
+    if (pathname === href || pathname.startsWith(href + "/")) {
       const idx = tabs.findIndex((t) => t.href === href);
       const next = remaining[idx - 1] ?? remaining[0];
       router.push(next.href);
@@ -67,7 +67,7 @@ export default function Topbar({
         <div className="flex items-end gap-1 overflow-x-auto pb-1 scrollbar-thin">
           {tabs.map((tab) => {
             const isActive =
-              pathname === tab.href || pathname.startsWith(tab.href);
+              pathname === tab.href || pathname.startsWith(tab.href + "/");
             return (
               <div
                 key={tab.href}

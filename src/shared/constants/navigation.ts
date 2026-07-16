@@ -79,8 +79,8 @@ export const DIRECTOR_NAV: NavItem[] = [
     id: "director-message",
     label: "쪽지",
     children: [
-      { label: "받은 쪽지", href: "/director-message-received" },
-      { label: "보낸 쪽지", href: "/director-message" },
+      { label: "받은 쪽지", href: "/director-message/received" },
+      { label: "보낸 쪽지", href: "/director-message/send" },
     ],
   },
 ];
@@ -119,8 +119,8 @@ export const MANAGER_NAV: NavItem[] = [
     id: "manager-message",
     label: "쪽지",
     children: [
-      { label: "받은 쪽지", href: "/manager-message-received" },
-      { label: "보낸 쪽지", href: "/manager-message" },
+      { label: "받은 쪽지", href: "/manager-message/received" },
+      { label: "보낸 쪽지", href: "/manager-message/send" },
     ],
   },
 ];
@@ -155,8 +155,8 @@ export const TEACHER_NAV: NavItem[] = [
     id: "teacher-message",
     label: "쪽지",
     children: [
-      { label: "쪽지 보내기", href: "/teacher-message" },
-      { label: "받은 쪽지", href: "/teacher-message-received" },
+      { label: "쪽지 보내기", href: "/teacher-message/send" },
+      { label: "받은 쪽지", href: "/teacher-message/received" },
     ],
   },
 ];
