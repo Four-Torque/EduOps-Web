@@ -29,14 +29,13 @@ export async function fetchDashboardPendingUsers() {
 }
 
 export async function fetchDashboardRecentMessages() {
-  const response = await apiClient.get("/message/conversations");
-  const conversations = response.data.body ?? response.data ?? [];
-  console.log(response);
+  const response = await apiClient.get("/message/received");
+  const conversations = response.data.body ? response.data.body.data : [];
   return conversations.slice(0, 5);
 }
 
 export async function fetchDashboardMonthlyTrends() {
-  const response = await apiClient.get("/payment/monthly-trends");
+  const response = await apiClient.get("/finance/period",{params: {startDate: "2026-05-16", endDate: "2026-07-16"}});
   return response.data.body ?? response.data ?? [];
 }
 

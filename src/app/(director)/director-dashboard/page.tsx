@@ -32,45 +32,51 @@ import {
   useDashboardRecentAssets,
   useDashboardPendingUsers,
   useDashboardRecentMessages,
-  useDashboardMonthlyTrends,
+  // useDashboardMonthlyTrends,
   useDashboardRecentPayments,
 } from "@/features/dashboard/query";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useFinanceStore } from "@/features/finance/store";
+import { useGetFinanceByPeriod } from "@/features/finance/query";
+import { FinancesDateChart } from "@/features/finance/components/FinancesDateChart";
 
-const chartData = [
-  { month: "1월", income: 4000, expense: 2400 },
-  { month: "2월", income: 3000, expense: 1398 },
-  { month: "3월", income: 2000, expense: 4800 },
-  { month: "4월", income: 2780, expense: 3908 },
-  { month: "5월", income: 1890, expense: 2800 },
-  { month: "6월", income: 3500, expense: 1800 },
-];
+// const chartData = [
+//   { month: "1월", income: 4000, expense: 2400 },
+//   { month: "2월", income: 3000, expense: 1398 },
+//   { month: "3월", income: 2000, expense: 4800 },
+//   { month: "4월", income: 2780, expense: 3908 },
+//   { month: "5월", income: 1890, expense: 2800 },
+//   { month: "6월", income: 3500, expense: 1800 },
+// ];
 
-const chartConfig = {
-  income: {
-    label: "수입",
-    color: "var(--chart-1)"
-  },
-  expense: {
-    label: "지출",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig;
+// const chartConfig = {
+//   income: {
+//     label: "수입",
+//     color: "var(--chart-1)"
+//   },
+//   expense: {
+//     label: "지출",
+//     color: "var(--chart-2)",
+//   },
+// } satisfies ChartConfig;
 
 export default function Dashboard() {
+  const {startDate, endDate} = useFinanceStore();
   const { data: staffCount = 0 } = useDashboardStaffCount();
   const { data: studentCount = 0 } = useDashboardStudentStats();
   const { data: classCount = 0 } = useDashboardClassCount();
   const { data: recentAssets = [] } = useDashboardRecentAssets();
   const { data: pendingUsers = [] } = useDashboardPendingUsers();
   const { data: recentMessages = [] } = useDashboardRecentMessages();
-  const { data: monthlyTrends = [] } = useDashboardMonthlyTrends();
+  // const { data: monthlyTrends = [] } = useDashboardMonthlyTrends();
+  const {data, isLoading} = useGetFinanceByPeriod({startDate, endDate});
   const { data: recentPayments = [] } = useDashboardRecentPayments();
 
   const now = new Date();
-  const startMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-  const chartDateRangeText = `${startMonth.getMonth() + 1}월 - ${now.getMonth() + 1}월 ${now.getFullYear()}`;
+  // const startMonth = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+  // const chartDateRangeText = `${startMonth.getMonth() + 1}월 - ${now.getMonth() + 1}월 ${now.getFullYear()}`;
+
 
   return (
     <div className="p-8 max-w-[1600px] mx-auto space-y-8 flex flex-col gap-4">
@@ -81,7 +87,7 @@ export default function Dashboard() {
       </div>
 
       <div className="auto-rows-[300px] grid gap-4 md:grid-cols-3 m-0">
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <FileText className="h-4 w-4" /> 최근 10개 자재 / 결재
@@ -115,7 +121,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <Users className="h-4 w-4" /> 사용자 승인 대기 목록
@@ -149,7 +155,7 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="p-4">
           <CardHeader>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <MessageSquare className="h-4 w-4" /> 최근 5개 쪽지
@@ -160,19 +166,19 @@ export default function Dashboard() {
               <p className="text-center text-sm text-slate-500 py-8">새로운 쪽지가 없습니다.</p>
             ) : recentMessages.map((conv: any, i: number) => (
               <div
-                key={conv.otherUser?.id || i}
+                key={conv.id || i}
                 className="flex flex-col space-y-1 p-2 rounded-md hover:bg-slate-50 border border-slate-100"
               >
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold">
-                    {conv.otherUser?.name || "알 수 없음"}
+                    {conv.receiver.name || "알 수 없음"}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {conv.lastMessageUpdatedAt ? formatDistanceToNow(new Date(conv.lastMessageUpdatedAt), { addSuffix: true, locale: ko }) : ""}
+                    {conv.createdAt ? formatDistanceToNow(new Date(conv.createdAt), { addSuffix: true, locale: ko }) : ""}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 line-clamp-1">
-                  {conv.lastMessageContent || "내용 없음"}
+                  {conv.title || "내용 없음"}
                 </p>
               </div>
             ))}
@@ -181,15 +187,21 @@ export default function Dashboard() {
       </div>
 
       <div className="auto-rows-[330px] grid gap-4 md:grid-cols-3 m-0">
-        <Card className="col-span-2 flex flex-col h-full">
+        <Card className="col-span-2 flex flex-col h-full p-4">
           <CardHeader>
             <CardTitle className="text-base font-semibold">
-              수입/지출 그래프
+              {now.getMonth()+1}월 수입/지출 그래프
             </CardTitle>
-            <CardDescription>{chartDateRangeText}</CardDescription>
+            {/* <CardDescription></CardDescription> */}
           </CardHeader>
           <CardContent className="flex-1 min-h-0 pb-4">
-            <ChartContainer
+            <FinancesDateChart
+              finances={data}
+              startDate={startDate}
+              endDate={endDate}
+              viewMode="DAY"
+            />
+            {/* <ChartContainer
               config={chartConfig}
               className="h-full w-full"
             >
@@ -235,11 +247,11 @@ export default function Dashboard() {
                   dot={false}
                 />
               </LineChart>
-            </ChartContainer>
+            </ChartContainer> */}
           </CardContent>
         </Card>
 
-        <Card className="col-span-1">
+        <Card className="col-span-1 p-4">
           <CardHeader>
             <CardTitle className="text-base font-semibold flex items-center gap-2">
               <CreditCard className="h-4 w-4" /> 최근 결제 내역
@@ -260,7 +272,7 @@ export default function Dashboard() {
                 ) : recentPayments.map((payment: any, i: number) => (
                   <TableRow key={payment.id || i}>
                     <TableCell className="font-medium text-xs truncate max-w-0" title={payment.itemTitle || "알 수 없음"}>
-                      {payment.itemTitle || "알 수 없음"}
+                      {payment.title || "알 수 없음"}
                     </TableCell>
                     <TableCell 
                       className={`text-sm font-semibold truncate max-w-0 ${
@@ -271,7 +283,7 @@ export default function Dashboard() {
                       {payment.amount?.toLocaleString() || 0}원
                     </TableCell>
                     <TableCell className="text-right text-[9px] text-muted-foreground truncate max-w-0">
-                      {payment.date ? formatDistanceToNow(new Date(payment.date), { addSuffix: true, locale: ko }) : ""}
+                      {payment.paymentDate ? formatDistanceToNow(new Date(payment.paymentDate), { addSuffix: true, locale: ko }) : ""}
                     </TableCell>
                   </TableRow>
                 ))}

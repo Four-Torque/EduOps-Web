@@ -16,7 +16,7 @@ export default function DashboardCountCard({
   count,
 }: DashboardCountCardProps) {
   return (
-    <Card className="border">
+    <Card className="border p-4">
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}

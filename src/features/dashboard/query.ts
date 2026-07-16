@@ -64,12 +64,12 @@ export function useDashboardRecentMessages() {
   });
 }
 
-export function useDashboardMonthlyTrends() {
-  return useQuery({
-    queryKey: dashboardQueryKeys.monthlyTrends(),
-    queryFn: fetchDashboardMonthlyTrends,
-  });
-}
+// export function useDashboardMonthlyTrends() {
+//   return useQuery({
+//     queryKey: dashboardQueryKeys.monthlyTrends(),
+//     queryFn: fetchDashboardMonthlyTrends,
+//   });
+// }
 
 export function useDashboardRecentPayments() {
   return useQuery({
