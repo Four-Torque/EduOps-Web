@@ -187,5 +187,9 @@
   right: 3px !important;
   bottom: 3px !important;
   left: 3px !important;
-  margin-right: 0 !important;
+}
+
+.rbc-day-slot .rbc-events-container {
+    margin-right: 0 !important;
+    inset: 0px !important;
 }
