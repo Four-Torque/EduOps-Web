@@ -119,15 +119,17 @@ export function MessageModal() {
                 />
               </div>
 
-              {/* 버튼 */}
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={handleClose}>
-                  닫기
-                </Button>
-                <Button variant="primary" size="sm" onClick={openReplyModal}>
-                  답장
-                </Button>
-              </div>
+           {/* 버튼 */}
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={handleClose}>
+            닫기
+            </Button>
+            {viewMode === "RECEIVED" && (
+            <Button variant="primary" size="sm" onClick={openReplyModal}>
+               답장
+            </Button>
+              )}
+          </div>
             </>
           )}
 
