@@ -19,7 +19,7 @@ export async function fetchDashboardClassCount() {
 }
 
 export async function fetchDashboardRecentAssets() {
-  const response = await apiClient.get("/asset", { params: { limit: 10 } });
+  const response = await apiClient.get("/asset-application", { params: { limit: 10 } });
   return response.data.body?.data ?? [];
 }
 
@@ -34,8 +34,8 @@ export async function fetchDashboardRecentMessages() {
   return conversations.slice(0, 5);
 }
 
-export async function fetchDashboardMonthlyTrends() {
-  const response = await apiClient.get("/finance/period",{params: {startDate: "2026-05-16", endDate: "2026-07-16"}});
+export async function fetchDashboardMonthlyTrends(startDate: string, endDate: string) {
+  const response = await apiClient.get("/finance/period", { params: { startDate, endDate } });
   return response.data.body ?? response.data ?? [];
 }
 

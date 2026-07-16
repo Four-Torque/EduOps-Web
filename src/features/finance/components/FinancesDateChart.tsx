@@ -61,7 +61,7 @@ export function FinancesDateChart({
   const shouldRenderIncome = type === "TOTAL" ? showIncome : type === "PAYMENT";
 
   return (
-    <ChartContainer config={chartConfig} className="h-75 w-full">
+    <ChartContainer config={chartConfig} className="h-full w-full">
       <LineChart
         data={formattedData}
         margin={{ top: 15, left: 10, right: 10, bottom: 5 }}

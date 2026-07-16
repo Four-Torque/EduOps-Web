@@ -21,7 +21,7 @@ export default function FinancePage() {
           <div className="flex-1">
             <IncomeExpenseFilter finances={data} />
           </div>
-          <div className="flex-4">
+          <div className="h-75 flex-4">
             <FinancesDateChart
               finances={data}
               startDate={startDate}

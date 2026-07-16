@@ -16,13 +16,6 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/shared/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Users, MessageSquare, CreditCard, FileText } from "lucide-react";
 import DashboardCountCard from "@/shared/components/dashboard/DashboardCountCard";
 import {
@@ -32,47 +25,29 @@ import {
   useDashboardRecentAssets,
   useDashboardPendingUsers,
   useDashboardRecentMessages,
-  // useDashboardMonthlyTrends,
+  useDashboardMonthlyTrends,
   useDashboardRecentPayments,
 } from "@/features/dashboard/query";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, startOfMonth, endOfMonth } from "date-fns";
 import { ko } from "date-fns/locale";
-import { useFinanceStore } from "@/features/finance/store";
-import { useGetFinanceByPeriod } from "@/features/finance/query";
 import { FinancesDateChart } from "@/features/finance/components/FinancesDateChart";
-
-// const chartData = [
-//   { month: "1월", income: 4000, expense: 2400 },
-//   { month: "2월", income: 3000, expense: 1398 },
-//   { month: "3월", income: 2000, expense: 4800 },
-//   { month: "4월", income: 2780, expense: 3908 },
-//   { month: "5월", income: 1890, expense: 2800 },
-//   { month: "6월", income: 3500, expense: 1800 },
-// ];
-
-// const chartConfig = {
-//   income: {
-//     label: "수입",
-//     color: "var(--chart-1)"
-//   },
-//   expense: {
-//     label: "지출",
-//     color: "var(--chart-2)",
-//   },
-// } satisfies ChartConfig;
+import { useState } from "react";
+import { DatePicker } from "@/shared/components/DatePicker";
 
 export default function Dashboard() {
-  const {startDate, endDate} = useFinanceStore();
+  const now = new Date();
+  const [startDate, setStartDate] = useState<string>(format(startOfMonth(now), "yyyy-MM-dd"));
+  const [endDate, setEndDate] = useState<string>(format(endOfMonth(now), "yyyy-MM-dd"));
+
   const { data: staffCount = 0 } = useDashboardStaffCount();
   const { data: studentCount = 0 } = useDashboardStudentStats();
   const { data: classCount = 0 } = useDashboardClassCount();
   const { data: recentAssets = [] } = useDashboardRecentAssets();
   const { data: pendingUsers = [] } = useDashboardPendingUsers();
   const { data: recentMessages = [] } = useDashboardRecentMessages();
-  const {data} = useGetFinanceByPeriod({startDate, endDate});
+  const { data: monthlyTrends = [] } = useDashboardMonthlyTrends(startDate, endDate);
   const { data: recentPayments = [] } = useDashboardRecentPayments();
 
-  const now = new Date();
   return (
     <div className="p-8 max-w-[1600px] mx-auto space-y-8 flex flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-3 m-0">
@@ -102,11 +77,23 @@ export default function Dashboard() {
                 ) : recentAssets.map((asset: any, i: number) => (
                   <TableRow key={asset.id || i}>
                     <TableCell className="font-medium text-sm">
-                      {asset.title || asset.name || `자재/결재 신청 ${i + 1}`}
+                      {/* {asset.title || asset.name || `자재/결재 신청 ${i + 1}`} */}
+                      {asset.categoryName}-{asset.assetName}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Badge variant={asset.status === "APPROVED" ? "default" : "outline"}>
-                        {asset.status === "APPROVED" ? "결재완료" : "대기중"}
+                      <Badge variant={
+                          asset.status === "ACCEPTED"
+                            ? "default"
+                            : asset.status === "REJECTED"
+                              ? "destructive"
+                              : "outline"
+                        }
+                      >
+                        {asset.status === "ACCEPTED"
+                          ? "결재완료"
+                          : asset.status === "REJECTED"
+                            ? "반려됨"
+                            : "대기중"}
                       </Badge>
                     </TableCell>
                   </TableRow>
@@ -181,68 +168,39 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="auto-rows-[330px] grid gap-4 md:grid-cols-3 m-0">
+      <div className="auto-rows-[340px] grid gap-4 md:grid-cols-3 m-0">
         <Card className="col-span-2 flex flex-col h-full p-4">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base font-semibold">
-              {now.getMonth()+1}월 수입/지출 그래프
+              수입/지출 그래프
             </CardTitle>
-            {/* <CardDescription></CardDescription> */}
+            <div className="flex items-center gap-2">
+              <DatePicker
+                value={startDate}
+                onChange={(v) => {
+                  if(!v) return;
+                  setStartDate(format(new Date(v), "yyyy-MM-dd"));
+                }}
+                className="w-[200px]"
+              />
+              <span className="text-muted-foreground">-</span>
+              <DatePicker
+                value={endDate}
+                onChange={(v) => {
+                  if (!v) return;
+                  setEndDate(format(new Date(v), "yyyy-MM-dd"));
+                }}
+                className="w-[200px]"
+              />
+            </div>
           </CardHeader>
-          <CardContent className="flex-1 min-h-0 pb-4">
+          <CardContent className="flex-1 min-h-0">
             <FinancesDateChart
-              finances={data}
+              finances={monthlyTrends}
               startDate={startDate}
               endDate={endDate}
               viewMode="DAY"
             />
-            {/* <ChartContainer
-              config={chartConfig}
-              className="h-full w-full"
-            >
-              <LineChart
-                accessibilityLayer
-                data={monthlyTrends.length > 0 ? monthlyTrends : chartData}
-                margin={{
-                  left: 12,
-                  right: 12,
-                  top: 10,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => `${value.toLocaleString()}`}
-                />
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent />}
-                />
-                <Line
-                  dataKey="current"
-                  type="monotone"
-                  stroke="var(--color-income)"
-                  strokeWidth={2}
-                  dot={false}
-                />
-                <Line
-                  dataKey="previous"
-                  type="monotone"
-                  stroke="var(--color-expense)"
-                  strokeWidth={2}
-                  dot={false}
-                />
-              </LineChart>
-            </ChartContainer> */}
           </CardContent>
         </Card>
 

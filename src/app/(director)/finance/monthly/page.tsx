@@ -22,33 +22,39 @@ export default function FinancePage() {
       <CardContent className="w-full flex flex-col gap-4 mt-4 items-center">
         <div className="w-full flex flex-col">
           <h2 className="text-lg font-semibold mb-4 border-b">수강료</h2>
-          <FinancesDateChart
-            finances={data?.[0]}
-            startDate={startDate}
-            endDate={endDate}
-            type="PAYMENT"
-            viewMode="DAY"
-          />
+          <div className="h-75">
+            <FinancesDateChart
+              finances={data?.[0]}
+              startDate={startDate}
+              endDate={endDate}
+              type="PAYMENT"
+              viewMode="DAY"
+            />
+          </div>
         </div>
         <div className="w-full flex flex-col">
           <h2 className="text-lg font-semibold mb-4 border-b">급여</h2>
-          <FinancesDateChart
-            finances={data?.[1]}
-            startDate={startDate}
-            endDate={endDate}
-            type="SALARY"
-            viewMode="DAY"
-          />
+          <div className="h-75">
+            <FinancesDateChart
+              finances={data?.[1]}
+              startDate={startDate}
+              endDate={endDate}
+              type="SALARY"
+              viewMode="DAY"
+            />
+          </div>
         </div>
         <div className="w-full flex flex-col">
           <h2 className="text-lg font-semibold mb-4 border-b">자재</h2>
-          <FinancesDateChart
-            finances={data?.[2]}
-            startDate={startDate}
-            endDate={endDate}
-            type="ASSET"
-            viewMode="DAY"
-          />
+          <div className="h-75">
+            <FinancesDateChart
+              finances={data?.[2]}
+              startDate={startDate}
+              endDate={endDate}
+              type="ASSET"
+              viewMode="DAY"
+            />
+          </div>
         </div>
       </CardContent>
     </>
