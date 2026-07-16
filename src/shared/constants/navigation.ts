@@ -155,8 +155,8 @@ export const TEACHER_NAV: NavItem[] = [
     id: "teacher-message",
     label: "쪽지",
     children: [
-      { label: "쪽지 보내기", href: "/teacher-message/send" },
       { label: "받은 쪽지", href: "/teacher-message/received" },
+       { label: "보낸 쪽지", href: "/teacher-message/send" },
     ],
   },
 ];
