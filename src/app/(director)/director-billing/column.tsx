@@ -8,6 +8,18 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 
+const STATUS_STYLE: Record<string, string> = {
+  PENDING:  "text-slate-500 bg-slate-100",
+  ACCEPTED: "text-emerald-700 bg-emerald-50",
+  REJECTED: "text-red-600 bg-red-50",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  PENDING:  "대기",
+  ACCEPTED: "승인",
+  REJECTED: "반려",
+};
+
 export const getAssetApplicationsColumns = (
   onEditStatus?: (id: string, status: string) => void,
 ): ColumnProps[] => [
@@ -21,19 +33,11 @@ export const getAssetApplicationsColumns = (
   {
     key: "status",
     label: "상태",
-    render: (item: AssetApplication) => {
-      const STATUS_STYLE: Record<string, string> = {
-        PENDING:  "text-slate-500 bg-slate-100",
-        ACCEPTED: "text-emerald-700 bg-emerald-50",
-        REJECTED: "text-red-600 bg-red-50",
-      };
-
-      return (
-        <span className={`inline-block text-[10.5px] font-medium px-2.5 py-0.5 rounded-full ${STATUS_STYLE[item.status] ?? "text-slate-500 bg-slate-100"}`}>
-          {item.status}
-        </span>
-      );
-    },
+    render: (item: AssetApplication) => (
+      <span className={`inline-block text-[10.5px] font-medium px-2.5 py-0.5 rounded-full ${STATUS_STYLE[item.status] ?? "text-slate-500 bg-slate-100"}`}>
+        {STATUS_LABEL[item.status] ?? item.status}
+      </span>
+    ),
   },
   {
     key: "actions",
