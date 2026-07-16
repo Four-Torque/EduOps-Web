@@ -238,7 +238,7 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1.5 pl-2">
                           <span className="font-semibold text-slate-700">
-                            {["월", "화", "수", "목", "금", "토", "일"][s.dayOfWeek]}요일
+                            {["일", "월", "화", "수", "목", "금", "토"][s.dayOfWeek]}요일
                           </span>
                           <span className="flex items-center gap-1.5 text-slate-500 text-xs">
                             <Clock size={12} /> {s.startTime} - {s.endTime}

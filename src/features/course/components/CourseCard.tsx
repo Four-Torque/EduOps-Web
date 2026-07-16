@@ -21,7 +21,7 @@ export function CourseCard({ item }: CourseCardProps) {
   const isFull = item.currentStudents >= item.capacity;
   const progressRatio = item.capacity > 0 ? Math.min((item.currentStudents / item.capacity) * 100, 100) : 0;
   
-  const daysMap = ["월", "화", "수", "목", "금", "토", "일"];
+  const daysMap = ["일", "월", "화", "수", "목", "금", "토"];
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-4 shadow-sm hover:shadow transition-shadow">
