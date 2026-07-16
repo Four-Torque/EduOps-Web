@@ -88,3 +88,16 @@ export function useMarkAsRead() {
   });
   return mutation;
 }
+
+export function useUnreadMessages(userId?: string) {
+  return useQuery({
+    enabled: !!userId,
+    queryKey: [...messageQueryKeys.received({ page: 1, limit: 100 }, userId), "unread"],
+    queryFn: () => findReceivedMessages({ page: 1, limit: 100 }),
+    refetchInterval: 1000,
+    select: (data: any) =>
+      (data?.data ?? []).filter(
+        (msg: any) => msg.receiverId === userId && !msg.isRead,
+      ),
+  });
+}

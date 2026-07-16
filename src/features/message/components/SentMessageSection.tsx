@@ -27,7 +27,8 @@ export function SentMessageSection() {
         showCheckbox={false}
         statusReadonly
       />
-      <MessageContactModal />
+
+
       <MessageModal />
     </div>
   );

@@ -37,3 +37,13 @@ export async function markMessageAsRead(id?: string) {
   const response = await apiClient.put(`/message/${id}/read`);
   return response.data;
 }
+
+// 기존 코드 그대로 유지
+// 아래만 추가
+
+export async function findUnreadMessages() {
+  const response = await apiClient.get("/message/received", {
+    params: { page: 1, limit: 100 },
+  });
+  return response.data.body;
+}
