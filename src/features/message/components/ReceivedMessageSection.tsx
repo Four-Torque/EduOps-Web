@@ -9,7 +9,7 @@ import { Table }               from "@/shared/components/Table";
 import { Button }              from "@/shared/components/ui/button";
 import { SquarePen }           from "lucide-react";
 import { useReceivedMessages } from "../query";
-import { getReceivedColumns }  from "@/app/(director)/director-message-received/column";
+import { getReceivedColumns }  from "@/app/(director)/director-message/received/column";
 export function ReceivedMessageSection() {
   const { data: user }                    = useSession();
   const { reset, openContactModal }       = useMessageStore();
