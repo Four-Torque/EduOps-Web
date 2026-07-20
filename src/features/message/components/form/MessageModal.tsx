@@ -67,7 +67,7 @@ export function MessageModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>{modalTitle}</DialogTitle>
         </DialogHeader>
@@ -76,7 +76,6 @@ export function MessageModal() {
           {/* 보기 모드 */}
           {modalMode === "view" && selectedMessage && (
             <>
-              {/* 보낸 사람 */}
               <div>
                 <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
                   {viewMode === "RECEIVED" ? "보낸 사람" : "받는 사람"}
@@ -87,7 +86,7 @@ export function MessageModal() {
                       ? selectedMessage.sender?.name?.slice(0, 1)
                       : selectedMessage.receiver?.name?.slice(0, 1)}
                   </div>
-                  <p className="text-[12.5px] font-medium text-slate-800">
+                  <p className="text-[12.5px] font-medium text-slate-800 select-none">
                     {viewMode === "RECEIVED"
                       ? selectedMessage.sender?.name
                       : selectedMessage.receiver?.name}
@@ -96,51 +95,36 @@ export function MessageModal() {
               </div>
 
               <div>
-                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
-                  제목
-                </p>
-                <Input
-                  value={selectedMessage.title}
-                  readOnly
-                  className="text-[12.5px] text-slate-700 placeholder:text-slate-400"
-                />
+                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">제목</p>
+                <div className="h-9 w-full rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-[12.5px] text-slate-700 cursor-default">
+                  {selectedMessage.title}
+                </div>
               </div>
 
-              {/* 내용 (readonly) */}
               <div>
-                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
-                  내용
-                </p>
+                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">내용</p>
                 <textarea
                   value={selectedMessage.content}
                   readOnly
                   rows={6}
-                  className="w-full border border-slate-200 rounded px-3 py-2.5 text-[12.5px] text-slate-700 outline-none resize-none bg-slate-50 cursor-default"
+                  className="w-full border border-slate-200 rounded px-3 py-2.5 text-[12.5px] text-slate-700 outline-none resize-none bg-slate-50 cursor-default select-none pointer-events-none"
                 />
               </div>
 
-           {/* 버튼 */}
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" size="sm" onClick={handleClose}>
-            닫기
-            </Button>
-            {viewMode === "RECEIVED" && (
-            <Button variant="primary" size="sm" onClick={openReplyModal}>
-               답장
-            </Button>
-              )}
-          </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={handleClose}>닫기</Button>
+                {viewMode === "RECEIVED" && (
+                  <Button variant="primary" size="sm" onClick={openReplyModal}>답장</Button>
+                )}
+              </div>
             </>
           )}
 
           {/* 답장 / 새 쪽지 모드 */}
           {(modalMode === "reply" || modalMode === "compose") && (
             <>
-              {/* 받는 사람 */}
               <div>
-                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
-                  받는 사람
-                </p>
+                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">받는 사람</p>
                 <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded">
                   <div className="w-6 h-6 rounded-full bg-[#0069A8] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
                     {composeTarget?.name?.slice(0, 1)}
@@ -152,9 +136,7 @@ export function MessageModal() {
               </div>
 
               <div>
-                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
-                  제목
-                </p>
+                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">제목</p>
                 <Input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -163,11 +145,8 @@ export function MessageModal() {
                 />
               </div>
 
-              {/* 내용 입력 */}
               <div>
-                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">
-                  내용
-                </p>
+                <p className="text-[11.5px] font-medium text-slate-500 mb-1.5">내용</p>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -177,11 +156,8 @@ export function MessageModal() {
                 />
               </div>
 
-              {/* 버튼 */}
               <div className="flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={handleClose}>
-                  취소
-                </Button>
+                <Button variant="outline" size="sm" onClick={handleClose}>취소</Button>
                 <Button
                   variant="primary"
                   size="sm"

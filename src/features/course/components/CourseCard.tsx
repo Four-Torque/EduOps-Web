@@ -9,6 +9,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { useDeleteClass } from "@/features/class/query";
 import { CourseDetailModal } from "./CourseDetailModal";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 interface CourseCardProps {
   item: ClassInfo;
@@ -17,11 +18,19 @@ interface CourseCardProps {
 export function CourseCard({ item }: CourseCardProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { mutate: deleteClass } = useDeleteClass();
+  const [ConfirmDialog, confirm] = useConfirm(
+    "강좌를 삭제하시겠습니까?",
+    "삭제된 데이터는 복구할 수 없습니다.",
+  );
 
   const isFull = item.currentStudents >= item.capacity;
   const progressRatio = item.capacity > 0 ? Math.min((item.currentStudents / item.capacity) * 100, 100) : 0;
-  
   const daysMap = ["일", "월", "화", "수", "목", "금", "토"];
+
+  async function handleDelete() {
+    const ok = await confirm();
+    if (ok) deleteClass(item.id);
+  }
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-4 shadow-sm hover:shadow transition-shadow">
@@ -36,20 +45,16 @@ export function CourseCard({ item }: CourseCardProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setIsDetailOpen(true)}>상세보기</DropdownMenuItem>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
-                onClick={() => {
-                  if (window.confirm("강좌를 삭제하시겠습니까?")) {
-                    deleteClass(item.id);
-                  }
-                }}
+                onClick={handleDelete}
               >
                 삭제
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <User size={14} />
@@ -87,7 +92,7 @@ export function CourseCard({ item }: CourseCardProps) {
           </div>
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div 
+          <div
             className={`h-full rounded-full ${isFull ? 'bg-red-500' : 'bg-slate-800'}`}
             style={{ width: `${progressRatio}%` }}
           />
@@ -101,6 +106,8 @@ export function CourseCard({ item }: CourseCardProps) {
           item={item}
         />
       )}
+
+      <ConfirmDialog />
     </div>
   );
 }

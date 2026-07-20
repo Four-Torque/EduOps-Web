@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { fetchPayments, updatePayment } from "./api";
 
 export const paymentQueryKeys = {
-  all: () => ["payments"] as const,
+  all:  () => ["payments"]                    as const,
   list: (filters: any) => ["payments", "list", filters] as const,
 };
 
@@ -17,7 +18,7 @@ export function usePayments(filters?: {
 }) {
   return useQuery({
     queryKey: paymentQueryKeys.list(filters || {}),
-    queryFn: () => fetchPayments(filters),
+    queryFn:  () => fetchPayments(filters),
   });
 }
 
@@ -32,7 +33,11 @@ export function useUpdatePayment() {
       paymentType: "PAID" | "UNPAID" | "REFUNDED";
     }) => updatePayment(id, paymentType),
     onSuccess: () => {
+      toast.success("결제 상태가 수정되었습니다.");
       queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all() });
+    },
+    onError: (error) => {
+      if (error instanceof Error) toast.error(error.message);
     },
   });
 }
