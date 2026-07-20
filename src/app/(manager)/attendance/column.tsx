@@ -4,6 +4,7 @@ import type { ColumnProps } from "@/shared/components/Table";
 import { AttendanceDot } from "@/features/attendance/components/AttendanceDot";
 import { AttendanceEmployee } from "@/features/attendance/type";
 import { DAYS } from "@/shared/constants/manager/attendance.constants";
+import { DAY_LABELS } from "@/shared/constants/day.constants";
 import { Button } from "@/shared/components/ui/button";
 
 interface ColumnOptions {
@@ -15,8 +16,7 @@ export function getAttendanceColumns({
   onCheckIn,
   onCheckOut,
 }: ColumnOptions): ColumnProps[] {
-  const daysOfWeek = ["일", "월", "화", "수", "목", "금", "토"];
-  const todayLabel = daysOfWeek[new Date().getDay()];
+  const todayLabel = DAY_LABELS[new Date().getDay()];
 
   return [
     {

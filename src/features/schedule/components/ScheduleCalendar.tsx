@@ -1,12 +1,12 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { Calendar } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { localizer, calendarMessages } from "@/shared/lib/calendar-localizer";
 import { useScheduleStore } from "../store";
 import { ScheduleEvent } from "../type";
-import { useDeleteSchedule } from "../query";
-import { useConfirm } from "@/shared/hooks/useConfirm";
+import { ScheduleClassDetailModal } from "./ScheduleClassDetailModal";
 
 interface ScheduleCalendarProps {
   events?: ScheduleEvent[];
@@ -14,18 +14,19 @@ interface ScheduleCalendarProps {
 
 export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
   const { view, date, setView, setDate } = useScheduleStore();
-  const { mutate: deleteEvent } = useDeleteSchedule();
 
-  const [ConfirmDialog, confirm] = useConfirm(
-    "정말 이 시간표 항목을 삭제하시겠습니까?",
-    "삭제된 스케줄 정보는 복구할 수 없습니다.",
-  );
+  // 같은 시간대 일정을 강의실(room) 기준 컬럼으로 나눠서 겹침 없이 보여준다.
+  const resources = useMemo(() => {
+    const rooms = Array.from(new Set(events.map((event) => event.room)));
+    return rooms.map((room) => ({ id: room, title: room }));
+  }, [events]);
 
-  const handleSelectEvent = async (event: ScheduleEvent) => {
-    const ok = await confirm();
-    if (ok) {
-      deleteEvent(event.id);
-    }
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  const handleSelectEvent = (event: ScheduleEvent) => {
+    setSelectedClassId(event.classId);
+    setIsDetailOpen(true);
   };
 
   return (
@@ -42,6 +43,8 @@ export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
         onNavigate={setDate}
         views={["week", "month", "day"]}
         messages={calendarMessages}
+        resources={resources.length > 1 ? resources : undefined}
+        resourceAccessor="room"
         min={new Date(1970, 0, 1, 9, 0)} // 09:00부터
         max={new Date(1970, 0, 1, 23, 59)} // 23:59(밤 11시 칸까지, 자정 넘어가는 걸 피하려고 59분으로 설정)
         step={60}
@@ -67,7 +70,11 @@ export function ScheduleCalendar({ events = [] }: ScheduleCalendarProps) {
           },
         })}
       />
-      <ConfirmDialog />
+      <ScheduleClassDetailModal
+        open={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        classId={selectedClassId}
+      />
     </div>
   );
 }

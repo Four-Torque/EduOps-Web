@@ -1,11 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchClasses, createClass, updateClass, deleteClass } from "./api";
+import { fetchClasses, fetchClassById, createClass, updateClass, deleteClass } from "./api";
 import { CreateClassPayload } from "./type";
 
 export const useClasses = (params: { page?: number; limit?: number; name?: string; teacherId?: string; status?: string } = {}) => {
   return useQuery({
     queryKey: ["classes", params],
     queryFn: () => fetchClasses(params),
+  });
+};
+
+export const useClass = (id: string | null) => {
+  return useQuery({
+    queryKey: ["classes", id],
+    queryFn: () => fetchClassById(id as string),
+    enabled: !!id,
   });
 };
 

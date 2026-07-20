@@ -13,6 +13,7 @@ import type {
   TeacherSalary,
   UpdateTeacherInput,
 } from "../type";
+import { formatWon } from "@/shared/lib/utils";
 
 const TEACHER_STATUS_LABEL: Record<TeacherStatus, string> = {
   WORKING: "재직",
@@ -35,10 +36,6 @@ const SALARY_STATUS_STYLE: Record<SalaryStatus, string> = {
   PENDING: "bg-amber-50 text-amber-600",
   COMPLETED: "bg-[#0069A8]/10 text-[#0069A8]",
 };
-
-function formatWon(amount: number) {
-  return `${amount.toLocaleString("ko-KR")}원`;
-}
 
 const ATTENDANCE_PAGE_SIZE = 10;
 

@@ -15,7 +15,7 @@ import {
   BILLING_CATEGORY_OPTIONS,
   BILLING_PAGE_SIZE,
 } from "@/shared/constants/manager/billing.constants";
-import { formatDate } from "@/shared/lib/utils";
+import { formatDate, formatWon } from "@/shared/lib/utils";
 import { MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
@@ -90,7 +90,7 @@ function getColumns(
       label: "금액",
       render: (item: PaymentItem) => (
         <div className="text-center text-[12.5px] font-medium text-slate-800">
-          {item.amount.toLocaleString("ko-KR")}원
+          {formatWon(item.amount)}
         </div>
       ),
     },

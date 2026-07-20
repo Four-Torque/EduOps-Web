@@ -13,6 +13,7 @@ import { useCreateScheduleBulk, useDeleteSchedule } from "@/features/schedule/qu
 import { useCreateEnrollment, useClassEnrollments, useDeleteEnrollment } from "@/features/enrollment/query";
 import { toast } from "react-hot-toast";
 import { Plus, Trash2, Calendar, User, Clock, MapPin, Phone } from "lucide-react";
+import { DAY_LABELS, DAY_OF_WEEK_OPTIONS } from "@/shared/constants/day.constants";
 
 interface CourseDetailModalProps {
   isOpen: boolean;
@@ -238,7 +239,7 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
                       <div className="flex items-start justify-between">
                         <div className="flex flex-col gap-1.5 pl-2">
                           <span className="font-semibold text-slate-700">
-                            {["일", "월", "화", "수", "목", "금", "토"][s.dayOfWeek]}요일
+                            {DAY_LABELS[s.dayOfWeek]}요일
                           </span>
                           <span className="flex items-center gap-1.5 text-slate-500 text-xs">
                             <Clock size={12} /> {s.startTime} - {s.endTime}
@@ -275,13 +276,9 @@ export function CourseDetailModal({ isOpen, onClose, item }: CourseDetailModalPr
                 <div className="flex flex-col gap-1.5">
                   <Label className="text-xs text-slate-600 font-medium">요일</Label>
                   <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-1 text-sm focus-visible:ring-emerald-500 focus-visible:border-emerald-500" value={dayOfWeek} onChange={e => setDayOfWeek(e.target.value)}>
-                    <option value="0">일요일</option>
-                    <option value="1">월요일</option>
-                    <option value="2">화요일</option>
-                    <option value="3">수요일</option>
-                    <option value="4">목요일</option>
-                    <option value="5">금요일</option>
-                    <option value="6">토요일</option>
+                    {DAY_OF_WEEK_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">

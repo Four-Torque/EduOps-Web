@@ -9,6 +9,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { useDeleteClass } from "@/features/class/query";
 import { CourseDetailModal } from "./CourseDetailModal";
+import { DAY_LABELS } from "@/shared/constants/day.constants";
 
 interface CourseCardProps {
   item: ClassInfo;
@@ -21,7 +22,7 @@ export function CourseCard({ item }: CourseCardProps) {
   const isFull = item.currentStudents >= item.capacity;
   const progressRatio = item.capacity > 0 ? Math.min((item.currentStudents / item.capacity) * 100, 100) : 0;
   
-  const daysMap = ["일", "월", "화", "수", "목", "금", "토"];
+  const daysMap = DAY_LABELS;
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-4 shadow-sm hover:shadow transition-shadow">

@@ -38,6 +38,7 @@ export default function SchedulePage() {
 
       return {
         id: item.id,
+        classId: item.classId,
         title: item.className,
         instructor: item.instructor,
         room: item.room,

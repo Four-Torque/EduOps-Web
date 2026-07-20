@@ -1,11 +1,8 @@
 import type { RevenueStats } from "@/features/finance/type";
+import { formatWon as formatKRW } from "@/shared/lib/utils";
 
 interface RevenueKpiProps {
   stats: RevenueStats;
-}
-
-function formatKRW(amount: number) {
-  return amount.toLocaleString("ko-KR") + "원";
 }
 
 export function RevenueKpi({ stats }: RevenueKpiProps) {
