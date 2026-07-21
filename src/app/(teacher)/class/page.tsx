@@ -18,6 +18,7 @@ import type { ClassInfo } from "@/features/class/type";
 import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalendar";
 import { useScheduleStore } from "@/features/schedule/store";
 import type { ScheduleEvent } from "@/features/schedule/type";
+import { isWithinDateRange } from "@/shared/lib/utils";
 
 function toTimeOfDay(base: Date, time: string): Date {
   const [hour, minute] = time.split(":").map(Number);
@@ -55,6 +56,7 @@ function toScheduleEvents(
     (cls.schedules ?? []).flatMap((schedule) =>
       days
         .filter((day) => getDay(day) === schedule.dayOfWeek) // dayOfWeek: 0(일)~6(토), JS Date.getDay()와 동일 기준
+        .filter((day) => isWithinDateRange(day, cls.startDate, cls.endDate))
         .map((day) => ({
           id: `${schedule.id}-${day.toISOString()}`,
           classId: cls.id,

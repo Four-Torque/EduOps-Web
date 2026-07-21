@@ -41,6 +41,27 @@ export interface NavItem {
   children?: SubNavItem[];
 }
 
+// 현재 경로(pathname)와 매칭되는 nav 항목(최상위 또는 자식)을 찾는다.
+// Sidebar가 탭을 추가할 때 쓰는 것과 동일한 href를 반환해야 Topbar 하이라이트/탭 병합이 맞는다.
+export function findNavByPath(
+  navItems: NavItem[],
+  pathname: string,
+): { href: string; label: string } | null {
+  for (const item of navItems) {
+    if (
+      item.href &&
+      (pathname === item.href || pathname.startsWith(item.href + "/"))
+    ) {
+      return { href: item.href, label: item.label };
+    }
+    const child = item.children?.find(
+      (c) => pathname === c.href || pathname.startsWith(c.href + "/"),
+    );
+    if (child) return { href: child.href, label: child.label };
+  }
+  return null;
+}
+
 export const DIRECTOR_NAV: NavItem[] = [
   {
     id: "dashboard",

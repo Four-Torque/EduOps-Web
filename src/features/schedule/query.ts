@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchWeeklySchedule,
   createScheduleBulk,
-  createBulkSchedule,
   deleteSchedule,
   fetchClassSchedules
 } from "./api";
@@ -38,27 +37,6 @@ export function useCreateScheduleBulk() {
   });
 }
 
-// export const useCreateBulkSchedule = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => createBulkSchedule(payload),
-//     onSuccess: (_, variables) => {
-//       queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
-//       queryClient.invalidateQueries({ queryKey: ["classes"] });
-//     },
-//   });
-// };
-
-// export function useDeleteSchedule() {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: deleteSchedule,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
-//     },
-//   });
-// }
-
 export function useAllClasses() {
   return useQuery({
     queryKey: scheduleQueryKeys.classes(),
@@ -71,9 +49,6 @@ export function useAllClasses() {
     },
   });
 }
-
-
-
 
 export const useClassSchedules = (classId: string) => {
   return useQuery({

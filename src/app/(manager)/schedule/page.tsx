@@ -7,6 +7,7 @@ import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalenda
 import { useWeeklySchedule } from "@/features/schedule/query";
 import { useScheduleStore } from "@/features/schedule/store";
 import { startOfWeek, addDays } from "date-fns";
+import { isWithinDateRange } from "@/shared/lib/utils";
 
 export default function SchedulePage() {
   const { date: activeDate, room, instructor, subject } = useScheduleStore();
@@ -21,31 +22,36 @@ export default function SchedulePage() {
   }, [activeDate]);
 
   const events = useMemo(() => {
-    return scheduleItems.map((item) => {
-      const startDay = addDays(startOfActiveWeek, item.dayOfWeek);
-      const startStr = `${startDay.getFullYear()}-${String(
-        startDay.getMonth() + 1,
-      ).padStart(2, "0")}-${String(startDay.getDate()).padStart(
-        2,
-        "0",
-      )}T${item.startTime}:00`;
-      const endStr = `${startDay.getFullYear()}-${String(
-        startDay.getMonth() + 1,
-      ).padStart(2, "0")}-${String(startDay.getDate()).padStart(
-        2,
-        "0",
-      )}T${item.endTime}:00`;
+    return scheduleItems
+      .flatMap((item) => {
+        const startDay = addDays(startOfActiveWeek, item.dayOfWeek);
+        if (!isWithinDateRange(startDay, item.classStartDate, item.classEndDate)) return [];
 
-      return {
-        id: item.id,
-        classId: item.classId,
-        title: item.className,
-        instructor: item.instructor,
-        room: item.room,
-        start: new Date(startStr),
-        end: new Date(endStr),
-      };
-    });
+        const startStr = `${startDay.getFullYear()}-${String(
+          startDay.getMonth() + 1,
+        ).padStart(2, "0")}-${String(startDay.getDate()).padStart(
+          2,
+          "0",
+        )}T${item.startTime}:00`;
+        const endStr = `${startDay.getFullYear()}-${String(
+          startDay.getMonth() + 1,
+        ).padStart(2, "0")}-${String(startDay.getDate()).padStart(
+          2,
+          "0",
+        )}T${item.endTime}:00`;
+
+        return [
+          {
+            id: item.id,
+            classId: item.classId,
+            title: item.className,
+            instructor: item.instructor,
+            room: item.room,
+            start: new Date(startStr),
+            end: new Date(endStr),
+          },
+        ];
+      });
   }, [scheduleItems, startOfActiveWeek]);
 
   if (isLoading) {

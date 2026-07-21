@@ -9,6 +9,8 @@ export interface ScheduleItem {
   startTime: string;
   endTime: string;
   room: string;
+  classStartDate: string | null;
+  classEndDate: string | null;
 }
 
 export async function fetchWeeklySchedule(

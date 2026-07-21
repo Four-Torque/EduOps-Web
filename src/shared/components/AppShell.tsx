@@ -40,6 +40,7 @@ export default function AppShell({
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
         <Topbar
+          navItems={navItems}
           homePath={homePath}
           homeLabel={homeLabel}
           tabs={tabs}

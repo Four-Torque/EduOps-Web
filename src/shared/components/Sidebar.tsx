@@ -80,12 +80,10 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
     if (matched) setOpenId(matched.id);
   }, [pathname, navItems]);
 
-  // 닫힐 때: 즉시 텍스트 숨김
   useEffect(() => {
     if (!sidebarOpen) setTextVisible(false);
   }, [sidebarOpen]);
 
-  // width 애니메이션이 완전히 끝난 뒤 텍스트 표시
   useEffect(() => {
     const el = asideRef.current;
     if (!el) return;

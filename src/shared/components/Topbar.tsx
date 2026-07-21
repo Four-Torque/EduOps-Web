@@ -5,8 +5,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import type { Tab } from "@/shared/hooks/useTabs";
+import { findNavByPath, type NavItem } from "@/shared/constants/navigation";
 
 interface TopbarProps {
+  navItems: NavItem[];
   homePath: string;
   homeLabel: string;
   tabs: Tab[];
@@ -15,6 +17,7 @@ interface TopbarProps {
 }
 
 export default function Topbar({
+  navItems,
   homePath,
   homeLabel,
   tabs,
@@ -24,16 +27,26 @@ export default function Topbar({
   const router = useRouter();
   const pathname = usePathname();
 
-  // 탭을 모두 닫은 뒤 홈으로 이동했거나(로그인 직후 포함), 탭 없이 홈 경로에
-  // 진입한 모든 경우에 홈 탭이 없으면 자동으로 만들어 topbar에 표시한다.
+  // 현재 경로에 해당하는 탭이 없으면 자동으로 만들어 topbar에 표시한다.
+  // 사이드바 클릭 없이 들어온 모든 경우(로그인 직후 리다이렉트, 새로고침, URL 직접
+  // 입력, 대시보드 바로가기 등)를 다 커버하기 위해 홈 경로뿐 아니라 모든 경로에 적용한다.
   useEffect(() => {
+    const hasTab = tabs.some(
+      (t) => pathname === t.href || pathname.startsWith(t.href + "/"),
+    );
+    if (hasTab) return;
+
     const isHome = pathname === homePath || pathname.startsWith(homePath + "/");
-    if (!isHome) return;
-    const hasHomeTab = tabs.some((t) => t.href === homePath);
-    if (!hasHomeTab) {
+    if (isHome) {
       addTab({ label: homeLabel, href: homePath });
+      return;
     }
-  }, [pathname, homePath, homeLabel, tabs, addTab]);
+
+    const matched = findNavByPath(navItems, pathname);
+    if (matched) {
+      addTab({ label: matched.label, href: matched.href });
+    }
+  }, [pathname, navItems, homePath, homeLabel, tabs, addTab]);
 
   function handleClose(href: string) {
     removeTab(href);

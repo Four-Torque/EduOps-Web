@@ -1,6 +1,6 @@
 import { CalendarEvent, ScheduleItem } from "@/features/schedule/type";
 import { clsx, type ClassValue } from "clsx";
-import { format, isValid } from "date-fns";
+import { format, isValid, startOfDay } from "date-fns";
 import { ko } from "date-fns/locale";
 import { twMerge } from "tailwind-merge";
 
@@ -93,4 +93,21 @@ export function formatDate(date: Date | string | null | undefined) {
 
 export function formatWon(amount: number) {
   return `${amount.toLocaleString("ko-KR")}원`;
+}
+
+// day가 [startDate, endDate] 범위 안에 있는지 시(時)/분(分) 무시하고 날짜 단위로 확인.
+// 강좌 유효기간처럼 startDate/endDate가 없을 수 있는 경우, 없는 쪽은 무제한으로 취급한다.
+export function isWithinDateRange(
+  day: Date,
+  startDate: string | Date | null | undefined,
+  endDate: string | Date | null | undefined,
+): boolean {
+  const target = startOfDay(day).getTime();
+  if (startDate && target < startOfDay(new Date(startDate)).getTime()) {
+    return false;
+  }
+  if (endDate && target > startOfDay(new Date(endDate)).getTime()) {
+    return false;
+  }
+  return true;
 }
