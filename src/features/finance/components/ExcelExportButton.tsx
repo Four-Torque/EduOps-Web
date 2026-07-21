@@ -2,20 +2,26 @@ import { Button } from "@/shared/components/ui/button";
 import { exportToCsv } from "@/shared/lib/export";
 import { Download } from "lucide-react";
 import toast from "react-hot-toast";
-import { fetchPayments } from "../api";
+import { fetchPayments } from "@/features/payment/api";
 import { STATUS_LABELS } from "../constants";
 import { formatDate } from "@/shared/lib/utils";
-import { useFinanceStore } from "../store";
-import { RevenueItem } from "../type";
+
+import { PaymentItem } from "@/features/payment/type";
+
 
 export default function ExcelExportButton() {
-  const { filter } = useFinanceStore();
+  const filter = {
+    search: "",
+    status: "all",
+    type: "all" as const,
+  };
+
 
   async function handleExcelExport() {
     try {
       const response = await fetchPayments({
         search: filter.search || undefined,
-        paymentType: filter.status === "all" ? undefined : filter.status,
+        paymentType: filter.status === "all" ? undefined : (filter.status as "PAID" | "UNPAID" | "REFUNDED"),
         type: filter.type,
       });
 
@@ -37,14 +43,14 @@ export default function ExcelExportButton() {
         "금액",
         "상태",
       ];
-      const rows = exportItems.map((item: RevenueItem) => [
-        item.type === "INCOME" ? "수입" : "지출",
-        item.date,
-        item.itemTitle,
-        item.itemSub,
-        item.studentName,
+      const rows = exportItems.map((item: PaymentItem) => [
+        "수입",
+        item.paymentDate ? formatDate(new Date(item.paymentDate)) : formatDate(new Date(item.createdAt)),
+        item.title,
+        item.className || "수강료",
+        item.studentName || "-",
         item.amount,
-        STATUS_LABELS[item.status] || item.status,
+        STATUS_LABELS[item.paymentType] || item.paymentType,
       ]);
 
       exportToCsv(`매출내역_${formatDate(new Date())}.csv`, headers, rows);

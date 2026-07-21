@@ -1,10 +1,12 @@
-export type AttendanceStatus = "present" | "late" | "absent";
+export type AttendanceStatus = "present" | "late" | "absent" | "pending";
 export type DepartmentType = "강사" | "관리자" | "전체";
 
 export interface AttendanceDay {
   day: "월" | "화" | "수" | "목" | "금";
   status: AttendanceStatus;
   checkedOut?: boolean;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
 }
 
 export interface AttendanceEmployee {
@@ -41,7 +43,12 @@ export interface AttendanceFilter {
 // 학생 출결 관련 Type
 // =============================================================================== //
 
-export type StudentAttendanceStatus = "ATTENDED" | "TARDY" | "ABSENT" | "LEFT_EARLY" | null;
+export type StudentAttendanceStatus =
+  | "ATTENDED"
+  | "TARDY"
+  | "ABSENT"
+  | "LEFT_EARLY"
+  | null;
 
 export interface ClassStudentAttendance {
   studentId: string;

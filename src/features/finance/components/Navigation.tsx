@@ -7,8 +7,9 @@ import { isSameMonth, format } from "date-fns";
 import { useFinanceStore } from "../store";
 
 interface NavigationProps {
-  type: "MONTHLY" | "YEARLY";
+  type?: "MONTHLY" | "YEARLY";
 }
+
 
 export default function Navigation({ type = "MONTHLY" }: NavigationProps) {
   const { currentDate, todayActual, handlePrev, handleNext, jumpToToday } =

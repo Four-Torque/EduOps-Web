@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  fetchClassAttendances, 
-  createStudentAttendance, 
+import {
+  fetchClassAttendances,
+  createStudentAttendance,
   updateStudentAttendance,
   fetchAttendance,
+  createStaffAttendance,
+  updateStaffAttendance,
 } from "./api";
 import { ClassStudentAttendance, AttendanceFilter } from "./type";
 import { fetchTeacherClasses } from "../class/api";
-import apiClient from "@/shared/lib/axios";
+import toast from "react-hot-toast";
 
 // 수업 목록 조회 훅
 export function useTeacherClasses(teacherId: string) {
@@ -52,24 +54,37 @@ export function useSaveAttendance() {
     },
     // API 호출 전에 UI 상태를 즉시 업데이트
     onMutate: async (newAttendance) => {
-      const queryKey = ["class", newAttendance.classId, "attendance", newAttendance.lectureDate];
-      
+      const queryKey = [
+        "class",
+        newAttendance.classId,
+        "attendance",
+        newAttendance.lectureDate,
+      ];
+
       // 진행 중인 쿼리 취소
       await queryClient.cancelQueries({ queryKey });
 
       // 이전 상태 백업
-      const previousAttendances = queryClient.getQueryData<ClassStudentAttendance[]>(queryKey);
+      const previousAttendances =
+        queryClient.getQueryData<ClassStudentAttendance[]>(queryKey);
 
       // 새 값으로 캐시 업데이트
       if (previousAttendances) {
-        queryClient.setQueryData(queryKey, (old: ClassStudentAttendance[] | undefined) => {
-          if (!old) return old;
-          return old.map((student) =>
-            student.studentId === newAttendance.studentId
-              ? { ...student, status: newAttendance.status as ClassStudentAttendance["status"] }
-              : student
-          );
-        });
+        queryClient.setQueryData(
+          queryKey,
+          (old: ClassStudentAttendance[] | undefined) => {
+            if (!old) return old;
+            return old.map((student) =>
+              student.studentId === newAttendance.studentId
+                ? {
+                    ...student,
+                    status:
+                      newAttendance.status as ClassStudentAttendance["status"],
+                  }
+                : student,
+            );
+          },
+        );
       }
 
       return { previousAttendances, queryKey };
@@ -99,12 +114,19 @@ export function useAttendance(filter: AttendanceFilter) {
 export function useStaffCheckIn() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (userId: string) => {
-      const response = await apiClient.post("/staff-attendance/check-in", { userId });
-      return response.data.body ?? response.data;
-    },
-    onSuccess: () => {
+    mutationFn: async (values: {
+      userId: string;
+      workDate?: Date | string;
+      checkInTime?: Date;
+    }) => createStaffAttendance(values),
+    onSuccess: (data) => {
+      toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["staff-attendance"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     },
   });
 }
@@ -112,12 +134,19 @@ export function useStaffCheckIn() {
 export function useStaffCheckOut() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (userId: string) => {
-      const response = await apiClient.post("/staff-attendance/check-out", { userId });
-      return response.data.body ?? response.data;
-    },
-    onSuccess: () => {
+    mutationFn: async (values: {
+      userId: string;
+      checkOutTime?: Date;
+      workDate?: Date | string;
+    }) => updateStaffAttendance(values),
+    onSuccess: (data) => {
+      toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["staff-attendance"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
     },
   });
 }

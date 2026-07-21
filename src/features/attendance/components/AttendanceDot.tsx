@@ -8,7 +8,9 @@ const DOT_STYLE: Record<AttendanceStatus, string> = {
   present: "bg-slate-800",
   late: "bg-amber-500",
   absent: "bg-red-500",
+  pending: "bg-transparent",
 };
+
 
 export function AttendanceDot({ status }: AttendanceDotProps) {
   return (

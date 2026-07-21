@@ -1,10 +1,5 @@
 import {
-  ATTENDANCE_PAGE_SIZE,
-  MOCK_ATTENDANCE_EMPLOYEES,
-} from "@/shared/constants/manager/attendance.constants";
-import {
   AttendanceFilter,
-  AttendanceListResponse,
   ClassStudentAttendance,
   AttendanceEmployee,
   AttendanceStats,
@@ -38,19 +33,48 @@ export async function fetchAttendance(
 // 학생 출결 관련 Api
 // =============================================================================== //
 
-export async function fetchClassAttendances(classId: string, lectureDate: string): Promise<ClassStudentAttendance[]> {
+export async function fetchClassAttendances(
+  classId: string,
+  lectureDate: string,
+): Promise<ClassStudentAttendance[]> {
   const response = await apiClient.get(`/class/${classId}/attendance`, {
     params: { lectureDate },
   });
   return response.data.body ?? response.data;
 }
 
-export async function createStudentAttendance(data: { studentId: string; classId: string; lectureDate: string; status: string }) {
+export async function createStudentAttendance(data: {
+  studentId: string;
+  classId: string;
+  lectureDate: string;
+  status: string;
+}) {
   const response = await apiClient.post("/student-attendance", data);
   return response.data.body ?? response.data;
 }
 
 export async function updateStudentAttendance(id: string, status: string) {
-  const response = await apiClient.patch(`/student-attendance/${id}`, { status });
+  const response = await apiClient.patch(`/student-attendance/${id}`, {
+    status,
+  });
   return response.data.body ?? response.data;
 }
+
+export async function createStaffAttendance(values: {
+  userId: string;
+  workDate?: Date | string;
+  checkInTime?: Date;
+}) {
+  const response = await apiClient.post("/staff-attendance/check-in", values);
+  return response.data;
+}
+
+export async function updateStaffAttendance(values: {
+  userId: string;
+  checkOutTime?: Date;
+  workDate?: Date | string;
+}) {
+  const response = await apiClient.patch(`/staff-attendance/check-out`, values);
+  return response.data;
+}
+
