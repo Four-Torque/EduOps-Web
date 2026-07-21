@@ -13,6 +13,11 @@ export const fetchClasses = async (params: { page?: number; limit?: number; name
   return response.data.body ?? response.data;
 };
 
+export const fetchClassById = async (id: string): Promise<ClassInfo> => {
+  const response = await apiClient.get(`/class/${id}`);
+  return response.data.body ?? response.data;
+};
+
 export const createClass = async (payload: CreateClassPayload): Promise<ClassInfo> => {
   const response = await apiClient.post("/class", payload);
   return response.data.body ?? response.data;

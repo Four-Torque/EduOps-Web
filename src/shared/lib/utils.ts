@@ -90,3 +90,7 @@ export function formatDate(date: Date | string | null | undefined) {
   if (!isValid(d)) return "";
   return format(d, "yyyy-MM-dd", { locale: ko });
 }
+
+export function formatWon(amount: number) {
+  return `${amount.toLocaleString("ko-KR")}원`;
+}

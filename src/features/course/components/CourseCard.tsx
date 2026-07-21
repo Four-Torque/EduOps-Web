@@ -10,6 +10,7 @@ import {
 import { useDeleteClass } from "@/features/class/query";
 import { CourseDetailModal } from "./CourseDetailModal";
 import { useConfirm } from "@/shared/hooks/useConfirm";
+import { DAY_LABELS } from "@/shared/constants/day.constants";
 
 interface CourseCardProps {
   item: ClassInfo;
@@ -25,7 +26,7 @@ export function CourseCard({ item }: CourseCardProps) {
 
   const isFull = item.currentStudents >= item.capacity;
   const progressRatio = item.capacity > 0 ? Math.min((item.currentStudents / item.capacity) * 100, 100) : 0;
-  const daysMap = ["일", "월", "화", "수", "목", "금", "토"];
+  const daysMap = DAY_LABELS;
 
   async function handleDelete() {
     const ok = await confirm();

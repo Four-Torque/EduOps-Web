@@ -20,6 +20,7 @@ export interface CalendarEvent {
 
 export interface ScheduleEvent {
   id: string;
+  classId: string;
   title: string; // 물리 수능대비반
   instructor: string; // Dr. DRE
   room: string; // 203호

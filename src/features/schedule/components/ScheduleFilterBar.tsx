@@ -1,6 +1,7 @@
 // @/components/manager/academic/schedule/ScheduleFilterBar.tsx
 "use client";
 
+import { useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import {
   Select,
@@ -9,12 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import {
-  SCHEDULE_ROOM_OPTIONS,
-  SCHEDULE_INSTRUCTOR_OPTIONS,
-  SCHEDULE_SUBJECT_OPTIONS,
-} from "@/shared/constants/manager/schedule.constants";
+import { SCHEDULE_SUBJECT_OPTIONS } from "@/shared/constants/manager/schedule.constants";
 import { useScheduleStore } from "../store";
+import { useAllClasses } from "../query";
+import { useTeachers } from "@/features/user/query";
+import type { ClassInfo } from "@/features/class/type";
 
 export function ScheduleFilterBar() {
   const {
@@ -26,6 +26,32 @@ export function ScheduleFilterBar() {
     setSubject,
     clearFilters,
   } = useScheduleStore();
+
+  // 강의실 목록은 별도 엔티티가 없어서, 실제 등록된 강좌들의 스케줄에서
+  // 쓰이고 있는 room 값을 모아 중복 제거해 만든다 (하드코딩 목업 대신 실데이터 기반).
+  const { data: classes = [] } = useAllClasses();
+  const roomOptions = useMemo(() => {
+    const rooms = new Set<string>();
+    (classes as ClassInfo[]).forEach((cls) =>
+      cls.schedules?.forEach((s) => rooms.add(s.room)),
+    );
+    return [
+      { value: "all", label: "강의장: All" },
+      ...Array.from(rooms)
+        .sort()
+        .map((r) => ({ value: r, label: r })),
+    ];
+  }, [classes]);
+
+  // 강사 목록은 실제 강사 관리 API(useTeachers)에서 그대로 가져온다.
+  const { data: teachers = [] } = useTeachers();
+  const instructorOptions = useMemo(
+    () => [
+      { value: "all", label: "강사: All" },
+      ...teachers.map((t) => ({ value: t.name, label: t.name })),
+    ],
+    [teachers],
+  );
 
   return (
     <div className="flex items-center justify-between border border-slate-200 rounded-lg px-4 py-2 mb-4 bg-white">
@@ -40,7 +66,7 @@ export function ScheduleFilterBar() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {SCHEDULE_ROOM_OPTIONS.map((o) => (
+            {roomOptions.map((o) => (
               <SelectItem key={o.value} value={o.value} className="text-[12px]">
                 {o.label}
               </SelectItem>
@@ -53,7 +79,7 @@ export function ScheduleFilterBar() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {SCHEDULE_INSTRUCTOR_OPTIONS.map((o) => (
+            {instructorOptions.map((o) => (
               <SelectItem key={o.value} value={o.value} className="text-[12px]">
                 {o.label}
               </SelectItem>

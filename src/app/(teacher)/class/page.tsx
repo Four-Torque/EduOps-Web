@@ -57,6 +57,7 @@ function toScheduleEvents(
         .filter((day) => getDay(day) === schedule.dayOfWeek) // dayOfWeek: 0(일)~6(토), JS Date.getDay()와 동일 기준
         .map((day) => ({
           id: `${schedule.id}-${day.toISOString()}`,
+          classId: cls.id,
           title: cls.name,
           instructor,
           room: schedule.room,
