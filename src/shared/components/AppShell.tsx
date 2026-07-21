@@ -5,6 +5,8 @@ import { Sidebar } from "./Sidebar";
 import Header from "./Header";
 import Topbar from "./Topbar";
 import { useTabs } from "../hooks/useTabs";
+import { MessageModal } from "@/features/message/components/form/MessageModal";
+import { useMessageSse } from "@/features/message/query";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -30,6 +32,8 @@ export default function AppShell({
   const homeLabel = findHomeLabel(navItems, homePath);
   const { tabs, addTab, removeTab } = useTabs();
 
+  useMessageSse();
+
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar navItems={navItems} addTab={addTab} />
@@ -44,6 +48,7 @@ export default function AppShell({
         />
         <main className="flex-1 overflow-auto p-6 bg-white">{children}</main>
       </div>
+      <MessageModal />
     </div>
   );
 }

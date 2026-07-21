@@ -1,11 +1,14 @@
 import { UserRole } from "../user/type";
 
 export interface MessageContact {
-  id: string;
+  id: string | number;
   name: string;
-  role: UserRole;
+  role: UserRole | "teacher" | "manager" | "director" | "admin";
   department?: string;
+  avatarInitial?: string;
 }
+
+
 
 export interface MessageContactGroup {
   role: string;
@@ -25,3 +28,20 @@ export interface Message {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ChatRoom {
+  id: number | string;
+  contact: MessageContact & { avatarInitial?: string };
+  lastMessage: string;
+  lastMessageAt: string;
+  unreadCount: number;
+  messages: Array<{
+    id: number | string;
+    senderId: number | string;
+    senderRole: string;
+    content: string;
+    isMine: boolean;
+    sentAt: string;
+  }>;
+}
+

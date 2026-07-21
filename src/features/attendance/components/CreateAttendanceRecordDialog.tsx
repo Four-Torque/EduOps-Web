@@ -25,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import toast from "react-hot-toast";
 
 import type { User } from "@/features/user/type";
 
@@ -63,35 +62,29 @@ export function CreateAttendanceRecordDialog() {
 
   const selectedUserId = watch("userId");
 
-  const onSubmit = async (values: AttendanceRecordFormValues) => {
-    try {
-      const { userId, workDate, checkInTime, checkOutTime } = values;
+  async function onSubmit(values: AttendanceRecordFormValues) {
+    const { userId, workDate, checkInTime, checkOutTime } = values;
 
-      if (checkInTime) {
-        const checkInDate = new Date(`${workDate}T${checkInTime}:00`);
-        await checkIn({
-          userId,
-          workDate,
-          checkInTime: checkInDate,
-        } as any);
-      }
-
-      if (checkOutTime) {
-        await checkOut({
-          userId,
-          workDate,
-        } as any);
-      }
-
-      toast.success("근태 기록이 성공적으로 등록되었습니다.");
-      reset();
-      onRecordClose();
-    } catch (error: any) {
-      const msg =
-        error?.response?.data?.message || "근태 등록 중 오류가 발생했습니다.";
-      toast.error(msg);
+    if (checkInTime) {
+      const checkInDate = new Date(`${workDate}T${checkInTime}:00`);
+      await checkIn({
+        userId,
+        workDate,
+        checkInTime: checkInDate,
+      });
     }
-  };
+
+    if (checkOutTime) {
+      const checkOutDate = new Date(`${workDate}T${checkOutTime}:00`);
+      await checkOut({
+        userId,
+        workDate,
+        checkOutTime: checkOutDate,
+      });
+    }
+    reset();
+    onRecordClose();
+  }
 
   return (
     <Dialog open={isRecordOpen} onOpenChange={onRecordClose}>
