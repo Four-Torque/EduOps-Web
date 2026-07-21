@@ -123,7 +123,11 @@ export function Table({
           <div className="flex items-center justify-between px-3.5 py-1 ">
             <p className="text-[11px] text-slate-400">총 {totalItems}건</p>
             {totalItems > 0 && (
-              <Pagination currentPage={activePage} totalPages={totalPages} onPageChange={onPageChange} />
+              <Pagination
+                currentPage={activePage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
             )}
           </div>
         )}
@@ -287,7 +291,7 @@ function TableBody({
             className="border-b border-slate-100 last:border-slate-200 hover:bg-slate-50 transition-colors"
           >
             {showCheckbox && (
-              <td className="px-3.5 py-2.5 text-center">
+              <td className="px-3.5 py-2.5">
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(rowId)}
@@ -299,7 +303,7 @@ function TableBody({
             {columns.map((col) => (
               <td
                 key={col.key}
-                className="px-3.5 py-2.5 text-[12.5px] text-center text-slate-600"
+                className="px-3.5 py-2.5 text-[12.5px] text-slate-600"
               >
                 {renderCellValue(item, col)}
               </td>

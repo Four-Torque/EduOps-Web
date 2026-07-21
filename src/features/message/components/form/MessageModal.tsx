@@ -44,7 +44,7 @@ export function MessageModal() {
     if (!title.trim()) return;
     if (!content.trim()) return;
     if (!composeTarget?.id) return;
-    sendMessage({ title, content, receiverId: composeTarget?.id });
+    sendMessage({ title, content, receiverId: String(composeTarget?.id) });
     setTitle("");
     setContent("");
     closeModal();

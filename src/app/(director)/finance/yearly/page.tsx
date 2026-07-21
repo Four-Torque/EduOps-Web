@@ -14,8 +14,6 @@ export default function FinancePage() {
     endDate,
   });
   if (isLoading) return null;
-
-  console.log("data", data);
   return (
     <>
       <Navigation type="YEARLY" />
@@ -54,7 +52,7 @@ export default function FinancePage() {
               type="ASSET"
               viewMode="MONTH"
             />
-          </div>  
+          </div>
         </div>
       </div>
     </>

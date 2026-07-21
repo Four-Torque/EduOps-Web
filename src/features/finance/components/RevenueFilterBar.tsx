@@ -15,7 +15,6 @@ import {
   ALL_STATUS_OPTIONS,
 } from "../constants";
 import ExcelExportButton from "./ExcelExportButton";
-import { useFinanceStore } from "../store";
 import { RevenueStatus } from "../type";
 
 interface RevenueFilterBarProps {
@@ -33,7 +32,9 @@ export function RevenueFilterBar({
   dateRange,
   onDateRangeChange,
 }: RevenueFilterBarProps) {
-  const { setSearch, setStatus, setType } = useFinanceStore();
+  const setSearch = (val: string) => {};
+  const setStatus = (val: any) => {};
+  const setType = (val: "all" | "INCOME" | "EXPENSE") => {};
   const statusOptions =
     type === "INCOME"
       ? INCOME_STATUS_OPTIONS

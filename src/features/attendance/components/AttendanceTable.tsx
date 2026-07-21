@@ -10,6 +10,7 @@ import { Table } from "@/shared/components/Table";
 import { useAttendance, useStaffCheckIn, useStaffCheckOut } from "../query";
 import { getAttendanceColumns } from "@/app/(manager)/attendance/column";
 import { exportToCsv } from "@/shared/lib/export";
+import { AttendanceEmployee } from "../type";
 
 export function AttendanceTable() {
   const { filter, setSearch } = useAttendanceStore();
@@ -20,10 +21,11 @@ export function AttendanceTable() {
 
   const columns = useMemo(() => {
     return getAttendanceColumns({
-      onCheckIn: (userId) => checkIn(userId),
-      onCheckOut: (userId) => checkOut(userId),
+      onCheckIn: (userId) => checkIn({ userId, checkInTime: new Date() }),
+      onCheckOut: (userId) => checkOut({ userId, checkOutTime: new Date() }),
     });
   }, [checkIn, checkOut]);
+
 
   const handleExport = () => {
     if (!data?.items || data.items.length === 0) return;
@@ -38,26 +40,40 @@ export function AttendanceTable() {
       "금요일",
     ];
 
-    const translateStatus = (status?: string) => {
-      if (status === "present") return "출근";
-      if (status === "late") return "지각";
-      if (status === "absent") return "결근";
-      return "-";
+    const formatTime = (timeStr?: string | null) => {
+      if (!timeStr) return "-";
+      try {
+        const date = new Date(timeStr);
+        if (isNaN(date.getTime())) return "-";
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        return `${hours}:${minutes}`;
+      } catch {
+        return "-";
+      }
+    };
+
+    const getDayAttendanceString = (item: AttendanceEmployee, dayLabel: "월" | "화" | "수" | "목" | "금") => {
+      const record = item.weeklyAttendance.find((a) => a.day === dayLabel);
+      if (!record || record.status === "pending") return "-";
+      if (record.status === "absent") return "결근";
+
+      const statusText = record.status === "late" ? "지각" : "출근";
+      const checkIn = formatTime(record.checkInTime);
+      const checkOut = formatTime(record.checkOutTime);
+
+      return `${statusText}(${checkIn}) / 퇴근(${checkOut})`;
     };
 
     const rows = data.items.map((item) => {
-      const getDayStatus = (dayLabel: string) => {
-        const record = item.weeklyAttendance.find((a) => a.day === dayLabel);
-        return translateStatus(record?.status);
-      };
       return [
         item.name,
         item.department,
-        getDayStatus("월"),
-        getDayStatus("화"),
-        getDayStatus("수"),
-        getDayStatus("목"),
-        getDayStatus("금"),
+        getDayAttendanceString(item, "월"),
+        getDayAttendanceString(item, "화"),
+        getDayAttendanceString(item, "수"),
+        getDayAttendanceString(item, "목"),
+        getDayAttendanceString(item, "금"),
       ];
     });
 

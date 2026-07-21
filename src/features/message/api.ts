@@ -18,16 +18,16 @@ export async function sendMessage(values: {
 }
 
 export async function findReceivedMessages(params: {
-  page?: number;
-  limit?: number;
+  page?: number | string;
+  limit?: number | string;
 }) {
   const responses = await apiClient.get("/message/received", { params });
   return responses.data.body;
 }
 
 export async function findSentMessages(params: {
-  page?: number;
-  limit?: number;
+  page?: number | string;
+  limit?: number | string;
 }) {
   const responses = await apiClient.get("/message/sent", { params });
   return responses.data.body;
@@ -38,12 +38,12 @@ export async function markMessageAsRead(id?: string) {
   return response.data;
 }
 
-// 기존 코드 그대로 유지
-// 아래만 추가
-
-export async function findUnreadMessages() {
-  const response = await apiClient.get("/message/received", {
-    params: { page: 1, limit: 100 },
+export async function deleteMessages(values: {
+  ids: string[];
+  type: "SENT" | "RECEIVED";
+}) {
+  const response = await apiClient.delete("/message", {
+    data: values,
   });
-  return response.data.body;
+  return response.data;
 }

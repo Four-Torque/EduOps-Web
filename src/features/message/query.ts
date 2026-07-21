@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  deleteMessages,
   fetchGroupedContacts,
   findReceivedMessages,
   findSentMessages,
@@ -8,6 +9,10 @@ import {
 } from "./api";
 import { useMessageStore } from "./store";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import { useSession } from "@/shared/hooks/useSession";
+import { createEventSource } from "@/shared/lib/sse";
+import { Message } from "./type";
 
 export const messageQueryKeys = {
   all: () => ["messages"] as const,
@@ -32,7 +37,7 @@ export function useSendMessage() {
     mutationFn: sendMessage,
     onSuccess: (data) => {
       toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: messageQueryKeys.sent() });
+      queryClient.invalidateQueries({ queryKey: ["messages", "sent"] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -78,7 +83,7 @@ export function useMarkAsRead() {
   const mutation = useMutation({
     mutationFn: markMessageAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: messageQueryKeys.received() });
+      queryClient.invalidateQueries({ queryKey: ["messages", "received"] });
     },
     onError: (error) => {
       if (error instanceof Error) {
@@ -90,13 +95,64 @@ export function useMarkAsRead() {
 }
 
 export function useUnreadMessages(userId?: string) {
-  return useQuery({
+  const query = useQuery({
     enabled: !!userId,
-    queryKey: [...messageQueryKeys.received({ page: 1, limit: 100 }, userId), "unread"],
+    queryKey: [
+      ...messageQueryKeys.received({ page: 1, limit: 100 }, userId),
+      "unread",
+    ],
     queryFn: () => findReceivedMessages({ page: 1, limit: 100 }),
     select: (data: any) =>
       (data?.data ?? []).filter(
-        (msg: any) => msg.receiverId === userId && !msg.isRead,
+        (msg: Message) => msg.receiverId === userId && !msg.isRead,
       ),
   });
+  return query;
+}
+
+export function useDeleteMessages() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: { ids: string[]; type: "SENT" | "RECEIVED" }) =>
+      deleteMessages(values),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["messages", "received"] });
+      queryClient.invalidateQueries({ queryKey: ["messages", "sent"] });
+    },
+    onError: (error) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+  });
+  return mutation;
+}
+
+export function useMessageSse() {
+  const { data: user } = useSession();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const eventSource = createEventSource("/message/sse");
+
+    eventSource.onmessage = (event) => {
+      if (event.data === "ping") return;
+      try {
+        queryClient.invalidateQueries({ queryKey: ["messages", "received"] });
+      } catch (error) {
+        console.error("SSE message parse error:", error);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error("SSE connection error:", error);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [user?.id, queryClient]);
 }

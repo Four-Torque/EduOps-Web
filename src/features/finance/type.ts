@@ -24,3 +24,37 @@ export type FinanceDetail = {
   title: string;
   status: string;
 };
+
+export interface MonthlyRevenue {
+  month: string;
+  current: number;
+  previous: number;
+}
+
+export interface RevenueStats {
+  totalRevenue: number;
+  totalExpense: number;
+  netProfit: number;
+  unpaidAmount: number;
+  unpaidCount: number;
+  newEnrollments: number;
+  refundCount: number;
+  refundAmount: number;
+}
+
+export interface RevenueItem {
+  id: string;
+  date: string;
+  itemTitle: string;
+  itemSub: string;
+  studentName: string;
+  amount: number;
+  status: string;
+  category: string;
+  type: "INCOME" | "EXPENSE";
+}
+
+export type RevenueStatus = "PAID" | "UNPAID" | "REFUNDED" | "COMPLETED" | "PENDING";
+
+
+

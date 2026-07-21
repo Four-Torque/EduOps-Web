@@ -20,6 +20,7 @@ export type AssetApplication = {
   vendorId: string;
   assetId: string;
   assetName: string;
+  stock?: number;
   quantity: number;
   price: number;
   reason: string;
