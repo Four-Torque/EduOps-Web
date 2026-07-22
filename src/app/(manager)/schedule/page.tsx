@@ -5,7 +5,7 @@ import { ScheduleFilterBar } from "@/features/schedule/components/ScheduleFilter
 import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalendar";
 import { useWeeklySchedule } from "@/features/schedule/query";
 import { useScheduleStore } from "@/features/schedule/store";
-import { startOfWeek, addDays } from "date-fns";
+import { startOfWeek, addDays, eachDayOfInterval, getDay } from "date-fns";
 import { isWithinDateRange } from "@/shared/lib/utils";
 
 export default function SchedulePage() {
@@ -16,14 +16,20 @@ export default function SchedulePage() {
     subject,
   );
 
-  const startOfActiveWeek = useMemo(() => {
-    return startOfWeek(activeDate, { weekStartsOn: 0 });
+  // 캘린더(calendar-localizer.ts)가 월요일 시작으로 렌더링하므로, 여기서도
+  // 반드시 같은 기준으로 주를 잡아야 한다 — 기준이 어긋나면 그 차이만큼
+  // 특정 요일의 계산된 날짜가 캘린더가 그리는 주 범위 밖으로 밀려나 안 보이게 된다.
+  const activeWeekDays = useMemo(() => {
+    const monday = startOfWeek(activeDate, { weekStartsOn: 1 });
+    return eachDayOfInterval({ start: monday, end: addDays(monday, 6) });
   }, [activeDate]);
 
   const events = useMemo(() => {
     return scheduleItems
       .flatMap((item) => {
-        const startDay = addDays(startOfActiveWeek, item.dayOfWeek);
+        // item.dayOfWeek: 0(일)~6(토), JS Date.getDay()와 동일 기준으로 실제 날짜를 찾는다.
+        const startDay = activeWeekDays.find((d) => getDay(d) === item.dayOfWeek);
+        if (!startDay) return [];
         if (!isWithinDateRange(startDay, item.classStartDate, item.classEndDate)) return [];
 
         const startStr = `${startDay.getFullYear()}-${String(
@@ -51,7 +57,7 @@ export default function SchedulePage() {
           },
         ];
       });
-  }, [scheduleItems, startOfActiveWeek]);
+  }, [scheduleItems, activeWeekDays]);
 
   if (isLoading) {
     return (
