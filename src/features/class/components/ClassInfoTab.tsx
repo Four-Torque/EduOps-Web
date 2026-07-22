@@ -13,6 +13,7 @@ export interface InfoFormData {
   endDate: string;
   teacherId: string;
   subjectName: string;
+  billingDay: string;
 }
 
 interface ClassInfoTabProps {
@@ -114,6 +115,15 @@ export const ClassInfoTab = (props: ClassInfoTabProps) => {
             onChange={(e) => onChange("endDate", e.target.value)}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <Label>납부 기한</Label>
+        <Input
+          type="date"
+          value={formData.billingDay}
+          onChange={(e) => onChange("billingDay", e.target.value)}
+        />
       </div>
 
       <div className="flex justify-end mt-4">

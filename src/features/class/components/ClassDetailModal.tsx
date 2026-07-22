@@ -41,10 +41,11 @@ export function ClassDetailModal({
     name: item.name,
     fee: item.fee?.toString() || "",
     capacity: item.capacity?.toString() || "",
+    subjectName: item.subjectName || "",
+    billingDay: item.billingDay ? item.billingDay.split("T")[0] : "",
     startDate: item.startDate ? item.startDate.split("T")[0] : "",
     endDate: item.endDate ? item.endDate.split("T")[0] : "",
     teacherId: item.teacherId || "",
-    subjectName: item.subjectName || "",
   });
 
   const handleInfoChange = (field: keyof typeof infoForm, value: string) => {
@@ -63,6 +64,7 @@ export function ClassDetailModal({
         fee: parseInt(infoForm.fee, 10),
         capacity: parseInt(infoForm.capacity, 10),
         subjectName: infoForm.subjectName,
+        billingDay: new Date(infoForm.billingDay).toISOString(),
         startDate: new Date(infoForm.startDate).toISOString(),
         endDate: new Date(infoForm.endDate).toISOString(),
         teacherId: infoForm.teacherId,
@@ -153,7 +155,8 @@ export function ClassDetailModal({
       {
         classId: item.id,
         studentId: studentForm.selectedStudentId,
-        enrollDate: new Date(),
+        enrollDate: new Date(item.startDate!),
+        initialDueDate: item.billingDay ? new Date(item.billingDay) : undefined,
       },
       {
         onSuccess: () => {

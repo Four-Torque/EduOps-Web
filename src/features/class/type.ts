@@ -44,6 +44,7 @@ export interface ClassInfo {
   updatedAt: string;
   subjectId?: string;
   subjectName?: string;
+  billingDay?: string;
   schedules: ClassSchedule[];
 }
 
@@ -59,6 +60,7 @@ export interface CreateClassPayload {
   fee: number;
   capacity: number;
   subjectName: string;
+  billingDay: string;
   startDate: string;
   endDate: string;
 }

@@ -103,7 +103,6 @@ export const ClassStudentTab = (props: ClassStudentTabProps) => {
               ))}
             </select>
           </div>
-          <div className="bg-gray-850">여기에 dueDate</div>
           <Button
             onClick={handleAddStudent}
             disabled={!formData.selectedStudentId || isAddingStudent}
