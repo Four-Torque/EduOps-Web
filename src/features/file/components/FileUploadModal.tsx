@@ -15,25 +15,34 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { Label } from "@/shared/components/ui/label";
-import { uploadClassFile } from "../api";
 import { fetchTeacherClasses } from "@/features/class/api";
 import { useSession } from "@/shared/hooks/useSession";
+import { useDocumentUpload } from "../hook";
 
 export function FileUploadModal() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [classId, setClassId] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { data: user } = useSession();
   const teacherId = user?.id || "";
+
+  const { uploadDocuments, uploading } = useDocumentUpload({
+    initialDocuments: [],
+    initialNames: [],
+    onSuccess: (newDocumentUrls, newNames) => {
+      setFileName(newNames[0] || "");
+    },
+  });
 
   const { data: classData, isLoading: isClassesLoading } = useQuery({
     queryKey: ["classes"],
     queryFn: () => fetchTeacherClasses(teacherId),
     enabled: !!teacherId && open,
   });
-  
+
   const classes = classData?.data || [];
 
   const handleUpload = async () => {
@@ -48,12 +57,13 @@ export function FileUploadModal() {
 
     try {
       setIsLoading(true);
-      await uploadClassFile({ classId, file });
+      await uploadDocuments([file]);
       toast.success("파일이 성공적으로 업로드되었습니다.");
-      
+
       // 상태 초기화 및 모달 닫기
       queryClient.invalidateQueries({ queryKey: ["classFiles"] });
       setClassId("");
+      setFileName("");
       setFile(null);
       setOpen(false);
     } catch (error) {
@@ -79,10 +89,17 @@ export function FileUploadModal() {
         size="sm"
         footer={
           <>
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={isLoading}
+            >
               취소
             </Button>
-            <Button onClick={handleUpload} disabled={isLoading || !classId || !file}>
+            <Button
+              onClick={handleUpload}
+              disabled={isLoading || !classId || !file}
+            >
               {isLoading ? "업로드 중..." : "업로드 완료"}
             </Button>
           </>
@@ -91,9 +108,19 @@ export function FileUploadModal() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <Label htmlFor="class">대상 클래스</Label>
-            <Select value={classId} onValueChange={setClassId} disabled={isClassesLoading}>
+            <Select
+              value={classId}
+              onValueChange={setClassId}
+              disabled={isClassesLoading}
+            >
               <SelectTrigger id="class">
-                <SelectValue placeholder={isClassesLoading ? "클래스를 불러오는 중..." : "클래스를 선택하세요"} />
+                <SelectValue
+                  placeholder={
+                    isClassesLoading
+                      ? "클래스를 불러오는 중..."
+                      : "클래스를 선택하세요"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {classes.length === 0 && !isClassesLoading ? (
@@ -112,10 +139,18 @@ export function FileUploadModal() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="file">파일 선택</Label>
-            <Input 
-              id="file" 
-              type="file" 
-              onChange={(e) => setFile(e.target.files?.[0] || null)}
+            <Input
+              id="file"
+              type="file"
+              value={fileName}
+              onChange={async (e) => {
+                const files = e.currentTarget.files;
+                if (!files || files.length === 0) return;
+                const filesArr = Array.from(files);
+
+                console.log("filesArr: ", filesArr);
+                await uploadDocuments(filesArr);
+              }}
             />
           </div>
         </div>

@@ -1,30 +1,28 @@
 import apiClient from "@/shared/lib/axios";
-import { ClassFileResponse, PaginatedClassFileResponse } from "./type";
+import { PaginatedClassFileResponse } from "./type";
 
 export interface UploadClassFileRequest {
   classId: string;
-  file: File;
+  urls: string[];
+  existingDocuments?: [];
 }
 
-export async function uploadClassFile(data: UploadClassFileRequest) {
-  const formData = new FormData();
-  formData.append("classId", data.classId);
-  formData.append("file", data.file);
-
-  const response = await apiClient.post("/class-file", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+export async function createClassFile(data: UploadClassFileRequest) {
+  const response = await apiClient.post("/class-file/create", data);
 
   return response.data;
 }
 
+export async function documentUpload(formData: FormData) {
+  const response = await apiClient.post(`class-file`, formData);
+  return response.data;
+}
+
 export async function fetchClassFiles(
-  classId?: string, 
+  classId?: string,
   fileName?: string,
   page?: number,
-  limit?: number
+  limit?: number,
 ): Promise<PaginatedClassFileResponse> {
   const response = await apiClient.get("/class-file", {
     params: { classId, fileName, page, limit },
