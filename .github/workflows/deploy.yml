@@ -54,6 +54,7 @@ jobs:
 
             docker run -d \
               -p 3000:3000 \
+              -e TZ=Asia/Seoul \
               --name ${{ secrets.SERVICE_NAME }} \
               --network nginx-proxy_gyubuntu_net \
               ${{ secrets.DOCKER_USERNAME }}/${{ secrets.SERVICE_NAME }}:latest
