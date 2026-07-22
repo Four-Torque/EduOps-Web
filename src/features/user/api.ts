@@ -212,7 +212,8 @@ export async function approveUser(id: string) {
 }
 
 export async function createUser(values: z.infer<typeof UserFormSchema>) {
-  const response = await apiClient.post("/user", values);
+  const { resignedAt, ...rest } = values;
+  const response = await apiClient.post("/user", rest);
   return response.data;
 }
 

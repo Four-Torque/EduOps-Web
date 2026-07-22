@@ -21,8 +21,8 @@ export default function CreateUserDialog() {
     role: "TEACHER",
     status: "ACTIVE",
     employmentStatus: "WORKING",
-    joinedAt: "",
-    resignedAt: "",
+    joinedAt: undefined,
+    resignedAt: undefined,
   };
 
   function onSubmit(values: z.infer<typeof UserFormSchema>) {
