@@ -11,10 +11,14 @@ import { useAttendance, useStaffCheckIn, useStaffCheckOut } from "../query";
 import { getAttendanceColumns } from "@/app/(manager)/attendance/column";
 import { exportToCsv } from "@/shared/lib/export";
 import { AttendanceEmployee } from "../type";
+import { useSearchParams } from "next/navigation";
 
 export function AttendanceTable() {
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page") || 1);
+  const limit = Number(searchParams.get("limit") || 10);
   const { filter, setSearch } = useAttendanceStore();
-  const { data, isLoading } = useAttendance(filter);
+  const { data, isLoading } = useAttendance({ ...filter, page, limit });
 
   const { mutate: checkIn } = useStaffCheckIn();
   const { mutate: checkOut } = useStaffCheckOut();
@@ -25,7 +29,6 @@ export function AttendanceTable() {
       onCheckOut: (userId) => checkOut({ userId, checkOutTime: new Date() }),
     });
   }, [checkIn, checkOut]);
-
 
   const handleExport = () => {
     if (!data?.items || data.items.length === 0) return;
@@ -53,7 +56,10 @@ export function AttendanceTable() {
       }
     };
 
-    const getDayAttendanceString = (item: AttendanceEmployee, dayLabel: "월" | "화" | "수" | "목" | "금") => {
+    const getDayAttendanceString = (
+      item: AttendanceEmployee,
+      dayLabel: "월" | "화" | "수" | "목" | "금",
+    ) => {
       const record = item.weeklyAttendance.find((a) => a.day === dayLabel);
       if (!record || record.status === "pending") return "-";
       if (record.status === "absent") return "결근";
@@ -86,15 +92,22 @@ export function AttendanceTable() {
 
   const tableData = {
     data: data?.items ?? [],
-    total: data?.items?.length ?? 0,
-    totalPages: 1,
+    total: data?.totalItems ?? data?.items?.length ?? 0,
+    totalPages:
+      data?.totalPages ??
+      Math.max(
+        1,
+        Math.ceil(
+          (data?.totalItems ?? data?.items?.length ?? 0) / (limit || 10),
+        ),
+      ),
   };
 
   return (
     <div>
       {/* 헤더 */}
       <div className=" mb-4">
-        <div className="relative w-[200px]">
+        <div className="relative w-50">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
           <Input
             value={filter.search}
@@ -128,6 +141,7 @@ export function AttendanceTable() {
         rowKey="id"
         showCheckbox={false}
         statusReadonly={true}
+        currentPage={page}
       />
 
       {/* 범례 */}

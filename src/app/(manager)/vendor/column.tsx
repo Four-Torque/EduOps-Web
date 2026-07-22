@@ -17,10 +17,26 @@ export const getVendorColumns = ({
   onEdit,
   onDelete,
 }: VendorColumnProps): ColumnProps[] => [
-  { key: "name", label: "업체명", type: "text" },
-  { key: "email", label: "이메일", type: "text" },
-  { key: "phone", label: "전화번호", type: "text" },
-  { key: "createdAt", label: "최초 등록일", type: "date" },
+  {
+    key: "name",
+    label: "업체명",
+    render: (item) => <p className="text-center">{item.name}</p>,
+  },
+  {
+    key: "email",
+    label: "이메일",
+    render: (item) => <p className="text-center">{item.email}</p>,
+  },
+  {
+    key: "phone",
+    label: "전화번호",
+    render: (item) => <p className="text-center">{item.phone}</p>,
+  },
+  {
+    key: "createdAt",
+    label: "최초 등록일",
+    render: (item) => <p className="text-center">{item.createdAt}</p>,
+  },
   {
     key: "actions",
     label: "",

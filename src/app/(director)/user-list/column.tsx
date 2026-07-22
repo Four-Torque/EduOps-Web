@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
+import { formatDate } from "@/shared/lib/utils";
 import { EditIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 
 interface UserColumnProps {
@@ -25,32 +26,52 @@ export const getUserColumns = ({
   onDeactivate,
   onApprove,
 }: UserColumnProps): ColumnProps[] => [
-  { key: "name", label: "성함", type: "text" },
-  { key: "phone", label: "전화번호", type: "text" },
+  {
+    key: "name",
+    label: "성함",
+    render: (item) => <p className="text-center">{item.name}</p>,
+  },
+  {
+    key: "phone",
+    label: "전화번호",
+    render: (item) => <p className="text-center">{item.phone}</p>,
+  },
   {
     key: "role",
     label: "역할",
     render: (item) => (
-      <Badge variant={item.role}>{USER_ROLES[item.role]}</Badge>
+      <div className="flex justify-center">
+        <Badge variant={item.role}>{USER_ROLES[item.role]}</Badge>
+      </div>
     ),
   },
   {
     key: "status",
     label: "상태",
     render: (item) => (
-      <Badge variant={item.status}>{USER_ACCOUNT_STATUS[item.status]}</Badge>
+      <div className="flex justify-center">
+        <Badge variant={item.status}>{USER_ACCOUNT_STATUS[item.status]}</Badge>
+      </div>
     ),
   },
   {
     key: "employmentStatus",
     label: "재직 상태",
     render: (item) => (
-      <Badge variant={item.employmentStatus}>
-        {USER_EMPLOYMENT_STATUS[item.employmentStatus]}
-      </Badge>
+      <div className="flex justify-center">
+        <Badge variant={item.employmentStatus}>
+          {USER_EMPLOYMENT_STATUS[item.employmentStatus]}
+        </Badge>
+      </div>
     ),
   },
-  { key: "joinedAt", label: "입사일", type: "date" },
+  {
+    key: "joinedAt",
+    label: "입사일",
+    render: (item) => (
+      <p className="text-center">{formatDate(item.joinedAt)}</p>
+    ),
+  },
   {
     key: "actions",
     label: "",

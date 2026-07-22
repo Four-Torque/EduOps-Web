@@ -8,24 +8,34 @@ import apiClient from "@/shared/lib/axios";
 
 export async function fetchAttendance(
   filter: AttendanceFilter,
-): Promise<{ items: AttendanceEmployee[]; stats: AttendanceStats }> {
+): Promise<{
+  items: AttendanceEmployee[];
+  stats: AttendanceStats;
+  totalItems: number;
+  totalPages: number;
+}> {
   const response = await apiClient.get("/staff-attendance/weekly", {
     params: {
       weekStart: filter.weekStart || undefined,
       department: filter.department !== "전체" ? filter.department : undefined,
       search: filter.search || undefined,
+      page: filter.page ?? undefined,
+      limit: (filter as any).limit ?? undefined,
     },
   });
 
   const body = response.data.body ?? response.data;
   return {
     items: body.items ?? [],
-    stats: body.stats ?? {
-      totalEmployees: 0,
-      presentToday: 0,
-      absentToday: 0,
-      lateOrEtc: 0,
-    },
+    stats:
+      body.stats ?? {
+        totalEmployees: 0,
+        presentToday: 0,
+        absentToday: 0,
+        lateOrEtc: 0,
+      },
+    totalItems: body.totalItems ?? body.total ?? (body.items ?? []).length,
+    totalPages: body.totalPages ?? Math.ceil((body.totalItems ?? (body.items ?? []).length) / ((filter as any).limit ?? 10)),
   };
 }
 

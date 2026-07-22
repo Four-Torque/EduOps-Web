@@ -3,8 +3,8 @@ import z from "zod/v3";
 import { AssetApplicationFormSchema } from "./schema";
 
 export async function findAssetApplications(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   status?: string;
 }) {
   const response = await apiClient.get("asset-application", { params });
@@ -12,8 +12,8 @@ export async function findAssetApplications(params: {
 }
 
 export async function findAssets(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   search?: string;
   categoryId?: string;
   vendorId?: string;

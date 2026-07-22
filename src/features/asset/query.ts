@@ -11,8 +11,8 @@ import {
 import { AssetApplicationFormSchema } from "./schema";
 
 export function useFindAssetApplications(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   status?: string;
 }) {
   const query = useQuery({
@@ -23,8 +23,8 @@ export function useFindAssetApplications(params: {
 }
 
 export function useFindAssets(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   search?: string;
   categoryId?: string;
   vendorId?: string;

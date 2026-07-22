@@ -6,7 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { cn } from "@/shared/lib/utils";
+import { cn, formatNumber } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/badge";
 
 interface StatusStyle {
   label: string;
@@ -47,14 +48,18 @@ export const getAssetApplicationsColumns = (
     key: "quantity",
     label: "수량",
     render: (item: AssetApplication) => (
-      <p className="w-full text-[12px] text-center">{item.quantity}</p>
+      <p className="w-full text-[12px] text-center">
+        {formatNumber(item.quantity)}
+      </p>
     ),
   },
   {
     key: "stock",
     label: "재고",
     render: (item: AssetApplication) => (
-      <p className="w-full text-[12px] text-center">{item.stock}</p>
+      <p className="w-full text-[12px] text-center">
+        {formatNumber(item.stock)}
+      </p>
     ),
   },
   {
@@ -62,7 +67,7 @@ export const getAssetApplicationsColumns = (
     label: "금액",
     render: (item: AssetApplication) => {
       return (
-        <p className="w-full text-[12px] text-right">{`${item.price.toLocaleString()}원`}</p>
+        <p className="w-full text-[12px] text-center">{`${formatNumber(item.price)}원`}</p>
       );
     },
   },
@@ -107,15 +112,17 @@ export const getAssetApplicationsColumns = (
           {item.status === "PENDING" ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <span
-                  className={cn(
-                    "inline-block text-[10.5px] font-medium px-2.5 py-0.5 rounded-full text-center cursor-pointer w-full",
-                    STATUS_STYLE[item.status]?.color ?? "text-slate-500",
-                    STATUS_STYLE[item.status]?.background ?? "bg-slate-100",
-                  )}
-                >
-                  {STATUS_STYLE[item.status]?.label ?? item.status}
-                </span>
+                <div className="flex justify-center">
+                  <Badge
+                    className={cn(
+                      "text-[10.5px] font-medium px-2.5 py-0.5 cursor-pointer",
+                      STATUS_STYLE[item.status]?.color ?? "text-slate-500",
+                      STATUS_STYLE[item.status]?.background ?? "bg-slate-100",
+                    )}
+                  >
+                    {STATUS_STYLE[item.status]?.label ?? item.status}
+                  </Badge>
+                </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-20">
                 <DropdownMenuItem
@@ -133,15 +140,17 @@ export const getAssetApplicationsColumns = (
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <span
-              className={cn(
-                "inline-block text-[10.5px] font-medium px-2.5 py-0.5 rounded-full text-center w-full",
-                STATUS_STYLE[item.status]?.color ?? "text-slate-500",
-                STATUS_STYLE[item.status]?.background ?? "bg-slate-100",
-              )}
-            >
-              {STATUS_STYLE[item.status]?.label ?? item.status}
-            </span>
+            <div className="flex justify-center">
+              <Badge
+                className={cn(
+                  " text-[10.5px] font-medium px-2.5 py-0.5 rounded-full",
+                  STATUS_STYLE[item.status]?.color ?? "text-slate-500",
+                  STATUS_STYLE[item.status]?.background ?? "bg-slate-100",
+                )}
+              >
+                {STATUS_STYLE[item.status]?.label ?? item.status}
+              </Badge>
+            </div>
           )}
         </>
       );

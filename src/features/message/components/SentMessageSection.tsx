@@ -19,7 +19,7 @@ export function SentMessageSection() {
     "삭제된 쪽지는 복구할 수 없습니다.",
   );
   const searchParams = useSearchParams();
-  const page = Number(searchParams.get("page") || "1");
+  const page = Number(searchParams.get("page") || 1);
   const { data, isLoading } = useFindSentMessages(
     { page, limit: 10 },
     user?.id,
@@ -48,6 +48,7 @@ export function SentMessageSection() {
         showCheckbox={true}
         deleteButtonLabel="쪽지 삭제"
         onDelete={handleDelete}
+        currentPage={page}
         statusReadonly
       />
     </>

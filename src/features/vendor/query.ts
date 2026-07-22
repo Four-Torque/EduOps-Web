@@ -11,8 +11,8 @@ import {
 import { VendorFormSchema } from "./schema";
 
 export function useFindVendors(paramns: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   search?: string;
 }) {
   const query = useQuery({

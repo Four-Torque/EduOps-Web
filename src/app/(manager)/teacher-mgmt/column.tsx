@@ -8,6 +8,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import { EyeIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
 import type { TeacherStatus } from "@/features/user/type";
+import { Badge } from "@/shared/components/ui/badge";
 
 const STATUS_LABEL: Record<TeacherStatus, string> = {
   WORKING: "재직",
@@ -34,26 +35,42 @@ export const getTeacherColumns = ({
     key: "name",
     label: "강사",
     render: (item) => (
-      <button
-        onClick={() => onView(item.id)}
-        className="cursor-pointer font-medium text-[#0069A8] hover:underline"
-      >
-        {item.name}
-      </button>
+      <div className="flex items-center justify-center gap-2.5">
+        <button
+          onClick={() => onView(item.id)}
+          className="cursor-pointer font-medium text-[#0069A8] hover:underline"
+        >
+          {item.name}
+        </button>
+      </div>
     ),
   },
-  { key: "email", label: "이메일", type: "text" },
-  { key: "phone", label: "연락처", type: "text" },
-  { key: "hireDate", label: "근무 시작일", type: "date" },
+  {
+    key: "email",
+    label: "이메일",
+    render: (item) => <p className="text-center">{item.email}</p>,
+  },
+  {
+    key: "phone",
+    label: "연락처",
+    render: (item) => <p className="text-center">{item.phone}</p>,
+  },
+  {
+    key: "hireDate",
+    label: "근무 시작일",
+    render: (item) => <p className="text-center">{item.hireDate}</p>,
+  },
   {
     key: "status",
     label: "상태",
     render: (item) => (
-      <span
-        className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[item.status as TeacherStatus]}`}
-      >
-        {STATUS_LABEL[item.status as TeacherStatus]}
-      </span>
+      <div className="flex justify-center">
+        <Badge
+          className={`px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[item.status as TeacherStatus]}`}
+        >
+          {STATUS_LABEL[item.status as TeacherStatus]}
+        </Badge>
+      </div>
     ),
   },
   {

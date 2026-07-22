@@ -40,8 +40,8 @@ export function useTeachers() {
 // /user API가 이름 검색을 지원하지 않아 서버에서 받은 전체 목록을 클라이언트에서 필터링·슬라이싱한다.
 // (같은 queryKey를 쓰므로 useTeachers()와 캐시를 공유한다)
 export function useTeacherList(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   search: string;
 }) {
   return useQuery({
@@ -190,8 +190,8 @@ export function useDeleteTeacher() {
 
 export function useFindUsers(
   params: {
-    page?: string;
-    limit?: string;
+    page?: number;
+    limit?: number;
     search?: string;
     isApproved?: boolean;
   },

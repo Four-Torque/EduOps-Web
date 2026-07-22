@@ -4,21 +4,21 @@ import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getAssetApplicationsColumns } from "./column";
 import type { MaterialTabFilter } from "@/features/asset/type";
-import { MaterialFilterBar }         from "@/features/asset/components/MaterialFilterBar";
+import { MaterialFilterBar } from "@/features/asset/components/MaterialFilterBar";
 import {
   useFindAssetApplications,
   useEditAssetApplicationStatus,
 } from "@/features/asset/query";
 import { useAssetApplicationStore } from "@/features/asset/store";
-import { Table }                    from "@/shared/components/Table";
+import { Table } from "@/shared/components/Table";
 
 export default function DirectorBillingPage() {
   const searchParams = useSearchParams();
   const [statusFilter, setStatusFilter] = useState<MaterialTabFilter>("all");
   const { onRejectOpen } = useAssetApplicationStore();
 
-  const page  = searchParams.get("page")  || "1";
-  const limit = searchParams.get("limit") || "10";
+  const page = Number(searchParams.get("page") || 1);
+  const limit = Number(searchParams.get("limit") || 10);
 
   const { data, isLoading } = useFindAssetApplications({
     page,
@@ -52,6 +52,7 @@ export default function DirectorBillingPage() {
         data={data}
         isLoading={isLoading}
         showCheckbox={false}
+        currentPage={page}
         statusReadonly
       />
     </>

@@ -11,8 +11,8 @@ import { Table } from "@/shared/components/Table";
 export default function InventoryPage() {
   const { q, categoryId, vendorId } = useAssetStore();
   const searchParams = useSearchParams();
-  const page = searchParams.get("page") || "1";
-  const limit = searchParams.get("limit") || "10";
+  const page = Number(searchParams.get("page") || 1);
+  const limit = Number(searchParams.get("limit") || 10);
   const { data, isLoading } = useFindAssets({
     page,
     limit,
@@ -33,6 +33,7 @@ export default function InventoryPage() {
         data={data}
         isLoading={isLoading}
         showCheckbox={false}
+        currentPage={page}
       />
     </>
   );

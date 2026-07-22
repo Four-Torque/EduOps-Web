@@ -11,6 +11,7 @@ interface AttendanceUIState {
   setDepartment: (department: DepartmentType) => void;
   setSearch: (search: string) => void;
   setPage: (page: number) => void;
+  setLimit: (limit: number) => void;
   onRecordOpen: () => void;
   onRecordClose: () => void;
 }
@@ -18,7 +19,7 @@ interface AttendanceUIState {
 function getDefaultWeekStart(monthStr: string): string {
   const match = monthStr.match(/(\d+)월\s+(\d+)년/);
   if (!match) return "";
-  const monthNum = parseInt(match[1], 10) - 1; // 0-11
+  const monthNum = parseInt(match[1], 10) - 1;
   const yearNum = parseInt(match[2], 10);
   const today = new Date();
 
@@ -50,6 +51,7 @@ export const useAttendanceStore = create<AttendanceUIState>()(
         department: "전체",
         search: "",
         page: 1,
+        limit: 10,
         weekStart: getDefaultWeekStart("7월 2026년"),
       },
       isRecordOpen: false,
@@ -96,8 +98,17 @@ export const useAttendanceStore = create<AttendanceUIState>()(
           "attendance/set-page",
         ),
 
-      onRecordOpen: () => set({ isRecordOpen: true }, false, "attendance/onRecordOpen"),
-      onRecordClose: () => set({ isRecordOpen: false }, false, "attendance/onRecordClose"),
+      setLimit: (limit) =>
+        set(
+          (state) => ({ filter: { ...state.filter, limit, page: 1 } }),
+          false,
+          "attendance/set-limit",
+        ),
+
+      onRecordOpen: () =>
+        set({ isRecordOpen: true }, false, "attendance/onRecordOpen"),
+      onRecordClose: () =>
+        set({ isRecordOpen: false }, false, "attendance/onRecordClose"),
     }),
     { name: "AttendanceStore" },
   ),

@@ -25,8 +25,8 @@ export default function UserPage() {
     "비활성화된 사용자는 로그인이 차단되며 근로 상태가 퇴사로 변경됩니다.",
   );
 
-  const page = searchParams.get("page") || "1";
-  const limit = searchParams.get("limit") || "10";
+  const page = Number(searchParams.get("page") || "1");
+  const limit = Number(searchParams.get("limit") || "10");
   const { data, isLoading } = useFindUsers({
     page,
     limit,
@@ -77,6 +77,8 @@ export default function UserPage() {
     return () => debouncedSearch.cancel?.();
   }, [debouncedSearch]);
 
+  console.log("data: ", data);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center bg-white p-3 border border-slate-200 rounded">
@@ -95,6 +97,7 @@ export default function UserPage() {
         onCreate={handleCreate}
         deleteButtonLabel="선택 비활성화"
         onDelete={handleDeactivate}
+        currentPage={page}
         showCheckbox={activeTab === "pending" ? false : true}
       />
 
