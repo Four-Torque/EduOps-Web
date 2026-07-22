@@ -121,3 +121,18 @@ export function formatNumber(amount: number | string | undefined | null) {
   if (Number.isNaN(cleaned)) return "";
   return cleaned.toLocaleString("ko-KR");
 }
+
+export const getFormatLabel = (fileName: string) => {
+  const ext = fileName.split(".").pop()?.toUpperCase();
+  return ext || "ETC";
+};
+
+export const formatFileSize = (fileSize: number): string => {
+  if (fileSize < 1024) {
+    return `${fileSize} B`;
+  }
+  if (fileSize < 1024 * 1024) {
+    return `${(fileSize / 1024).toFixed(1)} KB`;
+  }
+  return `${(fileSize / (1024 * 1024)).toFixed(1)} MB`;
+};

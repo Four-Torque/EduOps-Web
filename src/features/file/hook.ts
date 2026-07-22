@@ -1,101 +1,57 @@
+import { useState, useCallback } from "react";
 import toast from "react-hot-toast";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { documentUpload } from "./api";
+import { uploadClassFile } from "./api";
 
-interface Props {
-  maxDocuments?: number;
-  onSuccess?: (urls: string[], names: string[]) => void;
-  initialDocuments?: string[];
-  initialNames?: string[];
+export interface FileMetadata {
+  url: string;
+  originalName: string;
+  size: number;
 }
 
-export function useDocumentUpload({
-  maxDocuments = 1,
-  onSuccess,
-  initialDocuments = [],
-  initialNames = [],
-}: Props = {}) {
-  const [documents, setDocuments] = useState<string[]>(initialDocuments);
-  const [names, setNames] = useState<string[]>(initialNames);
+export function useDocumentUpload() {
+  const [file, setFile] = useState<FileMetadata | null>(null);
   const [uploading, setUploading] = useState(false);
-  const prevInitialDocumentsRef = useRef<string[]>(initialDocuments);
 
-  useEffect(() => {
-    const currentInitialDocuments = initialDocuments;
-    const prevInitialDocuments = prevInitialDocumentsRef.current;
+  const upload = useCallback(async (selectedFile: File) => {
+    setUploading(true);
 
-    const hasChanged =
-      currentInitialDocuments.length !== prevInitialDocuments.length ||
-      currentInitialDocuments.some(
-        (doc, index) => doc !== prevInitialDocuments[index],
-      );
+    try {
+      const formData = new FormData();
+      formData.append("files", selectedFile);
 
-    if (hasChanged) {
-      setDocuments(currentInitialDocuments);
-      setNames(initialNames);
-      prevInitialDocumentsRef.current = currentInitialDocuments;
-    }
-  }, [initialDocuments, initialNames]);
+      const response = await uploadClassFile(formData);
 
-  const uploadDocuments = useCallback(
-    async (acceptedFiles: File[]) => {
-      const remainingSlots = maxDocuments - documents.length;
-      const filesToUpload = acceptedFiles.slice(0, maxDocuments);
-      if (filesToUpload.length === 0) {
-        toast.error("업로드할 파일을 선택해주세요.");
-        return;
-      }
-      setUploading(true);
-      try {
-        const formData = new FormData();
-        const fileNames: string[] = [];
+      const uploadedUrls: string[] = response?.body ?? [];
 
-        filesToUpload.forEach((file) => {
-          formData.append("files", file);
-          fileNames.push(file.name);
+      if (uploadedUrls.length > 0) {
+        uploadedUrls.forEach((url) => {
+          const fileData: FileMetadata = {
+            url,
+            originalName: selectedFile.name,
+            size: selectedFile.size,
+          };
+
+          setFile(fileData);
+          return fileData;
         });
-        console.log("formData: ", formData);
-
-        const uploadedUrls = await documentUpload(formData);
-        console.log("2");
-
-        if (uploadedUrls && uploadedUrls.length > 0) {
-          let newDocuments: string[];
-          let newNames: string[];
-
-          if (remainingSlots <= 0) {
-            newDocuments = uploadedUrls.slice(0, maxDocuments);
-            newNames = fileNames.slice(0, maxDocuments);
-          } else {
-            const totalDocuments = [...documents, ...uploadedUrls];
-            const totalNames = [...names, ...fileNames];
-            newDocuments = totalDocuments.slice(0, maxDocuments);
-            newNames = totalNames.slice(0, maxDocuments);
-          }
-
-          setDocuments(newDocuments);
-          setNames(newNames);
-          onSuccess?.(newDocuments, newNames);
-        }
-      } catch (error) {
-        toast.error("파일 업로드 실패");
-      } finally {
-        setUploading(false);
       }
-    },
-    [documents, names, maxDocuments, onSuccess],
-  );
+    } catch (error) {
+      toast.error("파일 업로드 실패");
+      throw error;
+    } finally {
+      setUploading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setFile(null);
+    setUploading(false);
+  }, []);
 
   return {
+    file,
     uploading,
-    uploadDocuments,
-    names,
+    upload,
+    reset,
   };
-}
-
-export function extractFileName(url: string | null | undefined) {
-  if (!url) return "";
-  const pathPart = url.split("?")[0];
-  const parts = pathPart.split("/");
-  return parts[parts.length - 1] || "";
 }
