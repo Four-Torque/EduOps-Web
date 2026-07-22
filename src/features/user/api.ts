@@ -212,11 +212,7 @@ export async function approveUser(id: string) {
 }
 
 export async function createUser(values: z.infer<typeof UserFormSchema>) {
-  const { joinedAt, resignedAt, ...rest } = values;
-  const payload = {
-    ...rest,
-  };
-  const response = await apiClient.post("/user", payload);
+  const response = await apiClient.post("/user", values);
   return response.data;
 }
 
@@ -238,6 +234,7 @@ export async function deactivateUsers(ids: string[]) {
       apiClient.patch(`/user/${id}`, {
         status: "INACTIVE",
         employmentStatus: "RESIGNED",
+        resignedAt: new Date().toISOString(),
       }),
     ),
   );

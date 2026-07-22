@@ -235,27 +235,30 @@ export default function UserForm({
             </Field>
           )}
         />
-
-        <Controller
-          name="resignedAt"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field className="gap-2 flex flex-col">
-              <FieldLabel htmlFor="resignedAt" className="font-semibold">
-                퇴사일
-              </FieldLabel>
-              <DatePicker
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="퇴사일 선택"
-                hasError={fieldState.invalid}
-                startMonth={calendarStartMonth}
-                endMonth={calendarEndMonth}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        {isEdit && (
+          <Controller
+            name="resignedAt"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field className="gap-2 flex flex-col">
+                <FieldLabel htmlFor="resignedAt" className="font-semibold">
+                  퇴사일
+                </FieldLabel>
+                <DatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="퇴사일 선택"
+                  hasError={fieldState.invalid}
+                  startMonth={calendarStartMonth}
+                  endMonth={calendarEndMonth}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        )}
       </FieldGroup>
       <SubmitButton title="저장" className="h-10 mt-6" />
     </form>
