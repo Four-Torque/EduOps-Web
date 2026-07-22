@@ -206,9 +206,9 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
                       onClick={() => handleParentClick(item.id)}
                       className={cn(
                         "flex items-center justify-between px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors w-full",
-                        hasActiveChild
-                          ? "text-slate-800 font-medium"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-800",
+                          hasActiveChild
+                            ? "text-[#E8732A] font-medium"
+                            : "text-slate-500 hover:text-[#E8732A]",
                       )}
                     >
                       <span>{item.label}</span>
@@ -230,7 +230,7 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
                                 "flex items-center gap-2 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors",
                                 isActive
                                   ? "text-[#E8732A] font-medium"
-                                  : "text-slate-400 hover:text-slate-700",
+                                  : "text-slate-400 hover:text-[#E8732A]",
                               )}
                             >
                               <span
@@ -267,8 +267,8 @@ export function Sidebar({ navItems, addTab }: SidebarProps) {
                     className={cn(
                       "flex items-center gap-1.5 px-[6.5px] py-[6.5px] rounded-md text-[12px] transition-colors w-full",
                       isActive
-                        ? "bg-[#0069A8] text-white font-medium"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800",
+                        ? "text-[#E8732A] font-medium"
+                        : "text-slate-500 hover:text-[#E8732A]",
                     )}
                   >
                     <span className="truncate">{item.label}</span>

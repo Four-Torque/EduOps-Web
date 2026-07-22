@@ -1,4 +1,4 @@
-import { CourseManagerDashboard } from "@/features/course/components/CourseManagerDashboard";
+import { CourseManagerDashboard } from "@/features/class/components/CourseManagerDashboard";
 
 export default function CourseManagerPage() {
   return <CourseManagerDashboard />;

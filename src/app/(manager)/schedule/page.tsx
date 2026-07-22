@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { ScheduleHeader } from "@/features/schedule/components/ScheduleHeader";
 import { ScheduleFilterBar } from "@/features/schedule/components/ScheduleFilterBar";
 import { ScheduleCalendar } from "@/features/schedule/components/ScheduleCalendar";
 import { useWeeklySchedule } from "@/features/schedule/query";
@@ -61,10 +60,9 @@ export default function SchedulePage() {
   }
 
   return (
-    <div>
-      <ScheduleHeader />
+    <>
       <ScheduleFilterBar />
       <ScheduleCalendar events={events} />
-    </div>
+    </>
   );
 }

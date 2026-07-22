@@ -10,11 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { SCHEDULE_SUBJECT_OPTIONS } from "@/shared/constants/manager/schedule.constants";
 import { useScheduleStore } from "../store";
 import { useAllClasses } from "../query";
 import { useTeachers } from "@/features/user/query";
 import type { ClassInfo } from "@/features/class/type";
+import { useFindSubjects } from "@/features/subject/query";
+import { Subject } from "@/features/subject/type";
 
 export function ScheduleFilterBar() {
   const {
@@ -25,6 +26,7 @@ export function ScheduleFilterBar() {
     setInstructor,
     setSubject,
     clearFilters,
+    onCreateOpen,
   } = useScheduleStore();
 
   // 강의실 목록은 별도 엔티티가 없어서, 실제 등록된 강좌들의 스케줄에서
@@ -36,7 +38,7 @@ export function ScheduleFilterBar() {
       cls.schedules?.forEach((s) => rooms.add(s.room)),
     );
     return [
-      { value: "all", label: "강의장: All" },
+      { value: "all", label: "강의장: 전체" },
       ...Array.from(rooms)
         .sort()
         .map((r) => ({ value: r, label: r })),
@@ -47,10 +49,19 @@ export function ScheduleFilterBar() {
   const { data: teachers = [] } = useTeachers();
   const instructorOptions = useMemo(
     () => [
-      { value: "all", label: "강사: All" },
+      { value: "all", label: "강사: 전체" },
       ...teachers.map((t) => ({ value: t.name, label: t.name })),
     ],
     [teachers],
+  );
+
+  const { data: subjects = [] } = useFindSubjects();
+  const subjectOptions = useMemo(
+    () => [
+      { value: "all", label: "과목: 전체" },
+      ...subjects.map((s: Subject) => ({ value: s.id, label: s.name })),
+    ],
+    [subjects],
   );
 
   return (
@@ -58,11 +69,11 @@ export function ScheduleFilterBar() {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1.5 text-slate-500">
           <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span className="text-[12px] font-medium">Filters:</span>
+          <span className="text-[12px] font-medium">필터:</span>
         </div>
 
         <Select value={room} onValueChange={setRoom}>
-          <SelectTrigger className="w-[110px] text-[12px]" size="default">
+          <SelectTrigger className="text-[12px]" size="default">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -75,7 +86,7 @@ export function ScheduleFilterBar() {
         </Select>
 
         <Select value={instructor} onValueChange={setInstructor}>
-          <SelectTrigger className="w-[90px] text-[12px]" size="default">
+          <SelectTrigger className="text-[12px]" size="default">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -88,24 +99,32 @@ export function ScheduleFilterBar() {
         </Select>
 
         <Select value={subject} onValueChange={setSubject}>
-          <SelectTrigger className="w-[110px] text-[12px]" size="default">
+          <SelectTrigger className="text-[12px]" size="default">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {SCHEDULE_SUBJECT_OPTIONS.map((o) => (
+            {subjectOptions.map((o) => (
               <SelectItem key={o.value} value={o.value} className="text-[12px]">
                 {o.label}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {(subject !== "all" || room !== "all" || instructor !== "all") && (
+          <button
+            onClick={clearFilters}
+            className="text-[12px] text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+          >
+            초기화
+          </button>
+        )}
       </div>
 
       <button
-        onClick={clearFilters}
-        className="text-[12px] text-slate-500 hover:text-slate-700 transition-colors"
+        onClick={onCreateOpen}
+        className="text-[11.5px] font-medium text-white bg-slate-800 px-3 py-1.5 rounded hover:bg-slate-700 transition-colors cursor-pointer"
       >
-        Clear Filters
+        + 추가
       </button>
     </div>
   );

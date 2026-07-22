@@ -45,7 +45,7 @@ export function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+        className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-color cursor-pointer"
         aria-label="알림"
       >
         <Bell size={20} />
@@ -86,7 +86,7 @@ export function NotificationBell() {
                 <button
                   key={msg.id}
                   onClick={() => handleMessageClick(msg)}
-                  className="flex items-start gap-3 w-full px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-100 last:border-0"
+                  className="flex items-start gap-3 w-full px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b cursor-pointer border-slate-100 last:border-0"
                 >
                   <div className="w-8 h-8 rounded-full bg-[#0069A8] text-white text-[11px] font-semibold flex items-center justify-center shrink-0 mt-0.5">
                     {msg.sender?.name?.slice(0, 1)}
@@ -125,7 +125,7 @@ export function NotificationBell() {
                 const role = user?.role ?? "MANAGER";
                 router.push(RECEIVED_PATH[role] ?? "/");
               }}
-              className="text-[11.5px] font-semibold text-sky-600 hover:text-sky-700 w-full py-1.5 transition-colors"
+              className="text-[11.5px] font-semibold text-sky-600 hover:text-sky-700 w-full py-1.5 transition-colors cursor-pointer"
             >
               전체 쪽지 보기
             </button>

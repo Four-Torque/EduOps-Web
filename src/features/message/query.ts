@@ -134,21 +134,21 @@ export function useMessageSse() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!user?.id) return;
-
+    if (!user?.id) {
+      return;
+    }
     const eventSource = createEventSource("/message/sse");
-
     eventSource.onmessage = (event) => {
       if (event.data === "ping") return;
       try {
         queryClient.invalidateQueries({ queryKey: ["messages", "received"] });
       } catch (error) {
-        console.error("SSE message parse error:", error);
+        console.error("캐시 무효화 실패", error);
       }
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE connection error:", error);
+      console.error("EventSource 연결 오류:", error);
     };
 
     return () => {

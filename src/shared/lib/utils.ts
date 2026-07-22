@@ -111,3 +111,13 @@ export function isWithinDateRange(
   }
   return true;
 }
+
+export function formatNumber(amount: number | string | undefined | null) {
+  if (amount === undefined || amount === null) return "";
+  const cleaned =
+    typeof amount === "number"
+      ? amount
+      : parseInt(String(amount).replace(/[^0-9]/g, ""), 10);
+  if (Number.isNaN(cleaned)) return "";
+  return cleaned.toLocaleString("ko-KR");
+}

@@ -33,8 +33,6 @@ export function MessageContactModal() {
 
   if (!isContactModalOpen) return null;
 
-  console.log("groups", groups);
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"

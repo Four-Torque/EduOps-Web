@@ -83,7 +83,7 @@ export const DIRECTOR_NAV: NavItem[] = [
         href: "/finance/monthly",
       },
       {
-        label: "년간 매출 현황",
+        label: "연간 매출 현황",
         href: "/finance/yearly",
       },
     ],
@@ -177,7 +177,7 @@ export const TEACHER_NAV: NavItem[] = [
     label: "쪽지",
     children: [
       { label: "받은 쪽지", href: "/teacher-message/received" },
-       { label: "보낸 쪽지", href: "/teacher-message/send" },
+      { label: "보낸 쪽지", href: "/teacher-message/send" },
     ],
   },
 ];

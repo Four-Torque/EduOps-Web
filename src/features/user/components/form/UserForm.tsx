@@ -19,6 +19,10 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { DatePicker } from "@/shared/components/DatePicker";
+import {
+  calendarEndMonth,
+  calendarStartMonth,
+} from "@/shared/constants/day.constants";
 
 interface UserFormProps {
   onSubmit: (values: z.infer<typeof UserFormSchema>) => void;
@@ -42,9 +46,6 @@ export default function UserForm({
     }
     onSubmit(values);
   }
-
-  const calendarStartMonth = new Date(2000, 0);
-  const calendarEndMonth = new Date(2040, 11);
 
   return (
     <form id="user-form" onSubmit={form.handleSubmit(handleSubmit)}>
