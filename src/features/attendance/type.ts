@@ -36,6 +36,7 @@ export interface AttendanceFilter {
   department: DepartmentType;
   search: string;
   page: number;
+  limit: number;
   weekStart?: string;
 }
 

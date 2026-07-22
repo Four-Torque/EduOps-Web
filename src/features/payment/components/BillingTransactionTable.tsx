@@ -33,7 +33,9 @@ import {
 
 // "대기"는 서버에 대응하는 개념이 없어 나오지 않는다.
 // 완료=PAID, 미완료/연체는 전부 UNPAID(납부기한 경과 여부로 다시 나뉨).
-function toPaymentTypeFilter(tab: BillingTabFilter): "PAID" | "UNPAID" | undefined {
+function toPaymentTypeFilter(
+  tab: BillingTabFilter,
+): "PAID" | "UNPAID" | undefined {
   if (tab === "완료") return "PAID";
   if (tab === "미완료" || tab === "연체") return "UNPAID";
   return undefined;
@@ -72,7 +74,9 @@ function getColumns(
           <p className="text-[12.5px] font-medium text-slate-900 leading-tight">
             {item.title}
           </p>
-          <p className="text-[10.5px] text-slate-400 mt-0.5">{item.className || "일반 청구"}</p>
+          <p className="text-[10.5px] text-slate-400 mt-0.5">
+            {item.className || "일반 청구"}
+          </p>
         </div>
       ),
     },
@@ -157,7 +161,8 @@ export function BillingTransactionTable() {
 
   const filteredItems = (data?.data ?? []).filter((item: PaymentItem) => {
     if (tab === "완료") return item.paymentType === "PAID";
-    if (tab === "미완료") return item.paymentType === "UNPAID" && !isOverdue(item);
+    if (tab === "미완료")
+      return item.paymentType === "UNPAID" && !isOverdue(item);
     if (tab === "연체") return item.paymentType === "UNPAID" && isOverdue(item);
     return item.paymentType === "PAID" || item.paymentType === "UNPAID"; // "all" (REFUNDED 제외)
   });
@@ -165,7 +170,10 @@ export function BillingTransactionTable() {
   const total = filteredItems.length;
   const totalPages = Math.max(1, Math.ceil(total / BILLING_PAGE_SIZE));
   const filteredData = {
-    data: filteredItems.slice((page - 1) * BILLING_PAGE_SIZE, page * BILLING_PAGE_SIZE),
+    data: filteredItems.slice(
+      (page - 1) * BILLING_PAGE_SIZE,
+      page * BILLING_PAGE_SIZE,
+    ),
     total,
     totalPages,
   };

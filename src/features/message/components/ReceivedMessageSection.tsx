@@ -49,6 +49,7 @@ export function ReceivedMessageSection() {
         deleteButtonLabel="쪽지 삭제"
         onCreate={openContactModal}
         onDelete={handleDelete}
+        currentPage={page}
         statusReadonly
       />
 
