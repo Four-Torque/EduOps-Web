@@ -195,8 +195,8 @@ export async function payTeacherSalary(salaryId: string): Promise<void> {
 }
 
 export async function findUsers(params: {
-  page?: string;
-  limit?: string;
+  page?: number;
+  limit?: number;
   search?: string;
   isApproved?: boolean;
 }) {

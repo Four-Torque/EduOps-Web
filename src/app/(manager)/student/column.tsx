@@ -37,7 +37,11 @@ export const getStudentColumns = ({
     {
       key: "birthDate",
       label: "생년월일",
-      type: "date",
+      render: (item: Student) => (
+        <p className="text-[12px] text-slate-600 text-center">
+          {item.birthDate}
+        </p>
+      ),
     },
     {
       key: "address",
@@ -47,13 +51,20 @@ export const getStudentColumns = ({
       key: "Phonenumber",
       label: "비상 연락처",
       render: (item: Student) => (
-        <p className="text-[12px] text-slate-600"> {item.Phonenumber}</p>
+        <p className="text-[12px] text-slate-600 text-center">
+          {" "}
+          {item.Phonenumber}
+        </p>
       ),
     },
     {
       key: "status",
       label: "상태",
-      render: (item: Student) => <StudentStatusBadge status={item.status} />,
+      render: (item: Student) => (
+        <div className="flex justify-center">
+          <StudentStatusBadge status={item.status} />
+        </div>
+      ),
     },
     {
       key: "actions",

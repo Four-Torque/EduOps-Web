@@ -6,11 +6,6 @@ import { Pagination } from "./Pagination";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 
-interface PopoverState {
-  itemId: string;
-  rect: DOMRect;
-}
-
 export interface ColumnProps {
   key: string;
   label: string;

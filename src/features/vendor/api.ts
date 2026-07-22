@@ -3,8 +3,8 @@ import z from "zod/v3";
 import { VendorFormSchema } from "./schema";
 
 export async function findVendors(params: {
-  page: string;
-  limit: string;
+  page: number;
+  limit: number;
   search?: string;
 }) {
   const response = await apiClient.get("/vendor", { params });
