@@ -58,6 +58,7 @@ export interface CreateClassPayload {
   name: string;
   fee: number;
   capacity: number;
+  subjectName: string;
   startDate: string;
   endDate: string;
 }
