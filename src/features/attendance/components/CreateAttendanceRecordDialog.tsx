@@ -31,7 +31,7 @@ import type { User } from "@/features/user/type";
 export function CreateAttendanceRecordDialog() {
   const { isRecordOpen, onRecordClose } = useAttendanceStore();
   const { data: userData } = useFindUsers(
-    { limit: "100" },
+    { limit: 100 },
     { enabled: isRecordOpen },
   );
 

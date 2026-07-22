@@ -24,7 +24,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       {children}
       <ModalProvider />
       <Toaster />
-      {process.env.NODE_ENV !== "production" && (
+      {process.env.NEXT_PUBLIC_NODE_ENV !== "production" && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </QueryClientProvider>

@@ -19,8 +19,8 @@ export function InventoryFilterBar() {
     useAssetStore();
   const { data: categories } = useFindCategories();
   const { data } = useFindVendors({
-    page: "1",
-    limit: "10000",
+    page: 1,
+    limit: 10000,
   });
   const vendors = data?.data ?? [];
 

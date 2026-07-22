@@ -17,8 +17,8 @@ export default function TeacherMgmtPage() {
     "삭제된 데이터는 복구할 수 없습니다.",
   );
 
-  const page = searchParams.get("page") || "1";
-  const limit = searchParams.get("limit") || "10";
+  const page = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 10;
   const { data, isLoading } = useTeacherList({ page, limit, search: q });
   const { mutateAsync: deleteTeacherAsync } = useDeleteTeacher();
 

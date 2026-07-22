@@ -16,8 +16,8 @@ export default function AssetNameField({ form }: AssetNameFieldProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: assetsData } = useFindAssets({
-    page: "1",
-    limit: "20",
+    page: 1,
+    limit: 20,
     search: searchTerm,
   });
   const assets = assetsData?.data || [];

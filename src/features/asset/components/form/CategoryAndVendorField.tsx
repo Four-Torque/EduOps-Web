@@ -25,9 +25,9 @@ export default function CategoryAndVendorField({
   form,
 }: CategoryAndVendorFieldProps) {
   const { data: categories } = useFindCategories();
-  const { data: vendorsData } = useFindVendors({ page: "1", limit: "50" });
+  const { data: vendorsData } = useFindVendors({ page: 1, limit: 50 });
 
-  const { data: assetsData } = useFindAssets({ page: "1", limit: "50" });
+  const { data: assetsData } = useFindAssets({ page: 1, limit: 50 });
 
   const vendors = vendorsData?.data || [];
   const assets = assetsData?.data || [];
