@@ -1,4 +1,3 @@
-
 export interface ClassFileResponse {
   id: string;
   classId: string;
@@ -12,5 +11,6 @@ export interface ClassFileResponse {
 export interface PaginatedClassFileResponse {
   total: number;
   page: number;
+  totalPages: number;
   data: ClassFileResponse[];
 }

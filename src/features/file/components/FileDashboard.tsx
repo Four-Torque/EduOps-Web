@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { fetchClassFiles } from "../api";
 import { FileFilterBar } from "./FileFilterBar";
 import { FileListTable } from "./FileListTable";
 import { useSession } from "@/shared/hooks/useSession";
+import { useFindClassFiles } from "../query";
 
 export function FileDashboard() {
   const [classId, setClassId] = useState<string>("all-class");
@@ -15,25 +14,25 @@ export function FileDashboard() {
 
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 10;
 
-  const actualClassId = classId === "all-class" ? undefined : classId;
-  const actualFileName = fileName.trim() === "" ? undefined : fileName;
-
-  const { data: filesResponse, isLoading } = useQuery({
-    queryKey: ["classFiles", actualClassId, actualFileName, page],
-    queryFn: () => fetchClassFiles(actualClassId, actualFileName, page, 10),
+  const { data, isLoading } = useFindClassFiles({
+    page,
+    limit,
+    search: fileName,
+    classId: classId === "all-class" ? undefined : classId,
   });
 
   return (
     <div className="flex flex-col gap-4">
       <FileFilterBar
         teacherId={user ? user.id : ""}
-        classId={classId} 
-        setClassId={setClassId} 
-        fileName={fileName} 
-        setFileName={setFileName} 
+        classId={classId}
+        setClassId={setClassId}
+        fileName={fileName}
+        setFileName={setFileName}
       />
-      <FileListTable files={filesResponse} isLoading={isLoading} />
+      <FileListTable data={data} isLoading={isLoading} />
     </div>
   );
 }
