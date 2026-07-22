@@ -5,8 +5,6 @@ import { useSession } from "@/shared/hooks/useSession";
 import { useMessageStore } from "@/features/message/store";
 import { MessageContactModal } from "./MessageContactModal";
 import { Table } from "@/shared/components/Table";
-import { Button } from "@/shared/components/ui/button";
-import { SquarePen } from "lucide-react";
 import { useDeleteMessages, useReceivedMessages } from "../query";
 import { getReceivedColumns } from "@/app/(director)/director-message/received/column";
 import { useSearchParams } from "next/navigation";
@@ -40,25 +38,21 @@ export function ReceivedMessageSection() {
   }
 
   return (
-    <div>
+    <>
       <ConfirmDialog />
-      <div className="flex justify-end mb-4">
-        <Button variant="primary" size="sm" onClick={openContactModal}>
-          <SquarePen className="w-3.5 h-3.5" />새 쪽지
-        </Button>
-      </div>
-
       <Table
         columns={columns}
         data={data}
         isLoading={isLoading}
         showCheckbox={true}
+        createButtonLabel="새 쪽지"
         deleteButtonLabel="쪽지 삭제"
+        onCreate={openContactModal}
         onDelete={handleDelete}
         statusReadonly
       />
 
       <MessageContactModal />
-    </div>
+    </>
   );
 }
