@@ -1,70 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
-
-@theme {
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222.2 84% 4.9%);
-  --color-primary: hsl(238 84% 60%);
-  --color-primary-foreground: hsl(0 0% 100%);
-  --color-secondary: hsl(210 40% 96.1%);
-  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
-  --color-muted: hsl(210 40% 96.1%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
-  --color-accent: hsl(210 40% 96.1%);
-  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-  --color-border: hsl(214.3 31.8% 91.4%);
-  --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: hsl(238 84% 60%);
-  --radius: 0.5rem;
-  --font-geist-sans: var(--font-geist-sans);
-  --font-geist-mono: var(--font-geist-mono);
-}
-
-@layer utilities {
-  /* 얇고 옅은 스크롤바. 가로 스크롤되는 탭/목록에서 재사용 */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar {
-    height: 6px;
-    width: 6px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #e2e8f0;
-    border-radius: 9999px;
-  }
-  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-  }
-}
-
-@layer base {
-  * {
-    border-color: var(--color-border);
-    @apply border-border outline-ring/50;
-  }
-  body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-geist-sans), system-ui, sans-serif;
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -178,10 +116,44 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* react-big-calendar 라이브러리 기본 CSS 오버라이드.
-   .rbc-events-container가 top/left/right/bottom:0 + margin-right:10px로 안쪽 여백이
-   오른쪽만 떠 있었는데, 네 방향 다 3px로 균일하게 맞춘다.
-   import 순서와 무관하게 확실히 이기도록 !important 사용. */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@layer utilities {
+  /* 얇고 옅은 스크롤바. 가로 스크롤되는 탭/목록에서 재사용 */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #e2e8f0;
+    border-radius: 9999px;
+  }
+  .scrollbar-thin:hover::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+  }
+}
+
 .rbc-day-slot .rbc-events-container {
   top: 3px !important;
   right: 3px !important;
@@ -190,6 +162,6 @@
 }
 
 .rbc-day-slot .rbc-events-container {
-    margin-right: 0 !important;
-    inset: 0px !important;
+  margin-right: 0 !important;
+  inset: 0px !important;
 }

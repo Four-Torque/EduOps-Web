@@ -24,7 +24,7 @@ interface CreatableSelectProps {
 const CreatableSelect = forwardRef<HTMLDivElement, CreatableSelectProps>(
   (
     {
-      options,
+      options = [],
       value,
       onChange,
       placeholder = "검색 혹은 입력",

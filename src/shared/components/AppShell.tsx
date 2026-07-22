@@ -1,12 +1,12 @@
 "use client";
 
 import { NavItem } from "../constants/navigation";
+import { useTabs } from "../hooks/useTabs";
+import { useMessageSse } from "@/features/message/query";
 import { Sidebar } from "./Sidebar";
 import Header from "./Header";
 import Topbar from "./Topbar";
-import { useTabs } from "../hooks/useTabs";
 import { MessageModal } from "@/features/message/components/form/MessageModal";
-import { useMessageSse } from "@/features/message/query";
 
 interface AppShellProps {
   children: React.ReactNode;

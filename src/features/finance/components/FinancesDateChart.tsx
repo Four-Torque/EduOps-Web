@@ -61,10 +61,10 @@ export function FinancesDateChart({
   const shouldRenderIncome = type === "TOTAL" ? showIncome : type === "PAYMENT";
 
   return (
-    <ChartContainer config={chartConfig} className="h-full w-full">
+    <ChartContainer config={chartConfig} className="h-full w-full p-4">
       <LineChart
         data={formattedData}
-        margin={{ top: 15, left: 10, right: 10, bottom: 5 }}
+        margin={{ top: 15, left: 15, right: 15, bottom: 5 }}
       >
         <CartesianGrid vertical={false} />
         <XAxis
@@ -73,11 +73,16 @@ export function FinancesDateChart({
           axisLine={false}
           tickMargin={8}
           minTickGap={10}
+          interval={4}
         />
         <YAxis
           tickLine={false}
           axisLine={false}
-          tickFormatter={(v) => (v == 0 ? "0" : `${v / 10000}만원`)}
+          tickFormatter={(v) => {
+            if (v === 0) return "0";
+            if (v < 10000) return "";
+            return `${Math.floor(v / 10000)}만원`;
+          }}
         />
         <ChartTooltip
           cursor={false}
@@ -90,7 +95,7 @@ export function FinancesDateChart({
             type="monotone"
             stroke="#ff616a"
             strokeWidth={2}
-            dot={autoViewMode === "MONTH"}
+            dot={false}
           />
         )}
         {shouldRenderIncome && (
@@ -99,7 +104,7 @@ export function FinancesDateChart({
             type="monotone"
             stroke="#4a74fb"
             strokeWidth={2}
-            dot={autoViewMode === "MONTH"}
+            dot={false}
           />
         )}
       </LineChart>
