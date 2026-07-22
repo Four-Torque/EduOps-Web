@@ -62,7 +62,7 @@ export const useUpdateClass = () => {
       payload: Partial<CreateClassPayload>;
     }) => updateClass(id, payload),
     onSuccess: (data) => {
-      toast.success(data.message);
+      toast.success("강좌 수정 완료", data.message);
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: (error) => {
