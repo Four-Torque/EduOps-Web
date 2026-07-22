@@ -10,20 +10,26 @@ export const getReceivedColumns = (): ColumnProps[] => [
     key: "sender",
     label: "보낸 사람",
     render: (item: Message) => (
-      <div className=" gap-2.5">
-        <div className="gap-1.5">
-          <p className="text-[12.5px] font-medium text-slate-900">{item.sender?.name}</p>
-          {!item.isRead && (
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
-          )}
-        </div>
-      </div>
+      <p className="text-[12.5px] font-medium text-slate-900">{item.sender?.name}</p>
     ),
   },
   {
     key: "title",
     label: "제목",
-    type: "text",
+    render: (item: Message) => (
+      <div className="flex items-center gap-2">
+        {!item.isRead && (
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 animate-pulse" />
+        )}
+        <span
+          className={`text-[12.5px] truncate ${
+            !item.isRead ? "font-semibold text-slate-900" : "text-slate-600"
+          }`}
+        >
+          {item.title}
+        </span>
+      </div>
+    ),
   },
   {
     key: "createdAt",
