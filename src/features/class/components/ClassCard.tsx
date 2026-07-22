@@ -8,15 +8,16 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { useDeleteClass } from "@/features/class/query";
-import { CourseDetailModal } from "./CourseDetailModal";
 import { useConfirm } from "@/shared/hooks/useConfirm";
 import { DAY_LABELS } from "@/shared/constants/day.constants";
+import { ClassDetailModal } from "./ClassDetailModal";
+import { Badge } from "@/shared/components/ui/badge";
 
-interface CourseCardProps {
+interface ClassCardProps {
   item: ClassInfo;
 }
 
-export function CourseCard({ item }: CourseCardProps) {
+export function ClassCard({ item }: ClassCardProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { mutate: deleteClass } = useDeleteClass();
   const [ConfirmDialog, confirm] = useConfirm(
@@ -25,7 +26,10 @@ export function CourseCard({ item }: CourseCardProps) {
   );
 
   const isFull = item.currentStudents >= item.capacity;
-  const progressRatio = item.capacity > 0 ? Math.min((item.currentStudents / item.capacity) * 100, 100) : 0;
+  const progressRatio =
+    item.capacity > 0
+      ? Math.min((item.currentStudents / item.capacity) * 100, 100)
+      : 0;
   const daysMap = DAY_LABELS;
 
   async function handleDelete() {
@@ -37,7 +41,14 @@ export function CourseCard({ item }: CourseCardProps) {
     <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col gap-4 shadow-sm hover:shadow transition-shadow">
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-[17px] font-bold text-slate-900">{item.name}</h3>
+          <div className="flex items-center gap-1">
+            {item.subjectName && (
+              <Badge variant="secondary">{item.subjectName}</Badge>
+            )}
+            <h3 className="text-[17px] font-bold text-slate-900">
+              {item.name}
+            </h3>
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-slate-400 hover:text-slate-600 p-1 rounded hover:bg-slate-50 transition-colors">
@@ -45,7 +56,9 @@ export function CourseCard({ item }: CourseCardProps) {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsDetailOpen(true)}>상세보기</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsDetailOpen(true)}>
+                상세보기
+              </DropdownMenuItem>
               <DropdownMenuItem
                 className="text-red-600 focus:text-red-600 focus:bg-red-50"
                 onClick={handleDelete}
@@ -60,7 +73,9 @@ export function CourseCard({ item }: CourseCardProps) {
           <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
             <User size={14} />
           </div>
-          <span className="text-sm text-slate-700 font-medium">{item.teacherName || "담당 강사 없음"}</span>
+          <span className="text-sm text-slate-700 font-medium">
+            {item.teacherName || "담당 강사 없음"}
+          </span>
         </div>
 
         <div className="flex flex-col gap-2 text-sm text-slate-600 border-b border-slate-100 pb-4">
@@ -71,8 +86,13 @@ export function CourseCard({ item }: CourseCardProps) {
           {item.schedules && item.schedules.length > 0 ? (
             <ul className="flex flex-col gap-1.5">
               {item.schedules.map((s, idx) => (
-                <li key={idx} className="flex items-center justify-between font-medium">
-                  <span className="text-slate-700">{daysMap[s.dayOfWeek]}요일 {s.startTime} - {s.endTime}</span>
+                <li
+                  key={idx}
+                  className="flex items-center justify-between font-medium"
+                >
+                  <span className="text-slate-700">
+                    {daysMap[s.dayOfWeek]}요일 {s.startTime} - {s.endTime}
+                  </span>
                   <span className="flex items-center gap-1 text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded text-[11px] border border-slate-100">
                     <Building2 size={10} /> {s.room || "-"}
                   </span>
@@ -94,14 +114,14 @@ export function CourseCard({ item }: CourseCardProps) {
         </div>
         <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full ${isFull ? 'bg-red-500' : 'bg-slate-800'}`}
+            className={`h-full rounded-full ${isFull ? "bg-red-500" : "bg-slate-800"}`}
             style={{ width: `${progressRatio}%` }}
           />
         </div>
       </div>
 
       {isDetailOpen && (
-        <CourseDetailModal
+        <ClassDetailModal
           isOpen={isDetailOpen}
           onClose={() => setIsDetailOpen(false)}
           item={item}

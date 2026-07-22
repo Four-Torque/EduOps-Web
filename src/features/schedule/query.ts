@@ -3,7 +3,7 @@ import {
   fetchWeeklySchedule,
   createScheduleBulk,
   deleteSchedule,
-  fetchClassSchedules
+  fetchClassSchedules,
 } from "./api";
 import apiClient from "@/shared/lib/axios";
 
@@ -31,7 +31,9 @@ export function useCreateScheduleBulk() {
     mutationFn: createScheduleBulk,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: scheduleQueryKeys.all() });
-      queryClient.invalidateQueries({ queryKey: ["classSchedules", variables.classId] });
+      queryClient.invalidateQueries({
+        queryKey: ["classSchedules", variables.classId],
+      });
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
   });

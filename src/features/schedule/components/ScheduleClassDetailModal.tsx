@@ -5,16 +5,12 @@ import { useClass } from "@/features/class/query";
 import { useClassEnrollments } from "@/features/enrollment/query";
 import { Calendar, Clock, MapPin, User, Phone } from "lucide-react";
 import { DAY_LABELS } from "@/shared/constants/day.constants";
-import { formatWon } from "@/shared/lib/utils";
+import { formatDate, formatWon } from "@/shared/lib/utils";
 
 interface ScheduleClassDetailModalProps {
   open: boolean;
   onClose: () => void;
   classId: string | null;
-}
-
-function formatDate(date: string | null) {
-  return date ? date.split("T")[0] : "-";
 }
 
 export function ScheduleClassDetailModal({
@@ -33,9 +29,7 @@ export function ScheduleClassDetailModal({
       size="lg"
       bodyClassName="bg-slate-50"
     >
-      {isLoading && (
-        <p className="text-sm text-slate-400">불러오는 중...</p>
-      )}
+      {isLoading && <p className="text-sm text-slate-400">불러오는 중...</p>}
 
       {!isLoading && (error || !classInfo) && (
         <p className="text-sm text-red-500">강좌 정보를 찾을 수 없습니다.</p>
@@ -45,7 +39,9 @@ export function ScheduleClassDetailModal({
         <div className="space-y-5">
           {/* 기본 정보 */}
           <div className="rounded-xl border border-slate-200 bg-white p-6">
-            <h1 className="text-xl font-bold text-slate-800">{classInfo.name}</h1>
+            <h1 className="text-xl font-bold text-slate-800">
+              {classInfo.name}
+            </h1>
             <dl className="mt-4 space-y-3 text-[13px]">
               <div>
                 <dt className="text-slate-400">담당 강사</dt>
@@ -54,7 +50,9 @@ export function ScheduleClassDetailModal({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <dt className="text-slate-400">수강료</dt>
-                  <dd className="mt-1 text-slate-700">{formatWon(classInfo.fee)}</dd>
+                  <dd className="mt-1 text-slate-700">
+                    {formatWon(classInfo.fee)}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-slate-400">정원</dt>
@@ -66,11 +64,15 @@ export function ScheduleClassDetailModal({
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <dt className="text-slate-400">시작일</dt>
-                  <dd className="mt-1 text-slate-700">{formatDate(classInfo.startDate)}</dd>
+                  <dd className="mt-1 text-slate-700">
+                    {formatDate(classInfo.startDate)}
+                  </dd>
                 </div>
                 <div>
                   <dt className="text-slate-400">종료일</dt>
-                  <dd className="mt-1 text-slate-700">{formatDate(classInfo.endDate)}</dd>
+                  <dd className="mt-1 text-slate-700">
+                    {formatDate(classInfo.endDate)}
+                  </dd>
                 </div>
               </div>
             </dl>
@@ -102,7 +104,9 @@ export function ScheduleClassDetailModal({
                 ))}
               </ul>
             ) : (
-              <p className="text-[13px] text-slate-400">등록된 스케줄이 없습니다.</p>
+              <p className="text-[13px] text-slate-400">
+                등록된 스케줄이 없습니다.
+              </p>
             )}
           </div>
 
@@ -129,7 +133,9 @@ export function ScheduleClassDetailModal({
                 ))}
               </ul>
             ) : (
-              <p className="text-[13px] text-slate-400">등록된 수강생이 없습니다.</p>
+              <p className="text-[13px] text-slate-400">
+                등록된 수강생이 없습니다.
+              </p>
             )}
           </div>
         </div>

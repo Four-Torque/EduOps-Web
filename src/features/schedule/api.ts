@@ -18,14 +18,15 @@ export async function fetchWeeklySchedule(
   instructor?: string,
   subject?: string,
 ): Promise<ScheduleItem[]> {
+  console.log("api subject: ", subject);
   const response = await apiClient.get("/schedule", {
     params: {
       room: room && room !== "all" ? room : undefined,
       teacherName: instructor && instructor !== "all" ? instructor : undefined,
-      subject: subject && subject !== "all" ? subject : undefined,
+      subjectId: subject && subject !== "all" ? subject : undefined,
     },
   });
-  return response.data.body ?? response.data;
+  return response.data.body;
 }
 
 export async function createScheduleBulk(data: {
@@ -40,7 +41,15 @@ export async function createScheduleBulk(data: {
   await apiClient.post("/schedule", data);
 }
 
-export const createBulkSchedule = async (payload: { classId: string; schedules: { dayOfWeek: number; startTime: string; endTime: string; room: string }[] }) => {
+export const createBulkSchedule = async (payload: {
+  classId: string;
+  schedules: {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
+    room: string;
+  }[];
+}) => {
   const response = await apiClient.post("/schedule", payload);
   return response.data;
 };
@@ -53,4 +62,3 @@ export const fetchClassSchedules = async (classId: string) => {
   const response = await apiClient.get("/schedule", { params: { classId } });
   return response.data.body ?? response.data;
 };
-

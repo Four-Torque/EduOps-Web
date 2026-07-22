@@ -10,3 +10,6 @@ export const DAY_OF_WEEK_OPTIONS = [
   { value: "5", label: "금요일" },
   { value: "6", label: "토요일" },
 ] as const;
+
+export const calendarStartMonth = new Date(2000, 0);
+export const calendarEndMonth = new Date(2040, 11);
