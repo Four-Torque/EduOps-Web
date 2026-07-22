@@ -1,16 +1,23 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { useDeleteMessages } from "../query";
 import { useSession } from "@/shared/hooks/useSession";
 import { useMessageStore } from "@/features/message/store";
 import { Table } from "@/shared/components/Table";
 import { useFindSentMessages } from "../query";
 import { getSentColumns } from "@/app/(director)/director-message/send/column";
 import { useSearchParams } from "next/navigation";
+import { useConfirm } from "@/shared/hooks/useConfirm";
 
 export function SentMessageSection() {
   const { data: user } = useSession();
   const { reset } = useMessageStore();
+  const { mutate: deleteMessages } = useDeleteMessages();
+  const [ConfirmDialog, confirm] = useConfirm(
+    "쪽지를 삭제하시겠습니까?",
+    "삭제된 쪽지는 복구할 수 없습니다.",
+  );
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page") || "1");
   const { data, isLoading } = useFindSentMessages(
@@ -24,12 +31,16 @@ export function SentMessageSection() {
 
   const columns = useMemo(() => getSentColumns(), []);
 
-  function handleDelete(ids: string[]) {
-    console.log("Delete messages with IDs:", ids);
+  async function handleDelete(ids: string[]) {
+    const ok = await confirm();
+    if (ok) {
+      deleteMessages({ ids, type: "SENT" });
+    }
   }
 
   return (
-    <div>
+    <>
+      <ConfirmDialog />
       <Table
         columns={columns}
         data={data}
@@ -39,6 +50,6 @@ export function SentMessageSection() {
         onDelete={handleDelete}
         statusReadonly
       />
-    </div>
+    </>
   );
 }
