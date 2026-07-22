@@ -25,14 +25,8 @@ interface ClassInfoTabProps {
 }
 
 export const ClassInfoTab = (props: ClassInfoTabProps) => {
-  const {
-    formData,
-    onChange,
-    teachers,
-    subjects,
-    handleUpdate,
-    isUpdating,
-  } = props;
+  const { formData, onChange, teachers, subjects, handleUpdate, isUpdating } =
+    props;
 
   return (
     <div className="flex flex-col gap-4 py-2">
@@ -76,7 +70,7 @@ export const ClassInfoTab = (props: ClassInfoTabProps) => {
               과목을 선택하세요
             </option>
             {subjects.map((s: Subject) => (
-              <option key={s.name} value={s.name}>
+              <option key={s.id} value={s.name}>
                 {s.name}
               </option>
             ))}

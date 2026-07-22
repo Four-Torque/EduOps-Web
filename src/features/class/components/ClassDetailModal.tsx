@@ -62,6 +62,7 @@ export function ClassDetailModal({
         name: infoForm.name,
         fee: parseInt(infoForm.fee, 10),
         capacity: parseInt(infoForm.capacity, 10),
+        subjectName: infoForm.subjectName,
         startDate: new Date(infoForm.startDate).toISOString(),
         endDate: new Date(infoForm.endDate).toISOString(),
         teacherId: infoForm.teacherId,
