@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Table, ColumnProps } from "@/shared/components/Table";
 import { ClassSyllabusItem } from "../type";
 import { SyllabusDetailModal } from "./SyllabusDetailModal";
+import { Badge } from "@/shared/components/ui/badge";
 
 interface SyllabusListTableProps {
   syllabuses: ClassSyllabusItem[];
@@ -23,65 +24,78 @@ const getStatusText = (status: string) => {
   return "대기 중";
 };
 
-export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: SyllabusListTableProps) {
-  const [selectedItem, setSelectedItem] = useState<ClassSyllabusItem | null>(null);
+export function SyllabusListTable({
+  syllabuses,
+  isLoading,
+  isManager = false,
+}: SyllabusListTableProps) {
+  const [selectedItem, setSelectedItem] = useState<ClassSyllabusItem | null>(
+    null,
+  );
 
   const columns: ColumnProps[] = [
     {
       key: "name",
       label: "강좌명",
       render: (item: ClassSyllabusItem) => (
-        <button 
+        <div
           onClick={() => setSelectedItem(item)}
-          className="font-medium text-[#0069A8] hover:underline cursor-pointer text-left focus:outline-none"
+          className="font-medium text-[#0069A8] hover:underline cursor-pointer text-center focus:outline-none"
         >
           {item.name}
-        </button>
+        </div>
       ),
     },
     {
       key: "fee",
       label: "수강료",
       render: (item: ClassSyllabusItem) => (
-        <span className="text-slate-600">
+        <p className="text-slate-600 text-center">
           {item.fee.toLocaleString()} 원
-        </span>
+        </p>
       ),
     },
     {
       key: "capacity",
       label: "정원",
       render: (item: ClassSyllabusItem) => (
-        <span className="text-slate-600">
-          {item.capacity} 명
-        </span>
+        <p className="text-slate-600 text-center">{item.capacity} 명</p>
       ),
     },
     {
       key: "schedule",
       label: "예정 기간",
       render: (item: ClassSyllabusItem) => {
-        if (!item.startDate && !item.endDate) return <span className="text-slate-400">-</span>;
+        if (!item.startDate && !item.endDate)
+          return <p className="text-slate-400 text-center">-</p>;
         const start = item.startDate ? item.startDate.split("T")[0] : "?";
         const end = item.endDate ? item.endDate.split("T")[0] : "?";
-        return <span className="text-sm">{`${start} ~ ${end}`}</span>;
-      }
+        return <p className="text-sm text-center">{`${start} ~ ${end}`}</p>;
+      },
     },
     {
       key: "createdAt",
       label: "제출일",
       render: (item: ClassSyllabusItem) => {
-        return <span className="text-sm text-slate-500">{item.createdAt.split("T")[0]}</span>;
-      }
+        return (
+          <p className="text-sm text-slate-500 text-center">
+            {item.createdAt.split("T")[0]}
+          </p>
+        );
+      },
     },
     {
       key: "status",
       label: "상태",
       render: (item: ClassSyllabusItem) => (
-        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeStyle(item.status)}`}>
-          {getStatusText(item.status)}
-        </span>
-      )
+        <div className="flex items-center justify-center">
+          <Badge
+            className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeStyle(item.status)}`}
+          >
+            {getStatusText(item.status)}
+          </Badge>
+        </div>
+      ),
     },
     {
       key: "action",
@@ -90,9 +104,14 @@ export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: 
         return (
           <div className="flex items-center justify-center gap-2">
             {item.status === "REJECTED" && item.rejectedReason && (
-              <span className="text-xs text-red-500 max-w-[80px] truncate block" title={item.rejectedReason}>{item.rejectedReason}</span>
+              <span
+                className="text-xs text-red-500 max-w-[80px] truncate block"
+                title={item.rejectedReason}
+              >
+                {item.rejectedReason}
+              </span>
             )}
-            <button 
+            <button
               onClick={() => setSelectedItem(item)}
               className="text-[11.5px] font-medium text-slate-600 hover:text-slate-900 border border-slate-200 bg-white hover:bg-slate-50 px-2 py-1 rounded transition-colors"
             >
@@ -100,8 +119,8 @@ export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: 
             </button>
           </div>
         );
-      }
-    }
+      },
+    },
   ];
 
   return (
@@ -115,10 +134,10 @@ export function SyllabusListTable({ syllabuses, isLoading, isManager = false }: 
           isLoading={isLoading}
         />
       </div>
-      
-      <SyllabusDetailModal 
-        item={selectedItem} 
-        onClose={() => setSelectedItem(null)} 
+
+      <SyllabusDetailModal
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
         isManager={isManager}
       />
     </>
