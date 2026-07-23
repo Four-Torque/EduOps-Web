@@ -45,8 +45,6 @@ export default function VendorPage() {
     return getVendorColumns({ onEdit: handleEdit, onDelete: handleDelete });
   }, []);
 
-  console.log("data", data);
-
   return (
     <>
       <VendorFilterBar />

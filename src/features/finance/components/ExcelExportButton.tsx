@@ -8,7 +8,6 @@ import { formatDate } from "@/shared/lib/utils";
 
 import { PaymentItem } from "@/features/payment/type";
 
-
 export default function ExcelExportButton() {
   const filter = {
     search: "",
@@ -16,18 +15,18 @@ export default function ExcelExportButton() {
     type: "all" as const,
   };
 
-
   async function handleExcelExport() {
     try {
       const response = await fetchPayments({
         search: filter.search || undefined,
-        paymentType: filter.status === "all" ? undefined : (filter.status as "PAID" | "UNPAID" | "REFUNDED"),
+        paymentType:
+          filter.status === "all"
+            ? undefined
+            : (filter.status as "PAID" | "UNPAID" | "REFUNDED"),
         type: filter.type,
       });
 
       const exportItems = response.data;
-
-      console.log("exportItems", response.data);
 
       if (exportItems.length === 0) {
         toast.error("다운로드할 데이터가 없습니다.");
@@ -45,7 +44,9 @@ export default function ExcelExportButton() {
       ];
       const rows = exportItems.map((item: PaymentItem) => [
         "수입",
-        item.paymentDate ? formatDate(new Date(item.paymentDate)) : formatDate(new Date(item.createdAt)),
+        item.paymentDate
+          ? formatDate(new Date(item.paymentDate))
+          : formatDate(new Date(item.createdAt)),
         item.title,
         item.className || "수강료",
         item.studentName || "-",
