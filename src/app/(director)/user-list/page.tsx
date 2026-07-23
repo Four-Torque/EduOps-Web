@@ -77,8 +77,6 @@ export default function UserPage() {
     return () => debouncedSearch.cancel?.();
   }, [debouncedSearch]);
 
-  console.log("data: ", data);
-
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center bg-white p-3 border border-slate-200 rounded">

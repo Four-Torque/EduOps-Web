@@ -18,7 +18,6 @@ export async function fetchWeeklySchedule(
   instructor?: string,
   subject?: string,
 ): Promise<ScheduleItem[]> {
-  console.log("api subject: ", subject);
   const response = await apiClient.get("/schedule", {
     params: {
       room: room && room !== "all" ? room : undefined,
