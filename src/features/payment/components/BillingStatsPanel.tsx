@@ -1,8 +1,10 @@
-import { MOCK_BILLING_STATS } from "@/shared/constants/manager/billing.constants";
+import type { BillingStats } from "@/features/payment/type";
 
-export function BillingStatsPanel() {
-  const stats = MOCK_BILLING_STATS;
+interface BillingStatsPanelProps {
+  stats: BillingStats;
+}
 
+export function BillingStatsPanel({ stats }: BillingStatsPanelProps) {
   return (
     <div className="w-[280px] min-w-[280px] flex flex-col gap-4">
       {/* 총 수익 */}

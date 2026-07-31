@@ -1,8 +1,4 @@
-import type {
-  AttendanceEmployee,
-  AttendanceStats,
-  DepartmentType,
-} from "@/features/attendance/type";
+import type { DepartmentType } from "@/features/attendance/type";
 
 export const ATTENDANCE_PAGE_SIZE = 8;
 
@@ -22,55 +18,3 @@ export const DEPARTMENT_OPTIONS: { label: string; value: DepartmentType }[] = [
 ];
 
 export const DAYS = ["월", "화", "수", "목", "금"] as const;
-
-export const MOCK_ATTENDANCE_STATS: AttendanceStats = {
-  totalEmployees: 142,
-  presentToday:   135,
-  absentToday:    4,
-  lateOrEtc:      3,
-};
-
-export const MOCK_ATTENDANCE_EMPLOYEES: AttendanceEmployee[] = [
-  {
-    id: 1,
-    employeeCode: "EMP-1042",
-    name: "하인수",
-    avatarInitial: "SK",
-    department: "강사",
-    weeklyAttendance: [
-      { day: "월", status: "present" },
-      { day: "화", status: "present" },
-      { day: "수", status: "present" },
-      { day: "목", status: "present" },
-      { day: "금", status: "present" },
-    ],
-  },
-  {
-    id: 2,
-    employeeCode: "EMP-1088",
-    name: "이성재",
-    avatarInitial: "JL",
-    department: "관리자",
-    weeklyAttendance: [
-      { day: "월", status: "present" },
-      { day: "화", status: "present" },
-      { day: "수", status: "present" },
-      { day: "목", status: "absent"  },
-      { day: "금", status: "present" },
-    ],
-  },
-  {
-    id: 3,
-    employeeCode: "EMP-1102",
-    name: "박찬호",
-    avatarInitial: "MP",
-    department: "강사",
-    weeklyAttendance: [
-      { day: "월", status: "late"    },
-      { day: "화", status: "late"    },
-      { day: "수", status: "present" },
-      { day: "목", status: "present" },
-      { day: "금", status: "present" },
-    ],
-  },
-];
