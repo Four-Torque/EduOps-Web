@@ -1,3 +1,5 @@
-export default function CoursePage() {
-  return <div>강좌 관리</div>;
+import { CourseManagerDashboard } from "@/features/class/components/CourseManagerDashboard";
+
+export default function CourseManagerPage() {
+  return <CourseManagerDashboard />;
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
-import { useResetPasswordVerifyMail } from "@/hooks/auth/useAuth";
+import ResetPasswordForm from "@/features/auth/components/form/ResetPasswordForm";
+import { useResetPasswordVerifyMail } from "@/features/auth/query";
 import { notFound, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default function ResetPasswordFormPage() {
+function ResetPasswordFormPageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const { data, isError, isLoading } = useResetPasswordVerifyMail(
@@ -15,9 +16,15 @@ export default function ResetPasswordFormPage() {
     return null;
   }
 
-  if (isError) {
-    return notFound();
-  }
+  if (isError || !data) return notFound();
 
   return <ResetPasswordForm token={token || ""} email={data?.email || ""} />;
+}
+
+export default function ResetPasswordFormPage() {
+  return (
+    <Suspense fallback={null}>
+      <ResetPasswordFormPageContent />
+    </Suspense>
+  );
 }

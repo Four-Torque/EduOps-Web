@@ -1,0 +1,199 @@
+// 역할별 로그인 후 첫 진입 페이지 (탭을 모두 닫았을 때 돌아갈 홈이기도 함)
+export const ROLE_HOME = {
+  DIRECTOR: "/director-dashboard",
+  MANAGER: "/school-info",
+  TEACHER: "/class",
+} as const;
+
+// 최상위 메뉴의 고유 식별자 목록.
+// 코드(아이콘 매핑, 노출 제외 등)는 UI 라벨이 아니라 이 id를 참조한다.
+// 라벨은 다국어/문구 변경으로 언제든 바뀔 수 있지만 id는 바뀌지 않는다.
+export const NAV_IDS = [
+  "dashboard",
+  "sales",
+  "user-management",
+  "director-material-approval",
+  "director-message",
+  "academy-info",
+  "staff-attendance",
+  "material-management",
+  "billing",
+  "manager-message",
+  "schedule",
+  "student-attendance",
+  "class-files",
+  "grade",
+  "syllabus",
+  "teacher-message",
+] as const;
+
+export type NavId = (typeof NAV_IDS)[number];
+
+export interface SubNavItem {
+  label: string;
+  href: string;
+}
+
+export interface NavItem {
+  id: NavId;
+  label: string;
+  href?: string;
+  children?: SubNavItem[];
+}
+
+// 현재 경로(pathname)와 매칭되는 nav 항목(최상위 또는 자식)을 찾는다.
+// Sidebar가 탭을 추가할 때 쓰는 것과 동일한 href를 반환해야 Topbar 하이라이트/탭 병합이 맞는다.
+export function findNavByPath(
+  navItems: NavItem[],
+  pathname: string,
+): { href: string; label: string } | null {
+  for (const item of navItems) {
+    if (
+      item.href &&
+      (pathname === item.href || pathname.startsWith(item.href + "/"))
+    ) {
+      return { href: item.href, label: item.label };
+    }
+    const child = item.children?.find(
+      (c) => pathname === c.href || pathname.startsWith(c.href + "/"),
+    );
+    if (child) return { href: child.href, label: child.label };
+  }
+  return null;
+}
+
+export const DIRECTOR_NAV: NavItem[] = [
+  {
+    id: "dashboard",
+    label: "대시보드",
+    children: [{ label: "학원 현황", href: "/director-dashboard" }],
+  },
+  {
+    id: "user-management",
+    label: "사용자 관리",
+    children: [{ label: "사용자 목록", href: "/user-list" }],
+  },
+  {
+    id: "sales",
+    label: "매출 관리",
+    children: [
+      { label: "매출 현황", href: "/finance" },
+      {
+        label: "월간 매출 현황",
+        href: "/finance/monthly",
+      },
+      {
+        label: "연간 매출 현황",
+        href: "/finance/yearly",
+      },
+    ],
+  },
+  {
+    id: "director-material-approval",
+    label: "자재/결재 관리",
+    children: [
+      { label: "자재 목록", href: "/inventory" },
+      { label: "결재 관리", href: "/director-billing" },
+    ],
+  },
+  {
+    id: "director-message",
+    label: "쪽지",
+    children: [
+      { label: "받은 쪽지", href: "/director-message/received" },
+      { label: "보낸 쪽지", href: "/director-message/send" },
+    ],
+  },
+];
+
+export const MANAGER_NAV: NavItem[] = [
+  {
+    id: "academy-info",
+    label: "학원 정보",
+    children: [
+      { label: "학원 기본 정보", href: "/school-info" },
+      { label: "원생 관리", href: "/student" },
+      { label: "강좌 관리", href: "/course" },
+      { label: "스케줄 관리", href: "/schedule" },
+      { label: "강사 관리", href: "/teacher-mgmt" },
+    ],
+  },
+  {
+    id: "staff-attendance",
+    label: "근태 관리",
+    children: [{ label: "직원 근태", href: "/attendance" }],
+  },
+  {
+    id: "material-management",
+    label: "자재 관리",
+    children: [
+      { label: "자재 물품 신청", href: "/material" },
+      { label: "구매처 관리", href: "/vendor" },
+    ],
+  },
+  {
+    id: "billing",
+    label: "결제 목록",
+    children: [{ label: "원생 결제 내역", href: "/billing" }],
+  },
+  {
+    id: "manager-message",
+    label: "쪽지",
+    children: [
+      { label: "받은 쪽지", href: "/manager-message/received" },
+      { label: "보낸 쪽지", href: "/manager-message/send" },
+    ],
+  },
+];
+
+export const TEACHER_NAV: NavItem[] = [
+  {
+    id: "schedule",
+    label: "시간표",
+    children: [{ label: "수업 시간표", href: "/class" }],
+  },
+  {
+    id: "student-attendance",
+    label: "원생 출결",
+    children: [{ label: "원생 출결 관리", href: "/student-attendance" }],
+  },
+  {
+    id: "class-files",
+    label: "수업 파일",
+    children: [{ label: "수업 파일 관리", href: "/files" }],
+  },
+  {
+    id: "grade",
+    label: "성적 관리",
+    children: [{ label: "원생 수업 테스트", href: "/exam" }],
+  },
+  {
+    id: "syllabus",
+    label: "강의계획서",
+    children: [{ label: "강의계획서", href: "/syllabus" }],
+  },
+  {
+    id: "teacher-message",
+    label: "쪽지",
+    children: [
+      { label: "받은 쪽지", href: "/teacher-message/received" },
+      { label: "보낸 쪽지", href: "/teacher-message/send" },
+    ],
+  },
+];
+
+// 원장 nav에 관리자 메뉴를 재사용해 붙일 때, "보여줄 것만" 명시하는 화이트리스트.
+// 목록에 없는 관리자 메뉴는 기본적으로 원장에게 숨겨진다.
+// (블랙리스트로 하면 새 관리자 메뉴가 실수로 원장에게 노출될 수 있어 화이트리스트를 쓴다)
+const DIRECTOR_INCLUDES_FROM_MANAGER: NavId[] = [
+  "academy-info",
+  "staff-attendance",
+  "billing",
+];
+
+export function getDirectorNav(): NavItem[] {
+  const managerMenusForDirector = MANAGER_NAV.filter((item) =>
+    DIRECTOR_INCLUDES_FROM_MANAGER.includes(item.id),
+  );
+  return [...DIRECTOR_NAV, ...managerMenusForDirector];
+}

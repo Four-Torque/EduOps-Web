@@ -1,11 +1,30 @@
 "use client";
 
-import AppShell from "../../components/common/AppShell";
-import { getDirectorNav, MANAGER_NAV } from "../../constants/navigation";
-import { useAuthStore } from "../../store/auth.store";
+import AppShell from "@/shared/components/AppShell";
+import {
+  getDirectorNav,
+  MANAGER_NAV,
+  ROLE_HOME,
+} from "@/shared/constants/navigation";
+import { useRoleGuard } from "@/shared/hooks/useRoleGuard";
 
-export default function ManagerLayout({ children }: { children: React.ReactNode }) {
-  const role = useAuthStore((s) => s.user?.role);
-  const navItems = role === "DIRECTOR" ? getDirectorNav() : MANAGER_NAV;
-  return <AppShell navItems={navItems}>{children}</AppShell>;
+export default function ManagerLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // 관리자 영역이지만 원장도 열람 가능
+  const { session, ready } = useRoleGuard(["MANAGER", "DIRECTOR"]);
+  if (!ready) return null;
+
+  // 원장이 관리자 페이지를 볼 때도 사이드바/홈은 원장 기준을 유지한다
+  const isDirector = session!.role === "DIRECTOR";
+  const navItems = isDirector ? getDirectorNav() : MANAGER_NAV;
+  const homePath = isDirector ? ROLE_HOME.DIRECTOR : ROLE_HOME.MANAGER;
+
+  return (
+    <AppShell navItems={navItems} homePath={homePath}>
+      {children}
+    </AppShell>
+  );
 }
