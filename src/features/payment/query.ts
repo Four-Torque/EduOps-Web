@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { fetchPayments, updatePayment } from "./api";
+import { fetchPayments, fetchBillingSummary, updatePayment } from "./api";
 
 export const paymentQueryKeys = {
   all:  () => ["payments"]                    as const,
   list: (filters: any) => ["payments", "list", filters] as const,
+  summary: (params: object) => ["payments", "summary", params] as const,
 };
 
 export function usePayments(filters?: {
@@ -19,6 +20,18 @@ export function usePayments(filters?: {
   return useQuery({
     queryKey: paymentQueryKeys.list(filters || {}),
     queryFn:  () => fetchPayments(filters),
+  });
+}
+
+// 상단 통계 카드·매출 차트용 요약. 서버가 기간 집계까지 끝낸 값을 그대로 받는다.
+// params로 startDate/endDate를 넘기면 해당 기간, 생략 시 서버 기본값(최근 6개월).
+export function useBillingSummary(params?: {
+  startDate?: string;
+  endDate?: string;
+}) {
+  return useQuery({
+    queryKey: paymentQueryKeys.summary(params ?? {}),
+    queryFn: () => fetchBillingSummary(params),
   });
 }
 

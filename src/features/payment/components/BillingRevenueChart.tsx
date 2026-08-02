@@ -1,8 +1,10 @@
 import { MonthlyRevenue } from "@/features/payment/type";
-import { MOCK_MONTHLY_REVENUE } from "@/shared/constants/manager/billing.constants";
 
-export function BillingRevenueChart() {
-  const data = MOCK_MONTHLY_REVENUE;
+interface BillingRevenueChartProps {
+  data: MonthlyRevenue[];
+}
+
+export function BillingRevenueChart({ data }: BillingRevenueChartProps) {
   const maxVal = Math.max(...data.map((d) => d.amount ?? 0), 1);
 
   return (
